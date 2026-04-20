@@ -1,0 +1,44 @@
+<!DOCTYPE Menu PUBLIC '-//freedesktop//DTD Menu 1.0//EN' 'http://www.freedesktop.org/standards/menu-spec/menu-1.0.dtd'>
+<Menu>
+ <Menu>
+  <Name>Development</Name>
+  <Exclude/>
+  <Layout>
+   <Merge type="menus"/>
+   <Menuname>Translation</Menuname>
+   <Menuname>Web Development</Menuname>
+   <Merge type="files"/>
+   <Filename>assistant.desktop</Filename>
+   <Filename>code-oss.desktop</Filename>
+   <Filename>qdbusviewer.desktop</Filename>
+   <Filename>linguist.desktop</Filename>
+   <Filename>designer.desktop</Filename>
+  </Layout>
+  <Include>
+   <Filename>code-oss.desktop</Filename>
+  </Include>
+ </Menu>
+ <Menu>
+  <Name>.hidden</Name>
+  <Include>
+   <Filename>code-oss.desktop</Filename>
+  </Include>
+ </Menu>
+ <Menu>
+  <Name>Utilities</Name>
+  <Layout>
+   <Merge type="menus"/>
+   <Menuname>XUtilities</Menuname>
+   <Merge type="files"/>
+   <Filename>org.kde.plasma.emojier.desktop</Filename>
+   <Filename>keepass.desktop</Filename>
+   <Filename>org.kde.spectacle.desktop</Filename>
+   <Filename>vim.desktop</Filename>
+   <Separator/>
+   <Menuname>More</Menuname>
+  </Layout>
+  <Exclude>
+   <Filename>code-oss.desktop</Filename>
+  </Exclude>
+ </Menu>
+</Menu>

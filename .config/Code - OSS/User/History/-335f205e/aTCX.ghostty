@@ -1,0 +1,3 @@
+language = en
+command = zsh
+mouse-scroll-multiplier = 0.80

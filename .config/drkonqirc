@@ -1,0 +1,5 @@
+[DrKonqi]
+Sentry=true
+
+[SystemInformation]
+CompiledSources=false

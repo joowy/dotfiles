@@ -1,0 +1,18 @@
+2026-04-17 22:55:59.615 [info] Extension host with pid 10620 started
+2026-04-17 22:55:59.616 [info] Skipping acquiring lock for /home/joey/.config/Code - OSS/User/workspaceStorage/deff35acc5c64da8529c0f2294d267dd.
+2026-04-17 22:55:59.623 [info] ExtensionService#_doActivateExtension vscode.github-authentication, startup: false, activationEvent: 'onAuthenticationRequest:github'
+2026-04-17 22:55:59.635 [info] ExtensionService#_doActivateExtension vscode.emmet, startup: false, activationEvent: 'onLanguage'
+2026-04-17 22:55:59.654 [info] ExtensionService#_doActivateExtension vscode.git-base, startup: true, activationEvent: '*', root cause: vscode.git
+2026-04-17 22:55:59.655 [info] ExtensionService#_doActivateExtension vscode.npm, startup: true, activationEvent: 'workspaceContains:package.json'
+2026-04-17 22:55:59.681 [info] ExtensionService#_doActivateExtension vscode.git, startup: true, activationEvent: '*'
+2026-04-17 22:55:59.704 [info] ExtensionService#_doActivateExtension vscode.github, startup: true, activationEvent: '*'
+2026-04-17 22:55:59.756 [info] Eager extensions activated
+2026-04-17 22:55:59.771 [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch, startup: false, activationEvent: 'onStartupFinished'
+2026-04-17 22:55:59.772 [info] ExtensionService#_doActivateExtension vscode.merge-conflict, startup: false, activationEvent: 'onStartupFinished'
+2026-04-17 22:55:59.782 [info] ExtensionService#_doActivateExtension esbenp.prettier-vscode, startup: false, activationEvent: 'onStartupFinished'
+2026-04-17 22:55:59.782 [info] ExtensionService#_doActivateExtension PKief.material-icon-theme, startup: false, activationEvent: 'onStartupFinished'
+2026-04-17 22:56:00.593 [info] ExtensionService#_doActivateExtension vscode.configuration-editing, startup: false, activationEvent: 'onLanguage:json'
+2026-04-17 22:56:00.597 [info] ExtensionService#_doActivateExtension vscode.extension-editing, startup: false, activationEvent: 'onLanguage:json'
+2026-04-17 22:56:00.604 [info] ExtensionService#_doActivateExtension vscode.json-language-features, startup: false, activationEvent: 'onLanguage:json'
+2026-04-17 22:56:41.711 [info] Extension host terminating: received terminate message from renderer
+2026-04-17 22:56:41.717 [info] Extension host with pid 10620 exiting with code 0

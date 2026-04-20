@@ -1,0 +1,4 @@
+2026-04-18 08:47:51.297 [error] Failed to set sticky bit on /tmp/joey-code-oss-zsh: Error: ENOENT: no such file or directory, chmod '/tmp/joey-code-oss-zsh'
+2026-04-18 21:20:37.301 [info] Expanding terminal instance, old id bd4ed01862ccd4721a2dec1bf9e1422e-3 -> new id undefined
+2026-04-18 21:20:37.802 [info] Persistent process reconnection "3"
+2026-04-18 21:20:37.875 [info] Persistent process "3": Replaying 213 chars and 1 size events

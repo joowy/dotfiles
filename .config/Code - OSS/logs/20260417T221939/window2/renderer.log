@@ -1,0 +1,6 @@
+2026-04-17 22:55:59.337 [info] Started local extension host with pid 10620.
+2026-04-17 22:55:59.459 [error] Extension 'ms-python.debugpy CANNOT USE these API proposals 'portsAttributes, debugVisualization, contribViewsWelcome'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-17 22:55:59.459 [error] Extension 'ms-python.python CANNOT USE these API proposals 'contribEditorContentMenu, quickPickSortByLabel, testObserver, quickPickItemTooltip, terminalDataWriteEvent, terminalExecuteCommandEvent, codeActionAI, notebookReplDocument, notebookVariableProvider'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-17 22:55:59.459 [error] Extension 'ms-python.vscode-python-envs CANNOT USE these API proposals 'terminalShellEnv, terminalDataWriteEvent, taskExecutionTerminal'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-17 22:56:01.918 [info] [perf] Render performance baseline is 14ms
+2026-04-17 22:56:41.717 [warning] [backup tracker] suspended, ignoring unregister event file:///home/joey/.config/opencode/package.json 

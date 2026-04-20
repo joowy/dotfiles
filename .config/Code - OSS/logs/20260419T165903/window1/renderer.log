@@ -1,0 +1,7 @@
+2026-04-19 16:59:04.060 [info] Started local extension host with pid 47550.
+2026-04-19 16:59:04.298 [error] Extension 'ms-python.debugpy CANNOT USE these API proposals 'portsAttributes, debugVisualization, contribViewsWelcome'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-19 16:59:04.298 [error] Extension 'ms-python.python CANNOT USE these API proposals 'contribEditorContentMenu, quickPickSortByLabel, testObserver, quickPickItemTooltip, terminalDataWriteEvent, terminalExecuteCommandEvent, codeActionAI, notebookReplDocument, notebookVariableProvider'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-19 16:59:04.298 [error] Extension 'ms-python.vscode-python-envs CANNOT USE these API proposals 'terminalShellEnv, terminalDataWriteEvent, taskExecutionTerminal'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-19 16:59:06.660 [info] [perf] Render performance baseline is 11ms
+2026-04-19 18:03:27.637 [warning] Semantic token with invalid length detected at lineNumber 28, column 1
+2026-04-19 18:26:23.315 [error] An unknown error occurred. Please consult the log for more details.

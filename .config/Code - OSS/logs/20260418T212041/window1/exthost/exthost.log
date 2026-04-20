@@ -1,0 +1,47 @@
+2026-04-18 21:20:42.803 [info] Extension host with pid 37042 started
+2026-04-18 21:20:42.803 [info] Skipping acquiring lock for /home/joey/.config/Code - OSS/User/workspaceStorage/bd4ed01862ccd4721a2dec1bf9e1422e.
+2026-04-18 21:20:42.885 [info] ExtensionService#_doActivateExtension vscode.github-authentication, startup: false, activationEvent: 'onAuthenticationRequest:github'
+2026-04-18 21:20:42.897 [info] ExtensionService#_doActivateExtension vscode.emmet, startup: false, activationEvent: 'onLanguage'
+2026-04-18 21:20:42.905 [info] ExtensionService#_doActivateExtension rust-lang.rust-analyzer, startup: false, activationEvent: 'onLanguage:rust'
+2026-04-18 21:20:43.151 [info] ExtensionService#_doActivateExtension vscode.terminal-suggest, startup: false, activationEvent: 'onTerminalShellIntegration:*'
+2026-04-18 21:20:43.180 [info] ExtensionService#_doActivateExtension vscode.git-base, startup: true, activationEvent: '*', root cause: vscode.git
+2026-04-18 21:20:43.189 [info] ExtensionService#_doActivateExtension vscode.git, startup: true, activationEvent: '*'
+2026-04-18 21:20:43.211 [info] ExtensionService#_doActivateExtension vscode.github, startup: true, activationEvent: '*'
+2026-04-18 21:20:43.228 [info] ExtensionService#_doActivateExtension ms-python.python, startup: true, activationEvent: 'workspaceContains:*.py,*.ipynb,*.md', root cause: charliermarsh.ruff
+2026-04-18 21:20:43.430 [info] ExtensionService#_doActivateExtension charliermarsh.ruff, startup: true, activationEvent: 'workspaceContains:*.py,*.ipynb,*.md'
+2026-04-18 21:20:43.446 [info] Eager extensions activated
+2026-04-18 21:20:43.457 [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch, startup: false, activationEvent: 'onStartupFinished'
+2026-04-18 21:20:43.462 [info] ExtensionService#_doActivateExtension vscode.merge-conflict, startup: false, activationEvent: 'onStartupFinished'
+2026-04-18 21:20:43.471 [info] ExtensionService#_doActivateExtension esbenp.prettier-vscode, startup: false, activationEvent: 'onStartupFinished'
+2026-04-18 21:20:43.471 [info] ExtensionService#_doActivateExtension PKief.material-icon-theme, startup: false, activationEvent: 'onStartupFinished'
+2026-04-18 22:52:16.865 [info] ExtensionService#_doActivateExtension vscode.markdown-language-features, startup: false, activationEvent: 'onLanguage:skill'
+2026-04-18 22:52:17.080 [info] ExtensionService#_doActivateExtension vscode.markdown-math, startup: false, activationEvent: 'api', root cause: vscode.markdown-language-features
+2026-04-19 16:59:01.427 [info] Extension host terminating: received terminate message from renderer
+2026-04-19 16:59:01.435 [error] Canceled: Canceled
+	at new zI (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:407:102927)
+	at r._remoteCall (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:407:108979)
+	at i.<computed>.s.charCodeAt.i.<computed> (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:407:105774)
+	at yg._doExecuteCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:48120)
+	at yg.executeCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:47567)
+	at e.registerCommand.description (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:46831)
+	at yg._executeContributedCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:48683)
+	at yg._doExecuteCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:47700)
+	at yg.executeCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:47567)
+	at Object.executeCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:629:135583)
+	at Ba (/home/joey/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2862-linux-x64/out/main.js:61:14967)
+	at Object.q2 (/home/joey/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2862-linux-x64/out/main.js:401:1290)
+	at lP._deactivate (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:505:14479)
+	at file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:505:12006
+	at Array.map (<anonymous>)
+	at lP._deactivateAll (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:505:11994)
+	at lP.terminate (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:505:12345)
+	at r.terminate (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:507:1072)
+	at Gs (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:821:11700)
+	at op.value (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:821:9847)
+	at E._deliver (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:403:3043)
+	at E.fire (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:403:3361)
+	at as.fire (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:405:8437)
+	at MessagePortMain.<anonymous> (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:821:8082)
+	at MessagePortMain.emit (node:events:519:28)
+	at MessagePortMain._internalPort.emit (node:electron/js2c/utility_init:2:2959)
+2026-04-19 16:59:01.438 [info] Extension host with pid 37042 exiting with code 0

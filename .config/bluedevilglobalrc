@@ -1,0 +1,8 @@
+[Adapters]
+50:EE:32:82:25:69_powered=true
+
+[Devices]
+connectedDevices=DB:28:03:67:59:A4,D0:B4:BF:4D:14:B1
+
+[General]
+launchState=enable

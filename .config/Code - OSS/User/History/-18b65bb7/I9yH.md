@@ -1,0 +1,168 @@
+---
+name: rust-doc-comments
+description: Use when adding or improving Rust method doc comments — converts /// one-liners to /** */ block comments with rich multi-paragraph descriptions
+---
+
+# rust-doc-comments Skill
+
+## Overview
+
+Teaches the LLM to write `/** */` block doc comments for Rust methods in the `database.rs` style, replacing terse `///` one-liners (`catalog.rs` style). Uses deep body analysis and file-level `// ABOUTME` context to generate accurate, multi-paragraph documentation.
+
+## When to Use
+
+- Asked to add doc comments to Rust methods
+- Asked to improve existing Rust doc comments
+- Converting a file's doc style from `///` to `/** */`
+- Reviewing Rust code for documentation quality
+
+## When NOT to Use
+
+- Adding docs to structs, enums, type aliases, or constants (only methods)
+- Test functions inside `#[cfg(test)]` modules
+- Methods that already have `/** */` block comments (skip them)
+- Non-Rust files
+
+## Style Rules
+
+### DO: `/** */` block comments (database.rs style)
+
+```rust
+/**
+Creates a new table with the given columns.
+
+Registers a table named `name` with the provided `columns` in the
+catalog and persists the change to disk. Returns an error if a table
+with the same name already exists.
+*/
+pub fn create_table(&mut self, name: &str, columns: Vec<Column>) -> Result<(), DatabaseError> { ... }
+```
+
+### DON'T: `///` one-liners (catalog.rs style)
+
+```rust
+/// Creates a new table with the given `name` and `columns`.
+///
+/// Returns an error if a table with the same name already exists or
+/// if any column names are duplicated within the table.
+pub fn create_table(...) { ... }
+```
+
+## Doc Structure
+
+```
+/**
+{One-sentence purpose}
+
+{Detailed behavior: what it does, how it works, side effects, error conditions}
+
+{Optional: cross-references to related methods}
+*/
+```
+
+- **First paragraph:** One-sentence summary of purpose
+- **Second paragraph (optional for trivial methods):** Behavior details, side effects, error conditions
+- **Cross-references:** Link related methods using `[`method_name`]` inline, or `[`method_name`]: Type::method` for full links
+- **Type references:** Use backtick-wrapped type names like `` `Vec<u8>` ``
+
+## Deep Analysis Rules
+
+When generating docs, analyze the method body by:
+
+1. **Trace data flow** — Where do inputs go? Passed through, transformed, or discarded?
+2. **Identify side effects** — File I/O, mutations (`&mut self`), allocations, network calls
+3. **Map error paths** — `?` operator propagates errors; `unwrap()`/`expect()` panics
+4. **Track control flow** — loops, conditionals, match arms indicate multiple behaviors
+5. **Identify cross-references** — calls to other methods on `self` → link with `[`method`]`
+6. **Infer purpose from ABOUTME** — File-level `// ABOUTME` comments fill gaps body analysis can't
+
+### ABOUTME Context
+
+File-level `// ABOUTME` comments provide module-level purpose. Use them to:
+- Understand what the file/struct is responsible for
+- Fill in context the method body alone doesn't reveal
+- Avoid repeating info already in ABOUTME (be concise)
+
+## Examples
+
+### Example 1: Replacing /// comments
+
+**Before:**
+```rust
+/// Returns a reference to the table with the given `name`.
+///
+/// Returns [`CatalogError::TableNotFound`] if no such table exists.
+pub fn get_table(&self, name: &str) -> Result<&Table, CatalogError> { ... }
+```
+
+**After:**
+```rust
+/**
+Gets a reference to a table by name.
+
+Returns an error if no table with the given name exists.
+*/
+pub fn get_table(&self, name: &str) -> Result<&Table, DatabaseError> { ... }
+```
+
+### Example 2: Adding docs to undocumented method
+
+**Before:**
+```rust
+fn save(&mut self) -> Result<(), DatabaseError> {
+    let bytes = self.catalog.serialize();
+    self.file.seek(std::io::SeekFrom::Start(0))?;
+    self.file.write_all(&bytes)?;
+    self.file.set_len(bytes.len() as u64)?;
+    self.file.sync_all()?;
+    Ok(())
+}
+```
+
+**After:**
+```rust
+/**
+Serializes and writes the catalog to the database file.
+
+Truncates the file to the size of the serialized catalog data,
+then syncs all changes to disk.
+*/
+fn save(&mut self) -> Result<(), DatabaseError> { ... }
+```
+
+### Example 3: Method with cross-references
+
+**Before:**
+```rust
+/// Creates a new database file with an empty catalog.
+pub fn create(file_path: &PathBuf) -> Result<Self, DatabaseError> { ... }
+```
+
+**After:**
+```rust
+/**
+Creates a new database file with an empty catalog.
+
+Opens the file at `file_path` for reading and writing, creating it
+if it does not exist. The catalog starts empty; use [`create_table`]
+to define schema before the database has useful content.
+
+[`create_table`]: Database::create_table
+*/
+pub fn create(file_path: &PathBuf) -> Result<Self, DatabaseError> { ... }
+```
+
+## Common Mistakes
+
+| Mistake | Fix |
+|---------|-----|
+| Using `///` instead of `/** */` | Always use `/** */` block comments |
+| One-line `/** */` with no second paragraph | Add a second paragraph for behavior/details |
+| Repeating ABOUTME verbatim | Use ABOUTME for context, be concise |
+| Adding docs to non-method items | Only touch methods in impl blocks |
+| Documenting test functions | Skip `#[cfg(test)]` modules entirely |
+| Over-documenting obvious methods | Keep it concise; one paragraph is fine if the method is trivial |
+
+## Real-World Impact
+
+Files with `database.rs`-style docs are easier to read and understand at a glance. The block comment style makes method purposes clear without requiring the reader to parse the implementation first.

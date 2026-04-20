@@ -1,0 +1,13 @@
+2026-04-17 22:19:40.316 [info] Started local extension host with pid 2434.
+2026-04-17 22:19:40.639 [error] Extension 'ms-python.debugpy CANNOT USE these API proposals 'portsAttributes, debugVisualization, contribViewsWelcome'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-17 22:19:40.639 [error] Extension 'ms-python.python CANNOT USE these API proposals 'contribEditorContentMenu, quickPickSortByLabel, testObserver, quickPickItemTooltip, terminalDataWriteEvent, terminalExecuteCommandEvent, codeActionAI, notebookReplDocument, notebookVariableProvider'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-17 22:19:40.639 [error] Extension 'ms-python.vscode-python-envs CANNOT USE these API proposals 'terminalShellEnv, terminalDataWriteEvent, taskExecutionTerminal'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-17 22:19:43.549 [info] [perf] Render performance baseline is 11ms
+2026-04-17 22:19:44.709 [error] [Extension Host] (node:2434) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `exe --trace-deprecation ...` to show where the warning was created)
+2026-04-17 22:44:57.449 [warning] Semantic token with invalid length detected at lineNumber 50, column 1
+2026-04-17 22:58:53.242 [warning] [File Watcher (node.js)] Watcher shutdown because watched path got deleted
+2026-04-17 22:58:53.243 [warning] [File Watcher (node.js)] Watcher shutdown because watched path got deleted
+2026-04-17 22:59:29.700 [error] An unknown error occurred. Please consult the log for more details.: EntryNotFound (FileSystemError): 
+	at wl.readFile (/usr/lib/code/extensions/git/dist/main.js:115:20803)
+	at process.processTicksAndRejections (node:internal/process/task_queues:105:5)

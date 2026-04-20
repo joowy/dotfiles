@@ -1,0 +1,161 @@
+2026-04-17T22:44:27.801633151-04:00  WARN overly long loop turn took 335.036655ms (event handling took 39.531745ms): Notification { method: "textDocument/didChange" }
+2026-04-17T22:59:28.962884555-04:00 ERROR failed fetching cargo workspace root e=cd "/home/joey/Documents/crab-db" && RUSTUP_AUTO_INSTALL="0" RUSTUP_TOOLCHAIN="/home/joey/.rustup/toolchains/stable-x86_64-unknown-linux-gnu" "/usr/bin/cargo" "locate-project" "--workspace" "--manifest-path" "/home/joey/Documents/crab-db/Cargo.toml" failed, exit status: 101
+stderr:
+error: key with no value, expected `=`
+  --> Cargo.toml:10:9
+   |
+10 | <<<<<<< HEAD
+   |         ^
+ cargo_toml=/home/joey/Documents/crab-db/Cargo.toml
+2026-04-17T22:59:28.994879652-04:00  WARN failed to run `cd "/home/joey/Documents/crab-db" && RUSTUP_AUTO_INSTALL="0" RUSTUP_TOOLCHAIN="/home/joey/.rustup/toolchains/stable-x86_64-unknown-linux-gnu" __CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" "/usr/bin/cargo" "rustc" "-Z" "unstable-options" "--print" "cfg" "--target" "x86_64-unknown-linux-gnu" "--" "-O"`, falling back to invoking rustc directly e=cd "/home/joey/Documents/crab-db" && RUSTUP_AUTO_INSTALL="0" RUSTUP_TOOLCHAIN="/home/joey/.rustup/toolchains/stable-x86_64-unknown-linux-gnu" __CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" "/usr/bin/cargo" "rustc" "-Z" "unstable-options" "--print" "cfg" "--target" "x86_64-unknown-linux-gnu" "--" "-O" failed, exit status: 101
+stderr:
+error: key with no value, expected `=`
+  --> Cargo.toml:10:9
+   |
+10 | <<<<<<< HEAD
+   |         ^
+
+2026-04-17T22:59:28.994947752-04:00  WARN failed to run `cd "/home/joey/Documents/crab-db" && RUSTC_BOOTSTRAP="1" RUSTUP_AUTO_INSTALL="0" RUSTUP_TOOLCHAIN="/home/joey/.rustup/toolchains/stable-x86_64-unknown-linux-gnu" "/usr/bin/cargo" "rustc" "-Z" "unstable-options" "--print" "target-spec-json" "--target" "x86_64-unknown-linux-gnu" "--" "-Z" "unstable-options"`, falling back to invoking rustc directly e=cd "/home/joey/Documents/crab-db" && RUSTC_BOOTSTRAP="1" RUSTUP_AUTO_INSTALL="0" RUSTUP_TOOLCHAIN="/home/joey/.rustup/toolchains/stable-x86_64-unknown-linux-gnu" "/usr/bin/cargo" "rustc" "-Z" "unstable-options" "--print" "target-spec-json" "--target" "x86_64-unknown-linux-gnu" "--" "-Z" "unstable-options" failed, exit status: 101
+stderr:
+error: key with no value, expected `=`
+  --> Cargo.toml:10:9
+   |
+10 | <<<<<<< HEAD
+   |         ^
+
+2026-04-17T22:59:29.045602106-04:00 ERROR FetchWorkspaceError: rust-analyzer failed to load workspace: Failed to load the project at /home/joey/Documents/crab-db/Cargo.toml: Failed to read Cargo metadata from Cargo.toml file /home/joey/Documents/crab-db/Cargo.toml, Some(Version { major: 1, minor: 95, patch: 0 }): Failed to run `cd "/home/joey/Documents/crab-db" && CARGO_RESOLVER_LOCKFILE_PATH="/tmp/rust-analyzera84-14/Cargo.lock" RUSTUP_AUTO_INSTALL="0" RUSTUP_TOOLCHAIN="/home/joey/.rustup/toolchains/stable-x86_64-unknown-linux-gnu" __CARGO_TEST_CHANNEL_OVERRIDE_DO_NOT_USE_THIS="nightly" "/usr/bin/cargo" "metadata" "--format-version" "1" "--manifest-path" "/home/joey/Documents/crab-db/Cargo.toml" "--filter-platform" "x86_64-unknown-linux-gnu" "-Zlockfile-path" "-Zunstable-options"`: `cargo metadata` exited with an error: error: key with no value, expected `=`
+  --> Cargo.toml:10:9
+   |
+10 | <<<<<<< HEAD
+   |         ^
+
+
+2026-04-17T22:59:29.120731405-04:00 ERROR Flycheck failed to run the following command: CommandHandle { program: "/usr/bin/cargo", arguments: ["check", "--workspace", "--message-format=json-diagnostic-rendered-ansi", "--manifest-path", "/home/joey/Documents/crab-db/Cargo.toml", "--keep-going", "--all-targets"], current_dir: Some("/home/joey/Documents/crab-db") }, error=Cargo watcher failed, the command produced no valid metadata (exit code: ExitStatus(unix_wait_status(25856))):
+error: key with no value, expected `=`
+  --> Cargo.toml:10:9
+   |
+10 | <<<<<<< HEAD
+   |         ^
+
+2026-04-17T22:59:45.608521508-04:00 ERROR Flycheck failed to run the following command: CommandHandle { program: "/usr/bin/cargo", arguments: ["check", "--workspace", "--message-format=json-diagnostic-rendered-ansi", "--manifest-path", "/home/joey/Documents/crab-db/Cargo.toml", "--keep-going", "--all-targets"], current_dir: Some("/home/joey/Documents/crab-db") }, error=Cargo watcher failed, the command produced no valid metadata (exit code: ExitStatus(unix_wait_status(25856))):
+error: failed to parse lock file at: /home/joey/Documents/crab-db/Cargo.lock
+
+Caused by:
+  TOML parse error at line 6, column 9
+    |
+  6 | <<<<<<< HEAD
+    |         ^
+  key with no value, expected `=`
+
+2026-04-17T22:59:45.618720064-04:00  WARN `cargo metadata` failed and returning succeeded result with `--no-deps` error=`cargo metadata` exited with an error: error: failed to parse lock file at: /tmp/rust-analyzera84-16/Cargo.lock
+
+Caused by:
+  TOML parse error at line 6, column 9
+    |
+  6 | <<<<<<< HEAD
+    |         ^
+  key with no value, expected `=`
+
+
+Stack backtrace:
+   0: anyhow::error::<impl core::convert::From<E> for anyhow::Error>::from
+   1: project_model::cargo_workspace::FetchMetadata::exec
+   2: std::sys::backtrace::__rust_begin_short_backtrace
+   3: core::ops::function::FnOnce::call_once{{vtable.shim}}
+   4: std::sys::thread::unix::Thread::new::thread_start
+   5: <unknown>
+   6: <unknown>
+2026-04-17T22:59:46.028598737-04:00  WARN `cargo metadata` failed and returning succeeded result with `--no-deps` error=`cargo metadata` exited with an error: error: failed to parse lock file at: /tmp/rust-analyzera84-18/Cargo.lock
+
+Caused by:
+  TOML parse error at line 6, column 9
+    |
+  6 | <<<<<<< HEAD
+    |         ^
+  key with no value, expected `=`
+
+
+Stack backtrace:
+   0: anyhow::error::<impl core::convert::From<E> for anyhow::Error>::from
+   1: project_model::cargo_workspace::FetchMetadata::exec
+   2: std::sys::backtrace::__rust_begin_short_backtrace
+   3: core::ops::function::FnOnce::call_once{{vtable.shim}}
+   4: std::sys::thread::unix::Thread::new::thread_start
+   5: <unknown>
+   6: <unknown>
+2026-04-17T22:59:46.128417953-04:00 ERROR Flycheck failed to run the following command: CommandHandle { program: "/usr/bin/cargo", arguments: ["check", "--workspace", "--message-format=json-diagnostic-rendered-ansi", "--manifest-path", "/home/joey/Documents/crab-db/Cargo.toml", "--keep-going", "--all-targets"], current_dir: Some("/home/joey/Documents/crab-db") }, error=Cargo watcher failed, the command produced no valid metadata (exit code: ExitStatus(unix_wait_status(25856))):
+error: failed to parse lock file at: /home/joey/Documents/crab-db/Cargo.lock
+
+Caused by:
+  TOML parse error at line 6, column 9
+    |
+  6 | <<<<<<< HEAD
+    |         ^
+  key with no value, expected `=`
+
+2026-04-17T22:59:48.957154999-04:00  WARN `cargo metadata` failed and returning succeeded result with `--no-deps` error=`cargo metadata` exited with an error: error: failed to parse lock file at: /tmp/rust-analyzera84-1a/Cargo.lock
+
+Caused by:
+  TOML parse error at line 24, column 9
+     |
+  24 | <<<<<<< HEAD
+     |         ^
+  key with no value, expected `=`
+
+
+Stack backtrace:
+   0: anyhow::error::<impl core::convert::From<E> for anyhow::Error>::from
+   1: project_model::cargo_workspace::FetchMetadata::exec
+   2: std::sys::backtrace::__rust_begin_short_backtrace
+   3: core::ops::function::FnOnce::call_once{{vtable.shim}}
+   4: std::sys::thread::unix::Thread::new::thread_start
+   5: <unknown>
+   6: <unknown>
+2026-04-17T22:59:48.973860608-04:00 ERROR Flycheck failed to run the following command: CommandHandle { program: "/usr/bin/cargo", arguments: ["check", "--workspace", "--message-format=json-diagnostic-rendered-ansi", "--manifest-path", "/home/joey/Documents/crab-db/Cargo.toml", "--keep-going", "--all-targets"], current_dir: Some("/home/joey/Documents/crab-db") }, error=Cargo watcher failed, the command produced no valid metadata (exit code: ExitStatus(unix_wait_status(25856))):
+error: failed to parse lock file at: /home/joey/Documents/crab-db/Cargo.lock
+
+Caused by:
+  TOML parse error at line 24, column 9
+     |
+  24 | <<<<<<< HEAD
+     |         ^
+  key with no value, expected `=`
+
+2026-04-17T22:59:49.068432074-04:00 ERROR Flycheck failed to run the following command: CommandHandle { program: "/usr/bin/cargo", arguments: ["check", "--workspace", "--message-format=json-diagnostic-rendered-ansi", "--manifest-path", "/home/joey/Documents/crab-db/Cargo.toml", "--keep-going", "--all-targets"], current_dir: Some("/home/joey/Documents/crab-db") }, error=Cargo watcher failed, the command produced no valid metadata (exit code: ExitStatus(unix_wait_status(25856))):
+error: failed to parse lock file at: /home/joey/Documents/crab-db/Cargo.lock
+
+Caused by:
+  TOML parse error at line 24, column 9
+     |
+  24 | <<<<<<< HEAD
+     |         ^
+  key with no value, expected `=`
+
+2026-04-17T22:59:49.368120364-04:00  WARN `cargo metadata` failed and returning succeeded result with `--no-deps` error=`cargo metadata` exited with an error: error: failed to parse lock file at: /tmp/rust-analyzera84-1c/Cargo.lock
+
+Caused by:
+  TOML parse error at line 24, column 9
+     |
+  24 | <<<<<<< HEAD
+     |         ^
+  key with no value, expected `=`
+
+
+Stack backtrace:
+   0: anyhow::error::<impl core::convert::From<E> for anyhow::Error>::from
+   1: project_model::cargo_workspace::FetchMetadata::exec
+   2: std::sys::backtrace::__rust_begin_short_backtrace
+   3: core::ops::function::FnOnce::call_once{{vtable.shim}}
+   4: std::sys::thread::unix::Thread::new::thread_start
+   5: <unknown>
+   6: <unknown>
+2026-04-17T22:59:49.479321935-04:00 ERROR Flycheck failed to run the following command: CommandHandle { program: "/usr/bin/cargo", arguments: ["check", "--workspace", "--message-format=json-diagnostic-rendered-ansi", "--manifest-path", "/home/joey/Documents/crab-db/Cargo.toml", "--keep-going", "--all-targets"], current_dir: Some("/home/joey/Documents/crab-db") }, error=Cargo watcher failed, the command produced no valid metadata (exit code: ExitStatus(unix_wait_status(25856))):
+error: failed to parse lock file at: /home/joey/Documents/crab-db/Cargo.lock
+
+Caused by:
+  TOML parse error at line 24, column 9
+     |
+  24 | <<<<<<< HEAD
+     |         ^
+  key with no value, expected `=`
+

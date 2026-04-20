@@ -1,0 +1,91 @@
+{
+    "telemetry.sqmId": "",
+    "telemetry.machineId": "e46273d353d86e8327d883750ac39da12f4646c63e7d4e515863fdd52e032ac6",
+    "telemetry.devDeviceId": "eb126967-a4b3-41c9-8407-39c8f89c8b50",
+    "backupWorkspaces": {
+        "workspaces": [],
+        "folders": [
+            {
+                "folderUri": "file:///home/joey/Documents/crab-db"
+            },
+            {
+                "folderUri": "file:///home/joey"
+            }
+        ],
+        "emptyWindows": []
+    },
+    "windowControlHeight": 35,
+    "profileAssociations": {
+        "workspaces": {
+            "file:///home/joey/Documents/Obsidian": "__default__profile__",
+            "file:///home/joey/.config/opencode": "__default__profile__",
+            "file:///home/joey/Documents/crab-db": "__default__profile__",
+            "file:///home/joey": "__default__profile__"
+        },
+        "emptyWindows": {}
+    },
+    "theme": "vs",
+    "themeBackground": "#ffffff",
+    "windowSplash": {
+        "zoomLevel": 0,
+        "baseTheme": "vs",
+        "colorInfo": {
+            "foreground": "#3b3b3b",
+            "background": "#ffffff",
+            "editorBackground": "#ffffff",
+            "titleBarBackground": "#f8f8f8",
+            "titleBarBorder": "#e5e5e5",
+            "activityBarBackground": "#f8f8f8",
+            "activityBarBorder": "#e5e5e5",
+            "sideBarBackground": "#f8f8f8",
+            "sideBarBorder": "#e5e5e5",
+            "statusBarBackground": "#f8f8f8",
+            "statusBarBorder": "#e5e5e5",
+            "statusBarNoFolderBackground": "#f8f8f8"
+        },
+        "layoutInfo": {
+            "sideBarSide": "left",
+            "editorPartMinWidth": 220,
+            "titleBarHeight": 35,
+            "activityBarWidth": 48,
+            "sideBarWidth": 292,
+            "auxiliaryBarWidth": 0,
+            "statusBarHeight": 22,
+            "windowBorder": false
+        }
+    },
+    "windowsState": {
+        "lastActiveWindow": {
+            "folder": "file:///home/joey/Documents/crab-db",
+            "backupPath": "/home/joey/.config/Code - OSS/Backups/f32b377ad22e27da130b6f93e51237e8",
+            "uiState": {
+                "mode": 1,
+                "x": 0,
+                "y": 0,
+                "width": 1280,
+                "height": 1394
+            }
+        },
+        "openedWindows": []
+    },
+    "windowSplashWorkspaceOverride": {
+        "layoutInfo": {
+            "sideBarWidth": 292,
+            "auxiliaryBarWidth": 640,
+            "workspaces": {
+                "36db4a58c915b9c1eaee4b3a3765d428": {
+                    "sideBarVisible": true,
+                    "auxiliaryBarVisible": false
+                },
+                "deff35acc5c64da8529c0f2294d267dd": {
+                    "sideBarVisible": true,
+                    "auxiliaryBarVisible": true
+                },
+                "bd4ed01862ccd4721a2dec1bf9e1422e": {
+                    "sideBarVisible": true,
+                    "auxiliaryBarVisible": false
+                }
+            }
+        }
+    }
+}
