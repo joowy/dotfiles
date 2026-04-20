@@ -1,3 +1,0 @@
-2026-04-17 22:19:41.391 [info] Log level: Info
-2026-04-17 22:19:41.455 [warning] [GitHubBranchProtectionProvider][updateRepositoryBranchProtection] Failed to update repository branch protection: No GitHub authentication session available.
-2026-04-17 22:34:06.957 [warning] [GitHubSourceControlHistoryItemDetailsProvider][_loadAssignableUsers] Failed to load assignable user(s) for joowy/crab-db: Error: No GitHub authentication session available.

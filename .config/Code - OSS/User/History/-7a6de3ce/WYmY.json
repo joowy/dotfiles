@@ -1,7 +1,0 @@
-{
-    "security.workspace.trust.untrustedFiles": "open"
-    ,
-    "terminal.integrated.fontFamily": "MesloLGS NF",
-    "workbench.iconTheme": "material-icon-theme",
-    "terminal.explorerKind": "external"
-}

@@ -1,4 +1,0 @@
-language = en
-command = zsh
-theme = dark:Atom One Dark,light:Atom One Light 
-adjust-cursor-thickness=5px

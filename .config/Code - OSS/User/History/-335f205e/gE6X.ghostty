@@ -1,4 +1,0 @@
-language = en
-command = zsh
-mouse-scroll-multiplier = 0.80
-theme = dark:Atom One Dark,light:Atom One Light 

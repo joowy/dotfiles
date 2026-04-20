@@ -1,5 +1,0 @@
-2026-04-17 22:19:41.396 [warning] Dir "/home/joey/Documents/crab-db/.pixi/envs" is not watchable (directory does not exist)
-2026-04-17 22:19:41.471 [info] Python interpreter path: /bin/python
-2026-04-17 22:19:41.477 [info] > pyenv which python
-2026-04-17 22:19:41.477 [info] cwd: .
-2026-04-17 22:19:42.193 [info] Starting Jedi language server for crab-db.
