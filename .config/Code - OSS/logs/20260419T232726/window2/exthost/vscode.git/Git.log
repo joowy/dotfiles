@@ -1,0 +1,86 @@
+2026-04-20 00:08:26.984 [info] [main] Log level: Info
+2026-04-20 00:08:26.984 [info] [main] Validating found git in: "git"
+2026-04-20 00:08:26.984 [info] [main] Using git "2.53.0" from "git"
+2026-04-20 00:08:26.984 [info] [Model][doInitialScan] Initial repository scan started
+2026-04-20 00:08:26.984 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:26.985 [info] > git rev-parse --git-dir --git-common-dir --show-superproject-working-tree [1ms]
+2026-04-20 00:08:26.992 [info] [Model][openRepository] Opened repository (path): /home/joey/.config
+2026-04-20 00:08:26.992 [info] [Model][openRepository] Opened repository (real path): /home/joey/.config
+2026-04-20 00:08:26.992 [info] [Model][openRepository] Opened repository (kind): repository
+2026-04-20 00:08:26.997 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:26.997 [info] > git config --get commit.template [2ms]
+2026-04-20 00:08:27.000 [info] [Git][getRemotes] No remotes found in the git config file
+2026-04-20 00:08:27.001 [info] > git rev-parse --show-toplevel [2ms]
+2026-04-20 00:08:27.001 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [1ms]
+2026-04-20 00:08:27.001 [warning] [Git][getBranch] No such branch: main
+2026-04-20 00:08:27.006 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.006 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [2ms]
+2026-04-20 00:08:27.009 [info] > git status -z -uall [7ms]
+2026-04-20 00:08:27.009 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.028 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [3ms]
+2026-04-20 00:08:27.028 [warning] [Git][getBranch] No such branch: main
+2026-04-20 00:08:27.028 [error] [GitHistoryProvider][resolveHEADMergeBase] Failed to resolve merge base for main: Error: No such branch: main.
+2026-04-20 00:08:27.028 [info] > git rev-parse --show-toplevel [18ms]
+2026-04-20 00:08:27.031 [info] > git config --get commit.template [3ms]
+2026-04-20 00:08:27.031 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.032 [info] [Git][getRemotes] No remotes found in the git config file
+2026-04-20 00:08:27.033 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [1ms]
+2026-04-20 00:08:27.034 [warning] [Git][getBranch] No such branch: main
+2026-04-20 00:08:27.036 [info] > git rev-parse --show-toplevel [3ms]
+2026-04-20 00:08:27.037 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [1ms]
+2026-04-20 00:08:27.038 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.045 [info] > git status -z -uall [10ms]
+2026-04-20 00:08:27.045 [info] > git rev-parse --show-toplevel [6ms]
+2026-04-20 00:08:27.055 [info] > git rev-parse --show-toplevel [9ms]
+2026-04-20 00:08:27.057 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.058 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.060 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.061 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.062 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.063 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.065 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.066 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.067 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.069 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.070 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.071 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.073 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.074 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.075 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.076 [info] > git rev-parse --show-toplevel [0ms]
+2026-04-20 00:08:27.078 [info] > git rev-parse --show-toplevel [1ms]
+2026-04-20 00:08:27.078 [info] [Model][doInitialScan] Initial repository scan completed - repositories (1), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2026-04-20 00:08:27.509 [info] > git check-ignore -v -z --stdin [0ms]
+2026-04-20 00:08:29.098 [info] > git check-ignore -v -z --stdin [0ms]
+2026-04-20 00:08:32.025 [info] > git check-ignore -v -z --stdin [0ms]
+2026-04-20 00:08:37.077 [info] > git check-ignore -v -z --stdin [1ms]
+2026-04-20 00:08:37.081 [info] > git show --textconv :.gitignore [2ms]
+2026-04-20 00:08:37.082 [info] > git ls-files --stage -- .gitignore [1ms]
+2026-04-20 00:08:37.084 [info] > git hash-object -t tree /dev/null [2ms]
+2026-04-20 00:08:37.084 [warning] [GitFileSystemProvider][readFile] File not found - git:/home/joey/.config/.gitignore.git?%7B%22path%22%3A%22%2Fhome%2Fjoey%2F.config%2F.gitignore%22%2C%22ref%22%3A%22%22%7D
+2026-04-20 00:08:37.084 [info] > git hash-object -t tree /dev/null [1ms]
+2026-04-20 00:08:37.084 [warning] [GitFileSystemProvider][stat] File not found - git:/home/joey/.config/.gitignore.git?%7B%22path%22%3A%22%2Fhome%2Fjoey%2F.config%2F.gitignore%22%2C%22ref%22%3A%22%22%7D
+2026-04-20 00:08:37.366 [info] > git check-ignore -v -z --stdin [1ms]
+2026-04-20 00:08:42.155 [info] [Git][getRemotes] No remotes found in the git config file
+2026-04-20 00:08:42.155 [info] > git config --get commit.template [2ms]
+2026-04-20 00:08:42.155 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [0ms]
+2026-04-20 00:08:42.155 [warning] [Git][getBranch] No such branch: main
+2026-04-20 00:08:42.158 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [1ms]
+2026-04-20 00:08:42.162 [info] > git status -z -uall [6ms]
+2026-04-20 00:08:46.933 [info] > git check-ignore -v -z --stdin [0ms]
+2026-04-20 00:08:51.032 [info] > git check-ignore -v -z --stdin [1ms]
+2026-04-20 00:08:56.367 [info] > git check-ignore -v -z --stdin [0ms]
+2026-04-20 00:08:57.347 [info] > git check-ignore -v -z --stdin [1ms]
+2026-04-20 00:08:58.104 [info] > git check-ignore -v -z --stdin [1ms]
+2026-04-20 00:09:04.196 [info] [Git][getRemotes] No remotes found in the git config file
+2026-04-20 00:09:04.196 [info] > git config --get commit.template [1ms]
+2026-04-20 00:09:04.196 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [0ms]
+2026-04-20 00:09:04.196 [warning] [Git][getBranch] No such branch: main
+2026-04-20 00:09:04.199 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [0ms]
+2026-04-20 00:09:04.203 [info] > git status -z -uall [6ms]
+2026-04-20 00:09:09.216 [info] [Git][getRemotes] No remotes found in the git config file
+2026-04-20 00:09:09.216 [info] > git config --get commit.template [1ms]
+2026-04-20 00:09:09.216 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [0ms]
+2026-04-20 00:09:09.216 [warning] [Git][getBranch] No such branch: main
+2026-04-20 00:09:09.219 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [0ms]
+2026-04-20 00:09:09.223 [info] > git status -z -uall [5ms]

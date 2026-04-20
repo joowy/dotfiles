@@ -1,0 +1,24 @@
+2026-04-19 23:27:26.745 [error] Ignoring terminal.integrated.initialHint.copilotCli as terminal.integrated.initialHint is true
+2026-04-19 23:27:27.021 [info] Started local extension host with pid 70733.
+2026-04-19 23:27:27.118 [error] Extension 'ms-python.debugpy CANNOT USE these API proposals 'portsAttributes, debugVisualization, contribViewsWelcome'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-19 23:27:27.118 [error] Extension 'ms-python.python CANNOT USE these API proposals 'contribEditorContentMenu, quickPickSortByLabel, testObserver, quickPickItemTooltip, terminalDataWriteEvent, terminalExecuteCommandEvent, codeActionAI, notebookReplDocument, notebookVariableProvider'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-19 23:27:27.118 [error] Extension 'ms-python.vscode-python-envs CANNOT USE these API proposals 'terminalShellEnv, terminalDataWriteEvent, taskExecutionTerminal'. You MUST start in extension development mode or use the --enable-proposed-api command line flag
+2026-04-19 23:27:27.173 [error] Ignoring terminal.integrated.initialHint.copilotCli as terminal.integrated.initialHint is true
+2026-04-19 23:27:27.438 [error] Unable to create workbench contribution 'workbench.contrib.agentHostTerminal'. [createInstance] wbe depends on UNKNOWN service remoteAgentHostService.
+2026-04-19 23:27:29.901 [info] [perf] Render performance baseline is 11ms
+2026-04-19 23:37:50.245 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:37:51.928 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:37:54.279 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:37:55.451 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:37:57.050 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:37:58.325 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:37:59.723 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:38:04.998 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:38:07.748 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:38:28.746 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:42:54.276 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:42:58.799 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-19 23:43:06.800 [error] An unknown error occurred. Please consult the log for more details.
+2026-04-20 00:02:46.081 [error] [Extension Host] (node:70733) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `exe --trace-deprecation ...` to show where the warning was created)
+2026-04-20 00:07:20.716 [error] An unknown error occurred. Please consult the log for more details.

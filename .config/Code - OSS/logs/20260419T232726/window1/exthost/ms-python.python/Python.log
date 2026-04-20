@@ -1,0 +1,16 @@
+2026-04-19 23:31:32.393 [warning] Dir "/home/joey/Documents/dotfiles/.pixi/envs" is not watchable (directory does not exist)
+2026-04-19 23:31:32.400 [info] Starting Environment refresh
+2026-04-19 23:31:32.401 [info] Starting Environment refresh
+2026-04-19 23:31:32.406 [info] > hatch env show --json
+2026-04-19 23:31:32.406 [info] cwd: .
+2026-04-19 23:31:32.410 [info] Environments refresh finished (event): 10 milliseconds
+2026-04-19 23:31:32.410 [info] Environments refresh paths discovered: 10 milliseconds
+2026-04-19 23:31:32.410 [info] Environments refresh finished (event): 9 milliseconds
+2026-04-19 23:31:32.410 [info] Environments refresh paths discovered: 9 milliseconds
+2026-04-19 23:31:32.411 [info] Environment refresh took 11 milliseconds
+2026-04-19 23:31:32.411 [info] Environment refresh took 10 milliseconds
+2026-04-19 23:31:32.413 [info] > pyenv which python
+2026-04-19 23:31:32.413 [info] cwd: .
+2026-04-19 23:31:32.472 [info] Python interpreter path: /bin/python
+2026-04-19 23:31:32.822 [info] Starting Jedi language server for dotfiles.
+2026-04-19 23:37:48.970 [error] Unable to find workspace for given file

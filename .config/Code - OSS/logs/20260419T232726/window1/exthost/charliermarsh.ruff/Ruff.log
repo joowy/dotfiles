@@ -1,0 +1,88 @@
+2026-04-19 23:31:32.473 [info] Name: Ruff
+2026-04-19 23:31:32.473 [info] Module: ruff
+2026-04-19 23:31:32.473 [info] Python extension loading
+2026-04-19 23:31:32.473 [info] Waiting for interpreter from python extension.
+2026-04-19 23:31:32.473 [info] Python extension loaded
+2026-04-19 23:31:32.473 [info] Using interpreter: /bin/python
+2026-04-19 23:31:32.473 [info] Workspace settings for /home/joey/Documents/dotfiles: {
+    "nativeServer": "auto",
+    "cwd": "/home/joey/Documents/dotfiles",
+    "workspace": "file:///home/joey/Documents/dotfiles",
+    "path": [],
+    "ignoreStandardLibrary": true,
+    "interpreter": [
+        "/bin/python"
+    ],
+    "configuration": null,
+    "importStrategy": "fromEnvironment",
+    "codeAction": {
+        "fixViolation": {
+            "enable": true
+        },
+        "disableRuleComment": {
+            "enable": true
+        }
+    },
+    "lint": {
+        "enable": true,
+        "run": "onType",
+        "args": [],
+        "preview": null,
+        "select": null,
+        "extendSelect": null,
+        "ignore": null
+    },
+    "format": {
+        "args": [],
+        "preview": null,
+        "backend": "internal"
+    },
+    "enable": true,
+    "organizeImports": true,
+    "fixAll": true,
+    "showNotifications": "off",
+    "exclude": null,
+    "lineLength": null,
+    "configurationPreference": "editorFirst",
+    "showSyntaxErrors": true,
+    "logLevel": null,
+    "logFile": null
+}
+2026-04-19 23:31:32.473 [info] Global settings: {
+    "nativeServer": "auto",
+    "cwd": "/home/joey/.config",
+    "workspace": "/home/joey/.config",
+    "path": [],
+    "ignoreStandardLibrary": true,
+    "interpreter": [],
+    "configuration": null,
+    "importStrategy": "fromEnvironment",
+    "codeAction": {
+        "fixViolation": {
+            "enable": true
+        },
+        "disableRuleComment": {
+            "enable": true
+        }
+    },
+    "lint": {
+        "enable": true,
+        "run": "onType",
+        "args": []
+    },
+    "format": {
+        "args": [],
+        "backend": "internal"
+    },
+    "enable": true,
+    "organizeImports": true,
+    "fixAll": true,
+    "showNotifications": "off",
+    "configurationPreference": "editorFirst",
+    "showSyntaxErrors": true
+}
+2026-04-19 23:31:32.485 [info] Falling back to bundled executable: /home/joey/.vscode-oss/extensions/charliermarsh.ruff-2026.38.0-linux-x64/bundled/libs/bin/ruff
+2026-04-19 23:31:32.489 [info] Resolved 'ruff.nativeServer: auto' to use the native server
+2026-04-19 23:31:32.492 [info] Found Ruff 0.15.7 at /home/joey/.vscode-oss/extensions/charliermarsh.ruff-2026.38.0-linux-x64/bundled/libs/bin/ruff
+2026-04-19 23:31:32.492 [info] Server run command: /home/joey/.vscode-oss/extensions/charliermarsh.ruff-2026.38.0-linux-x64/bundled/libs/bin/ruff server
+2026-04-19 23:31:32.492 [info] Server: Start requested.
