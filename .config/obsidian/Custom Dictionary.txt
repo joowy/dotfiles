@@ -1,2 +1,0 @@
-Qwen3.6
-checksum_v1 = c5cf10a3544f82ca0c4b9308e3010a53
