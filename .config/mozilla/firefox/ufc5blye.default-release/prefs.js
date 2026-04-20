@@ -84,7 +84,7 @@ user_pref("browser.theme.toolbar-theme", 0);
 user_pref("browser.toolbarbuttons.introduced.sidebar-button", true);
 user_pref("browser.toolbars.bookmarks.visibility", "always");
 user_pref("browser.uiCustomization.state", "{\"placements\":{\"widget-overflow-fixed-list\":[],\"unified-extensions-area\":[\"_7be2ba16-0f1e-4d93-9ebc-5164397477a9_-browser-action\",\"plasma-browser-integration_kde_org-browser-action\"],\"nav-bar\":[\"sidebar-button\",\"back-button\",\"forward-button\",\"stop-reload-button\",\"customizableui-special-spring1\",\"vertical-spacer\",\"urlbar-container\",\"customizableui-special-spring2\",\"downloads-button\",\"ipprotection-button\",\"fxa-toolbar-menu-button\",\"unified-extensions-button\",\"ublock0_raymondhill_net-browser-action\"],\"toolbar-menubar\":[\"menubar-items\"],\"TabsToolbar\":[\"firefox-view-button\",\"tabbrowser-tabs\",\"new-tab-button\",\"alltabs-button\"],\"vertical-tabs\":[],\"PersonalToolbar\":[\"personal-bookmarks\"]},\"seen\":[\"developer-button\",\"screenshot-button\",\"ipprotection-button\",\"ublock0_raymondhill_net-browser-action\",\"_7be2ba16-0f1e-4d93-9ebc-5164397477a9_-browser-action\",\"plasma-browser-integration_kde_org-browser-action\"],\"dirtyAreaCache\":[\"nav-bar\",\"vertical-tabs\",\"PersonalToolbar\",\"unified-extensions-area\",\"toolbar-menubar\",\"TabsToolbar\"],\"currentVersion\":23,\"newElementCount\":2}");
-user_pref("browser.urlbar.lastUrlbarSearchSeconds", 1776657489);
+user_pref("browser.urlbar.lastUrlbarSearchSeconds", 1776657981);
 user_pref("browser.urlbar.placeholderName", "Google");
 user_pref("browser.urlbar.quickactions.timesShownOnboardingLabel", 3);
 user_pref("browser.urlbar.quicksuggest.migrationVersion", 7);

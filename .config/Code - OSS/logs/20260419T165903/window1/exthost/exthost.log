@@ -18,3 +18,56 @@
 2026-04-19 17:48:53.894 [info] ExtensionService#_doActivateExtension vscode.configuration-editing, startup: false, activationEvent: 'onLanguage:json'
 2026-04-19 17:48:53.899 [info] ExtensionService#_doActivateExtension vscode.extension-editing, startup: false, activationEvent: 'onLanguage:json'
 2026-04-19 17:48:53.907 [info] ExtensionService#_doActivateExtension vscode.json-language-features, startup: false, activationEvent: 'onLanguage:json'
+2026-04-19 23:27:13.596 [info] Extension host terminating: received terminate message from renderer
+2026-04-19 23:27:13.606 [error] Canceled: Canceled
+	at new zI (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:407:102927)
+	at r._remoteCall (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:407:108979)
+	at i.<computed>.s.charCodeAt.i.<computed> (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:407:105774)
+	at yg._doExecuteCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:48120)
+	at yg.executeCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:47567)
+	at e.registerCommand.description (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:46831)
+	at yg._executeContributedCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:48683)
+	at yg._doExecuteCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:47700)
+	at yg.executeCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:501:47567)
+	at Object.executeCommand (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:629:135583)
+	at Ba (/home/joey/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2862-linux-x64/out/main.js:61:14967)
+	at Object.q2 (/home/joey/.vscode-oss/extensions/rust-lang.rust-analyzer-0.3.2862-linux-x64/out/main.js:401:1290)
+	at lP._deactivate (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:505:14479)
+	at file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:505:12006
+	at Array.map (<anonymous>)
+	at lP._deactivateAll (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:505:11994)
+	at lP.terminate (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:505:12345)
+	at r.terminate (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:507:1072)
+	at Gs (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:821:11700)
+	at op.value (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:821:9847)
+	at E._deliver (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:403:3043)
+	at E.fire (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:403:3361)
+	at as.fire (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:405:8437)
+	at MessagePortMain.<anonymous> (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:821:8082)
+	at MessagePortMain.emit (node:events:519:28)
+	at MessagePortMain._internalPort.emit (node:electron/js2c/utility_init:2:2959)
+2026-04-19 23:27:13.610 [error] Error: Channel has been closed
+	at i (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:508:3935)
+	at Object.info (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:508:4305)
+	at WT.info (/usr/lib/code/extensions/json-language-features/client/dist/node/jsonClientMain.js:14:709)
+	at ChildProcess.<anonymous> (/usr/lib/code/extensions/json-language-features/client/dist/node/jsonClientMain.js:19:48759)
+	at ChildProcess.emit (node:events:519:28)
+	at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+2026-04-19 23:27:13.610 [error] Error: Channel has been closed
+	at o (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:508:3524)
+	at Object.append (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:508:3621)
+	at Socket.<anonymous> (/home/joey/.vscode-oss/extensions/charliermarsh.ruff-2026.38.0-linux-x64/dist/extension.js:1:320372)
+	at Socket.emit (node:events:519:28)
+	at addChunk (node:internal/streams/readable:561:12)
+	at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+	at Readable.push (node:internal/streams/readable:392:5)
+	at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)
+2026-04-19 23:27:13.611 [error] Error: Channel has been closed
+	at o (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:508:3524)
+	at Object.appendLine (file:///usr/lib/code/out/vs/workbench/api/node/extensionHostProcess.js:508:3663)
+	at b.logOutputMessage (/home/joey/.vscode-oss/extensions/charliermarsh.ruff-2026.38.0-linux-x64/dist/extension.js:1:141085)
+	at b.error (/home/joey/.vscode-oss/extensions/charliermarsh.ruff-2026.38.0-linux-x64/dist/extension.js:1:140976)
+	at ChildProcess.<anonymous> (/home/joey/.vscode-oss/extensions/charliermarsh.ruff-2026.38.0-linux-x64/dist/extension.js:1:321718)
+	at ChildProcess.emit (node:events:519:28)
+	at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+2026-04-19 23:27:13.612 [info] Extension host with pid 47550 exiting with code 0
