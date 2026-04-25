@@ -5,3 +5,4 @@ embed-application/x-yaml=false
 embed-text/markdown=false
 embed-text/plain=false
 embed-text/x-cmake=false
+embed-x-scheme-handler/geo=false

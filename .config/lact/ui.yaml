@@ -1,0 +1,18 @@
+selected_tab: oc_page
+selected_gpu: 1002:73BF-1849:5202-0000:0f:00.0
+plots_time_period: 60
+plots_per_row: 2
+stats_poll_interval_ms: 500
+gpus:
+  1002:73BF-1849:5202-0000:0f:00.0:
+    plots:
+    - - !Temperature edge
+      - !Temperature junction
+      - !Temperature mem
+    - - GpuClock
+      - GpuTargetClock
+      - VramClock
+    - - FanRpm
+      - FanPwm
+    - - PowerAverage
+      - PowerCap

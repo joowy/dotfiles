@@ -14,10 +14,10 @@
                 ],
                 "autoRotation": "InTabletMode",
                 "automaticBrightness": false,
-                "brightness": 0.63,
+                "brightness": 0.73,
                 "colorPowerTradeoff": "PreferEfficiency",
                 "colorProfileSource": "ICC",
-                "connectorName": "DP-2",
+                "connectorName": "DP-6",
                 "detectedDdcCi": true,
                 "edidHash": "3e60444887ae55013e84699e7807e8cf",
                 "edidIdentifier": "ACR 3586 1360015674 11 2025 0",
@@ -55,10 +55,10 @@
                 ],
                 "autoRotation": "InTabletMode",
                 "automaticBrightness": false,
-                "brightness": 0.41,
+                "brightness": 0.61,
                 "colorPowerTradeoff": "PreferEfficiency",
                 "colorProfileSource": "sRGB",
-                "connectorName": "DP-3",
+                "connectorName": "DP-5",
                 "detectedDdcCi": true,
                 "edidHash": "d53b661cd853ac966f868213149fe320",
                 "edidIdentifier": "HPN 14027 0 32 2022 0",
@@ -108,6 +108,21 @@
                             "y": 0
                         },
                         "priority": 2,
+                        "replicationSource": ""
+                    }
+                ]
+            },
+            {
+                "lidClosed": false,
+                "outputs": [
+                    {
+                        "enabled": true,
+                        "outputIndex": 0,
+                        "position": {
+                            "x": 0,
+                            "y": 0
+                        },
+                        "priority": 0,
                         "replicationSource": ""
                     }
                 ]

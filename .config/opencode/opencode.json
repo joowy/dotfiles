@@ -8,11 +8,11 @@
                 "baseURL": "http://127.0.0.1:8001/v1"
             },
             "models": {
-                "Qwen3.5": {
-                    "name": "Qwen3.5",
+                "Qwen3.6": {
+                    "name": "Qwen3.6",
                     "limit": {
-                        "context": 200000,
-                        "output": 200000
+                        "context": 132000,
+                        "output": 132000
                     }
                 }
             }
@@ -35,11 +35,10 @@
             "npm *": "allow",
             "grep *": "allow",
             "rm *": "ask",
-            "sudo *": "deny",
             "* --version": "allow",
             "* --help *": "allow",
-            "git commit *": "ask",
-            "git push": "deny"
+            "git push": "deny",
+            "sudo *": "deny"
         }
     }
 }

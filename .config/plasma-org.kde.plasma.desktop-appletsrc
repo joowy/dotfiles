@@ -16,8 +16,10 @@ plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.image
 
 [Containments][2]
+ItemGeometries-1200x1920=
 ItemGeometries-1920x1200=
 ItemGeometriesHorizontal=
+ItemGeometriesVertical=
 activityId=05feb2ff-56d0-4196-84c5-156d97bd7457
 formfactor=0
 immutability=1
@@ -69,6 +71,10 @@ plugin=org.kde.plasma.kickoff
 [Containments][3][Applets][4][Configuration]
 popupHeight=509
 popupWidth=647
+
+[Containments][3][Applets][4][Configuration][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
 
 [Containments][3][Applets][4][Configuration][General]
 favoritesPortedToKAstats=true
