@@ -1,4 +1,0 @@
-{"timestamp":141763438,"category":"bounce.tracking.protection","name":"purge_action","extra":{"success":"true","require_stateful_bounces":"false","bounce_time":"1776635305","site_host":"githib.com","glean_timestamp":"1776658172147","is_dry_run":"true"},"execution_counter":3}
-{"timestamp":81871,"category":"glean","name":"restarted","extra":{"glean.startup.date":"2026-04-20T18:25-04:00","glean_timestamp":"1776723924304"},"execution_counter":4}
-{"timestamp":202233,"category":"glean","name":"restarted","extra":{"glean.startup.date":"2026-04-20T18:27-04:00","glean_timestamp":"1776724044666"},"execution_counter":5}
-{"timestamp":358697,"category":"glean","name":"restarted","extra":{"glean_timestamp":"1776733852413","glean.startup.date":"2026-04-20T21:10-04:00"},"execution_counter":6}
