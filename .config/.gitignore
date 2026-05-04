@@ -4,3 +4,5 @@ LM-Studio
 obsidian
 */cache/*
 *cache*
+.config/chromium/*
+.config/mozilla
