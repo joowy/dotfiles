@@ -5,6 +5,7 @@ RightButton;NoModifier=org.kde.contextmenu
 RightButton;NoModifier=org.kde.contextmenu
 
 [Containments][1]
+ItemGeometries-0x0=
 ItemGeometries-2560x1440=
 ItemGeometriesHorizontal=
 activityId=05feb2ff-56d0-4196-84c5-156d97bd7457
@@ -16,6 +17,7 @@ plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.image
 
 [Containments][2]
+ItemGeometries-0x0=
 ItemGeometries-1200x1920=
 ItemGeometries-1920x1200=
 ItemGeometriesHorizontal=

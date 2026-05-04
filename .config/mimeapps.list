@@ -1,18 +1,24 @@
 [Added Associations]
 application/json=code-oss.desktop;
+application/pdf=firefox.desktop;
 application/x-docbook+xml=code-oss.desktop;
 application/x-yaml=code-oss.desktop;
 text/markdown=code-oss.desktop;
 text/plain=code-oss.desktop;
 text/x-cmake=code-oss.desktop;
 x-scheme-handler/geo=google-maps-geo-handler.desktop;
+x-scheme-handler/http=firefox.desktop;
+x-scheme-handler/https=firefox.desktop;
 
 [Default Applications]
 application/json=code-oss.desktop;
+application/pdf=firefox.desktop;
 application/x-docbook+xml=code-oss.desktop;
 application/x-yaml=code-oss.desktop;
 text/markdown=code-oss.desktop;
 text/plain=code-oss.desktop;
 text/x-cmake=code-oss.desktop;
 x-scheme-handler/geo=google-maps-geo-handler.desktop;
+x-scheme-handler/http=firefox.desktop;
+x-scheme-handler/https=firefox.desktop;
 x-scheme-handler/lmstudio=LM-Studio.desktop

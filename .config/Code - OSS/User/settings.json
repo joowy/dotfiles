@@ -34,9 +34,9 @@
   "workbench.preferredLightColorTheme": "Light Modern",
   "rust-analyzer.completion.addSemicolonToUnit": false,
   "explorer.confirmDelete": false,
-  "workbench.startupEditor": "none",
   "editor.fontSize": 16,
   "git.autofetch": true,
   "explorer.confirmDragAndDrop": false,
   "git.confirmSync": false,
+  "workbench.startupEditor": "none",
 }
