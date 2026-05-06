@@ -3,6 +3,8 @@
 -- Add any additional keymaps here
 
 vim.api.nvim_create_user_command("TerminalSplit", function()
-  vim.cmd("split | terminal")
-  vim.cmd("vsplit | terminal")
+  vim.cmd.new()
+  vim.cmd.term()
+  vim.cmd.vnew()
+  vim.cmd.term()
 end, { desc = "Create two terminals at the bottom" })
