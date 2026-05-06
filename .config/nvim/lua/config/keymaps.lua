@@ -8,3 +8,5 @@ vim.api.nvim_create_user_command("TerminalSplit", function()
   vim.cmd.vnew()
   vim.cmd.term()
 end, { desc = "Create two terminals at the bottom" })
+
+vim.keymap.set("t", "<esc><esc>", "<C-\\><C-n>")
