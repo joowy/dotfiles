@@ -130,3 +130,6 @@ if [ -f '/home/joey/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/home/jo
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+alias gs='git status'
+
