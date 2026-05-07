@@ -133,3 +133,7 @@ if [ -f '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/h
 
 alias gs='git status'
 
+HISTSIZE=100000   # How many lines to keep in the current session's memory
+SAVEHIST=100000   # How many lines to save in the history file (~/.zsh_history)
+HISTFILE=~/.zsh_history
+
