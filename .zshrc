@@ -131,9 +131,13 @@ if [ -f '/home/joey/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/home/jo
 # The next line enables shell command completion for gcloud.
 if [ -f '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
-alias gs='git status'
 
 HISTSIZE=100000   # How many lines to keep in the current session's memory
 SAVEHIST=100000   # How many lines to save in the history file (~/.zsh_history)
 HISTFILE=~/.zsh_history
 
+
+alias gs='git status'
+alias c='clear'
+# Execute at the end 
+eval "$(zoxide init zsh --cmd cd)"
