@@ -10,7 +10,6 @@ return {
           },
           files = {
             hidden = true, -- show dotfiles in fuzzy finder
-            --
             -- ignored = true,
           },
         },

@@ -2,4 +2,4 @@
 require("config.lazy")
 
 vim.opt.shell = "/bin/zsh"
-vim.opt.autochdir = true
+-- vim.opt.autochdir = true
