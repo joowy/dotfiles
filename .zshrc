@@ -79,7 +79,6 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting web-search fzf autoswitch_virtualenv)
 
-source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
@@ -139,5 +138,14 @@ HISTFILE=~/.zsh_history
 
 alias gs='git status'
 alias c='clear'
+alias n='nvim'
 # Execute at the end 
 eval "$(zoxide init zsh --cmd cd)"
+
+export VULKAN_SDK=~/vulkan/1.4.341.1/x86_64
+export PATH=$VULKAN_SDK/bin:$PATH
+export LD_LIBRARY_PATH=$VULKAN_SDK/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+export VK_ADD_LAYER_PATH=$VULKAN_SDK/share/vulkan/explicit_layer.d
+export PKG_CONFIG_PATH=$VULKAN_SDK/share/pkgconfig:$VULKAN_SDK/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+
+source $ZSH/oh-my-zsh.sh
