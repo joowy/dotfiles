@@ -77,12 +77,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab autoswitch_virtualenv)
+
+
+zstyle ':omz:plugins:nvm' lazy yes 
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm autoswitch_virtualenv)
 
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
-autoload -U compinit && compinit
-source "$ZSH/oh-my-zsh.sh"
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -92,9 +93,6 @@ source "$ZSH/oh-my-zsh.sh"
 
 export PATH=/opt/cuda/bin:$PATH
 export PATH=/home/joey/.local/bin:$PATH
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 
 export VISUAL=nvim
