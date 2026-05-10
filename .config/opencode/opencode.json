@@ -1,44 +1,45 @@
 {
-    "$schema": "https://opencode.ai/config.json",
-    "provider": {
-        "llama.cpp": {
-            "npm": "@ai-sdk/openai-compatible",
-            "name": "llama-server (local)",
-            "options": {
-                "baseURL": "http://127.0.0.1:8001/v1"
-            },
-            "models": {
-                "Qwen3.6": {
-                    "name": "Qwen3.6",
-                    "limit": {
-                        "context": 132000,
-                        "output": 132000
-                    }
-                }
-            }
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "llama.cpp": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "llama-server (local)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8001/v1"
+      },
+      "models": {
+        "Qwen3.6": {
+          "name": "Qwen3.6",
+          "limit": {
+            "context": 132000,
+            "output": 132000
+          }
         }
-    },
-    "permission": {
-        "webfetch": "allow",
-        "question": "allow",
-        "edit": "allow",
-        "read": "allow",
-        "grep": "allow",
-        "list": "allow",
-        "skill": "allow",
-        "todowrite": "allow",
-        "todoread": "allow",
-        "glob": "allow",
-        "bash": {
-            "ls *": "allow",
-            "git *": "allow",
-            "npm *": "allow",
-            "grep *": "allow",
-            "rm *": "ask",
-            "* --version": "allow",
-            "* --help *": "allow",
-            "git push": "deny",
-            "sudo *": "deny"
-        }
+      }
     }
+  },
+  "permission": {
+    "websearch": "allow",
+    "webfetch": "allow",
+    "question": "allow",
+    "edit": "allow",
+    "read": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "skill": "allow",
+    "todowrite": "allow",
+    "todoread": "allow",
+    "glob": "allow",
+    "bash": {
+      "ls *": "allow",
+      "git *": "allow",
+      "npm *": "allow",
+      "grep *": "allow",
+      "rm *": "ask",
+      "* --version": "allow",
+      "* --help *": "allow",
+      "git push": "deny",
+      "sudo *": "deny"
+    }
+  }
 }
