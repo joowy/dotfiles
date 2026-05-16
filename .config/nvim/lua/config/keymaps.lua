@@ -4,6 +4,9 @@
 
 vim.keymap.set("t", "<esc><esc>", "<C-\\><C-n>")
 
+vim.keymap.set("i", "<M-h>", "<Left>", { noremap = true, silent = true })
+vim.keymap.set("i", "<M-l>", "<Right>", { noremap = true, silent = true })
+
 -- vim.keymap.set({ "n", "t" }, "<leader>t1", function()
 --   Snacks.terminal.toggle(nil, { count = 1 })
 -- end, { desc = "Toggle terminal 1" })
