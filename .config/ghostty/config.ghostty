@@ -3,8 +3,9 @@ command = zsh
 theme = dark:Atom One Dark,light:Atom One Light 
 adjust-cursor-thickness=5
 
-
 keybind = ctrl+shift+alt+down=resize_split:down,20
 keybind = ctrl+shift+alt+left=resize_split:left,20
 keybind = ctrl+shift+alt+right=resize_split:right,20
 keybind = ctrl+shift+alt+up=resize_split:up,20
+
+keybind = alt+backspace=text:\x1b\x7f
