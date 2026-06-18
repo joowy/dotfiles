@@ -4,5 +4,8 @@ Seen=true
 [Applications][firefox]
 Seen=true
 
+[Applications][net.mkiol.SpeechNote]
+Seen=true
+
 [Applications][timeshift-gtk]
 Seen=true

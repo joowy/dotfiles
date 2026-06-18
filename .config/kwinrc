@@ -3,6 +3,11 @@ Id_1=be38b97e-57c1-4692-8b38-11706d8415e2
 Number=1
 Rows=1
 
+[Effect-blur]
+BlurStrength=1
+NoiseStrength=0
+Saturation=100
+
 [Effect-overview]
 BorderActivate=9
 
@@ -31,6 +36,14 @@ padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
 [Tiling][be38b97e-57c1-4692-8b38-11706d8415e2][ef117c2f-1071-4b1b-b951-3cb87074eba0]
+padding=4
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][ee1c184f-d4a5-47c7-afa1-5b2e8c8ae963][53318e59-e399-4f04-b26c-9db957445f8d]
+padding=4
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][ee1c184f-d4a5-47c7-afa1-5b2e8c8ae963][93e05905-a2e5-4567-b431-e776a506e85d]
 padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 

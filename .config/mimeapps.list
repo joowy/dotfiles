@@ -1,23 +1,23 @@
 [Added Associations]
-application/json=code-oss.desktop;
+application/json=nvim.desktop;code-oss.desktop;
 application/pdf=firefox.desktop;
-application/x-docbook+xml=code-oss.desktop;
-application/x-yaml=code-oss.desktop;
-text/markdown=code-oss.desktop;
-text/plain=code-oss.desktop;
-text/x-cmake=code-oss.desktop;
+application/x-docbook+xml=nvim.desktop;code-oss.desktop;
+application/x-yaml=nvim.desktop;code-oss.desktop;
+text/markdown=nvim.desktop;code-oss.desktop;
+text/plain=nvim.desktop;code-oss.desktop;
+text/x-cmake=nvim.desktop;code-oss.desktop;
 x-scheme-handler/geo=google-maps-geo-handler.desktop;
 x-scheme-handler/http=firefox.desktop;
 x-scheme-handler/https=firefox.desktop;
 
 [Default Applications]
-application/json=code-oss.desktop;
+application/json=nvim.desktop;
 application/pdf=firefox.desktop;
-application/x-docbook+xml=code-oss.desktop;
-application/x-yaml=code-oss.desktop;
-text/markdown=code-oss.desktop;
-text/plain=code-oss.desktop;
-text/x-cmake=code-oss.desktop;
+application/x-docbook+xml=nvim.desktop;
+application/x-yaml=nvim.desktop;
+text/markdown=nvim.desktop;
+text/plain=nvim.desktop;
+text/x-cmake=nvim.desktop;
 x-scheme-handler/geo=google-maps-geo-handler.desktop;
 x-scheme-handler/http=firefox.desktop;
 x-scheme-handler/https=firefox.desktop;

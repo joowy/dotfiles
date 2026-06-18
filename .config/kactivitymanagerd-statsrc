@@ -1,5 +1,8 @@
+[Favorites-org.kde.plasma.kickoff.favorites.instance-4-]
+ordering=applications:systemsettings.desktop,applications:org.kde.discover.desktop,applications:org.kde.dolphin.desktop,preferred://browser
+
 [Favorites-org.kde.plasma.kickoff.favorites.instance-4-05feb2ff-56d0-4196-84c5-156d97bd7457]
 ordering=applications:systemsettings.desktop,applications:org.kde.discover.desktop,applications:firefox.desktop
 
 [Favorites-org.kde.plasma.kickoff.favorites.instance-4-global]
-ordering=applications:systemsettings.desktop,applications:org.kde.discover.desktop,applications:firefox.desktop
+ordering=applications:systemsettings.desktop,applications:org.kde.discover.desktop,applications:org.kde.dolphin.desktop,preferred://browser

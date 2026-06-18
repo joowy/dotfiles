@@ -14,10 +14,12 @@
                 ],
                 "autoRotation": "InTabletMode",
                 "automaticBrightness": false,
-                "brightness": 0.75,
+                "brightness": 0.83,
                 "colorPowerTradeoff": "PreferEfficiency",
                 "colorProfileSource": "sRGB",
                 "connectorName": "DP-5",
+                "customModes": [
+                ],
                 "detectedDdcCi": true,
                 "edidHash": "d53b661cd853ac966f868213149fe320",
                 "edidIdentifier": "HPN 14027 0 32 2022 0",
@@ -26,6 +28,7 @@
                 "iccProfilePath": "",
                 "maxBitsPerColor": 0,
                 "mode": {
+                    "flags": 1,
                     "height": 1200,
                     "refreshRate": 59950,
                     "width": 1920
@@ -54,10 +57,12 @@
                 ],
                 "autoRotation": "InTabletMode",
                 "automaticBrightness": false,
-                "brightness": 0.73,
+                "brightness": 0.89,
                 "colorPowerTradeoff": "PreferEfficiency",
                 "colorProfileSource": "sRGB",
                 "connectorName": "DP-6",
+                "customModes": [
+                ],
                 "detectedDdcCi": true,
                 "edidHash": "3e60444887ae55013e84699e7807e8cf",
                 "edidIdentifier": "ACR 3586 1360015674 11 2025 0",
@@ -66,6 +71,7 @@
                 "iccProfilePath": "",
                 "maxBitsPerColor": 0,
                 "mode": {
+                    "flags": 0,
                     "height": 1440,
                     "refreshRate": 180001,
                     "width": 2560
