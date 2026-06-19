@@ -2,9 +2,15 @@
     {
         "data": [
             {
+                "abmLevel": 0,
                 "allowDdcCi": false,
                 "allowSdrSoftwareBrightness": true,
                 "autoBrightnessCurve": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
                     0,
                     0,
                     0,
@@ -24,6 +30,8 @@
                 "edidHash": "d53b661cd853ac966f868213149fe320",
                 "edidIdentifier": "HPN 14027 0 32 2022 0",
                 "edrPolicy": "always",
+                "hdrColorProfileSource": "EDID",
+                "hdrIccProfilePath": "",
                 "highDynamicRange": false,
                 "iccProfilePath": "",
                 "maxBitsPerColor": 0,
@@ -45,9 +53,15 @@
                 "wideColorGamut": false
             },
             {
+                "abmLevel": 0,
                 "allowDdcCi": false,
                 "allowSdrSoftwareBrightness": true,
                 "autoBrightnessCurve": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
                     0,
                     0,
                     0,
@@ -67,6 +81,8 @@
                 "edidHash": "3e60444887ae55013e84699e7807e8cf",
                 "edidIdentifier": "ACR 3586 1360015674 11 2025 0",
                 "edrPolicy": "always",
+                "hdrColorProfileSource": "EDID",
+                "hdrIccProfilePath": "",
                 "highDynamicRange": false,
                 "iccProfilePath": "",
                 "maxBitsPerColor": 0,
@@ -96,6 +112,11 @@
                     0,
                     0,
                     0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
                     0
                 ],
                 "autoRotation": "InTabletMode",
@@ -111,6 +132,7 @@
                 "highDynamicRange": false,
                 "iccProfilePath": "",
                 "mode": {
+                    "flags": 0,
                     "height": 480,
                     "refreshRate": 59940,
                     "width": 640

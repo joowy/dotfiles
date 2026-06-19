@@ -19,6 +19,10 @@ NightTemperature=4000
 padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
+[Tiling][be38b97e-57c1-4692-8b38-11706d8415e2][0c9bd54c-184a-410b-a0a4-1dcc508102a1]
+padding=4
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
 [Tiling][be38b97e-57c1-4692-8b38-11706d8415e2][2700ce85-4750-4982-97d9-29dc0fcae73c]
 padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
@@ -36,6 +40,10 @@ padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
 [Tiling][be38b97e-57c1-4692-8b38-11706d8415e2][ef117c2f-1071-4b1b-b951-3cb87074eba0]
+padding=4
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][be38b97e-57c1-4692-8b38-11706d8415e2][f88eb716-a9ea-4107-81be-a233254a3803]
 padding=4
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 

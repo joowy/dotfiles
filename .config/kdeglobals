@@ -133,7 +133,7 @@ ForegroundPositive=39,174,96
 ForegroundVisited=155,89,182
 
 [General]
-ColorSchemeHash=9f63c7711a13123582e720791ea0f8c0172977d2
+ColorSchemeHash=35c73fb379a4940e5f22982a33078640b27cf788
 TerminalApplication=/usr/bin/ghostty --gtk-single-instance=true
 TerminalService=com.mitchellh.ghostty.desktop
 XftAntialias=true

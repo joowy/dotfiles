@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Meta>
-		<Version>2.61</Version>
+		<Version>2.61.1</Version>
 		<PreferUserConfiguration>false</PreferUserConfiguration>
 		<OmitItemsWithDefaultValues>true</OmitItemsWithDefaultValues>
 		<DpiFactorX>1</DpiFactorX>
@@ -25,6 +25,7 @@
 		</MostRecentlyUsed>
 		<WorkingDirectories>
 			<Item>Database@../../../home/joey/Documents</Item>
+			<Item>Import@../../../home/joey/Downloads</Item>
 		</WorkingDirectories>
 		<Start>
 			<CheckForUpdate>false</CheckForUpdate>
@@ -39,10 +40,10 @@
 	</Application>
 	<Logging />
 	<MainWindow>
-		<X>1362</X>
-		<Y>717</Y>
-		<Width>919</Width>
-		<Height>724</Height>
+		<X>0</X>
+		<Y>960</Y>
+		<Width>1208</Width>
+		<Height>959</Height>
 		<SplitterHorizontalFrac>0.8333</SplitterHorizontalFrac>
 		<SplitterVerticalFrac>0.25</SplitterVerticalFrac>
 		<ToolBar />
@@ -51,11 +52,11 @@
 		<EntryListColumnCollection>
 			<Column>
 				<Type>Title</Type>
-				<Width>106</Width>
+				<Width>207</Width>
 			</Column>
 			<Column>
 				<Type>UserName</Type>
-				<Width>106</Width>
+				<Width>130</Width>
 			</Column>
 			<Column>
 				<Type>Password</Type>
@@ -78,7 +79,9 @@
 	</MainWindow>
 	<UI>
 		<TrayIcon />
-		<Hiding />
+		<Hiding>
+			<HideInEntryWindow>false</HideInEntryWindow>
+		</Hiding>
 		<StandardFont>
 			<Family>Microsoft Sans Serif</Family>
 			<Size>8.25</Size>

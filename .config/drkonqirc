@@ -1,4 +1,5 @@
 [DrKonqi]
+DownloadSymbols=true
 Sentry=true
 
 [SystemInformation]
