@@ -1,0 +1,20 @@
+{
+  "lastChangelogVersion": "0.79.6",
+  "enableInstallTelemetry": false,
+  "theme": "dark",
+  "packages": [
+    "npm:pi-llama-cpp",
+    "npm:pi-web-access",
+    "npm:@gotgenes/pi-permission-system"
+  ],
+  "llamaServerUrl": "http://127.0.0.1:8001",
+  "defaultThinkingLevel": "high",
+  "skills": [
+    "~/.claude/skills",
+    "~/.codex/skills"
+  ],
+  "newLine": [
+    "shift+enter",
+    "ctrl+j"
+  ]
+}

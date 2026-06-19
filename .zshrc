@@ -60,8 +60,9 @@ alias gs='git status'
 alias c='clear'
 alias n='nvim'
 alias ls='ls --color'
-# Execute at the end 
 alias pi='node -v && pi'
+alias open='dolphin'
+# Execute at the end 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
