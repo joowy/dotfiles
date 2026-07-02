@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.79.6",
+  "lastChangelogVersion": "0.80.2",
   "enableInstallTelemetry": false,
-  "theme": "dark",
+  "theme": "light/dark",
   "packages": [
     "npm:pi-llama-cpp",
     "npm:pi-web-access",

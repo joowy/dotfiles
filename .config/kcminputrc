@@ -1,3 +1,6 @@
+[Keyboard]
+NumLock=0
+
 [Libinput][1133][16505][Logitech G Pro ]
 PointerAcceleration=0.400
 PointerAccelerationProfile=1

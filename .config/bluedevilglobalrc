@@ -2,7 +2,7 @@
 50:EE:32:82:25:69_powered=true
 
 [Devices]
-connectedDevices=D0:B4:BF:4D:14:B2
+connectedDevices=
 
 [General]
 launchState=enable
