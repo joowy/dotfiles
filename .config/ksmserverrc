@@ -2,9 +2,9 @@
 count=0
 
 [Session: saved at previous logout]
-clientId1=10145dbd1dd000178233477500000013540001
+clientId1=10145dbd1dd000178294248300000013710001
 count=1
 program1=firefox
-restartCommand1=/usr/lib/firefox/firefox,--sm-client-id,10145dbd1dd000178233477500000013540001
+restartCommand1=/usr/lib/firefox/firefox,--sm-client-id,10145dbd1dd000178294248300000013710001
 restartStyleHint1=0
 userId1=joey
