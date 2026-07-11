@@ -11,3 +11,4 @@ go/*
 gcloud/*
 kwinoutputconfig.json 
 bluedevilglobalrc
+gh/hosts.yml

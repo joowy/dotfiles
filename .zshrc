@@ -62,6 +62,7 @@ alias n='nvim'
 alias ls='ls --color'
 alias pi='node -v && pi'
 alias open='dolphin'
+alias laz='lazygit'
 # Execute at the end 
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
