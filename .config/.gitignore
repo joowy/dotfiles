@@ -11,3 +11,12 @@ go/*
 gcloud/*
 kwinoutputconfig.json 
 bluedevilglobalrc
+gtk-*
+gtkrc*
+kdedefaults/*
+kdeglobals
+ksmserverrc
+xsettingsd/xsettingsd.conf
+Trolltech.conf
+dconf/*
+kconf_updaterc
