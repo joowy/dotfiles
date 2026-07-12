@@ -20,3 +20,4 @@ xsettingsd/xsettingsd.conf
 Trolltech.conf
 dconf/*
 kconf_updaterc
+gh/hosts.yml
