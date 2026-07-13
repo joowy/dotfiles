@@ -21,3 +21,5 @@ Trolltech.conf
 dconf/*
 kconf_updaterc
 gh/hosts.yml
+kwinrc
+ktimezonedrc
