@@ -13,7 +13,7 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 zstyle ':omz:plugins:nvm' lazy yes
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab web-search nvm autoswitch_virtualenv)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm autoswitch_virtualenv)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
@@ -73,8 +73,8 @@ alias laz='lazygit'
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1h --tree --level=2 --icons --color=always $realpath'
+zstyle ':fzf-tab:complete:z:*' fzf-preview 'eza -1h --tree --level=2 --icons --color=always $realpath'
 
 eval "$(zoxide init zsh)"
 source $ZSH/oh-my-zsh.sh
