@@ -1,5 +1,5 @@
 language = en
-command = tmux attach || tmux
+command = zsh
 theme = dark:Catppuccin Frappe,light:Catppuccin Latte
 adjust-cursor-thickness=5
 
