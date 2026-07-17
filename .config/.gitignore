@@ -24,3 +24,5 @@ gh/hosts.yml
 kwinrc
 ktimezonedrc
 QtProject.conf
+KeePass/*
+btop/*
