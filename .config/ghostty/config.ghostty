@@ -9,4 +9,4 @@ keybind = ctrl+shift+alt+right=resize_split:right,20
 keybind = ctrl+shift+alt+up=resize_split:up,20
 
 keybind = alt+backspace=text:\x1b\x7f
-custom-shader = ~/.config/ghostty/shaders/cursor_sweep.glsl
+custom-shader = ~/.config/ghostty/shaders/cursor_tail.glsl
