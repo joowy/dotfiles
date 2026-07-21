@@ -13,7 +13,7 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 zstyle ':omz:plugins:nvm' lazy yes
-zstyle ':omz:plugins:nvm' lazy-cmd nvim n 
+zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws pi 
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm autoswitch_virtualenv)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
@@ -64,7 +64,6 @@ alias gs='git status'
 alias c='clear'
 alias n='nvim'
 alias ls='ls --color'
-alias pi='node -v && pi'
 alias open='dolphin'
 alias laz='lazygit'
 
@@ -80,3 +79,7 @@ zstyle ':fzf-tab:complete:z:*' fzf-preview 'eza -1h --tree --level=2 --icons --c
 eval "$(zoxide init zsh)"
 source $ZSH/oh-my-zsh.sh
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)
