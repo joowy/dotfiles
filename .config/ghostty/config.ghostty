@@ -1,6 +1,6 @@
 language = en
 command = zsh
-theme = dark:Catppuccin Frappe,light:Catppuccin Latte
+theme = dark:Catppuccin Mocha,light:Catppuccin Latte
 adjust-cursor-thickness=5
 
 keybind = ctrl+shift+alt+down=resize_split:down,20
