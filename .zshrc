@@ -83,3 +83,5 @@ source $ZSH/oh-my-zsh.sh
 
 # Load Angular CLI autocompletion.
 source <(ng completion script)
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
