@@ -15,4 +15,7 @@ return {
     { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
     { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
   },
+  cond = function()
+    return vim.env.HERDR_PANE_ID == nil
+  end,
 }

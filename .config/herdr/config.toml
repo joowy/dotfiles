@@ -1,0 +1,62 @@
+[theme]
+name = "rose-pine-dawn"
+auto_switch = true
+dark_name = 'rose-pine'
+light_name = 'rose-pine-dawn'
+
+[keys]
+prefix = "ctrl+a"
+reload_config = "prefix+r"
+resize_mode = "prefix+shift+r"
+zoom = "prefix+m"
+split_vertical = "prefix+|"
+split_horizontal = "prefix+_"
+
+
+[experimental]
+pane_history = true
+
+
+[ui]
+accent = "#ea9d34"
+pane_gaps = false
+
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "herdr-splits.nav-left"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "herdr-splits.nav-down"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "herdr-splits.nav-up"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "herdr-splits.nav-right"
+
+[[keys.command]]
+key = "alt+h"
+type = "plugin_action"
+command = "herdr-splits.resize-left"
+
+[[keys.command]]
+key = "alt+j"
+type = "plugin_action"
+command = "herdr-splits.resize-down"
+
+[[keys.command]]
+key = "alt+k"
+type = "plugin_action"
+command = "herdr-splits.resize-up"
+
+[[keys.command]]
+key = "alt+l"
+type = "plugin_action"
+command = "herdr-splits.resize-right"
