@@ -9,11 +9,11 @@ fi
 # Oh My Zsh Configuration
 #--------------------------------------------------
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="powerlevel10k/powerlevel10k"
+export ZSH_THEME="powerlevel10k/powerlevel10k"
 
 zstyle ':omz:plugins:nvm' lazy yes
 zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws pi prettier
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm autoswitch_virtualenv)
+export plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm autoswitch_virtualenv)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 fpath=(~/.zfunc $fpath)
@@ -43,10 +43,10 @@ export EDITOR=nvim
 #--------------------------------------------------
 # History Configuration
 #--------------------------------------------------
-HISTSIZE=100000
-SAVEHIST=100000
-HISTFILE=~/.zsh_history
-HISTDUP=erase
+export HISTSIZE=100000
+export SAVEHIST=100000
+export HISTFILE=~/.zsh_history
+export HISTDUP=erase
 setopt appendhistory
 setopt sharehistory
 setopt hist_ignore_space
