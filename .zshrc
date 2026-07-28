@@ -39,9 +39,9 @@ if [ -f '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/h
 #--------------------------------------------------
 # Editor 
 #--------------------------------------------------
-export VISUAL=nvim
-export EDITOR=nvim
-
+# export VISUAL=nvim
+# export EDITOR=nvim
+#
 #--------------------------------------------------
 # History Configuration
 #--------------------------------------------------
