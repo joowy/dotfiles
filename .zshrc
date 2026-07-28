@@ -34,13 +34,12 @@ export PKG_CONFIG_PATH=$VULKAN_SDK/share/pkgconfig:$VULKAN_SDK/lib/pkgconfig${PK
 if [ -f '/home/joey/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/home/joey/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 if [ -f '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
+#--------------------------------------------------
+# Editor
+#--------------------------------------------------
+export VISUAL=nvim
+export EDITOR=nvim
 
-#--------------------------------------------------
-# Editor 
-#--------------------------------------------------
-# export VISUAL=nvim
-# export EDITOR=nvim
-#
 #--------------------------------------------------
 # History Configuration
 #--------------------------------------------------
@@ -69,13 +68,10 @@ alias laz='lazygit'
 #--------------------------------------------------
 # herdr completion
 #--------------------------------------------------
-# if command -v herdr &>/dev/null
-# then
-# if (( ${+_comps[your_command]} )); then
-# echo "Completion function exists: $_comps[your_command]"
-# else
-#   # do other stuff
-# fi
+if command -v herdr &>/dev/null && [[ ! -f ~/.zfunc/_herdr ]]; then
+  mkdir -p ~/.zfunc
+  herdr completion zsh >~/.zfunc/_herdr
+fi
 
 #--------------------------------------------------
 # Completion Styling & Zoxide
@@ -89,7 +85,6 @@ zstyle ':fzf-tab:complete:z:*' fzf-preview 'eza -1h --tree --level=2 --icons --c
 eval "$(zoxide init zsh)"
 source $ZSH/oh-my-zsh.sh
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
 
 # Load Angular CLI autocompletion.
 source <(ng completion script)

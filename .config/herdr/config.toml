@@ -60,3 +60,6 @@ command = "herdr-splits.resize-up"
 key = "alt+l"
 type = "plugin_action"
 command = "herdr-splits.resize-right"
+
+[ui.toast]
+delivery = "herdr"
