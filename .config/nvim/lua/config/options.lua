@@ -12,3 +12,9 @@ vim.opt.laststatus = 3
 -- To prevent this, set `splitkeep` to either `screen` or `topline`.
 vim.opt.splitkeep = "screen"
 vim.g.lazyvim_python_lsp = "basedpyright"
+
+vim.filetype.add({
+  filename = {
+    [".zshrc"] = "zsh",
+  },
+})

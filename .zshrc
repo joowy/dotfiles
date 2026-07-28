@@ -5,7 +5,6 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-
 #--------------------------------------------------
 # Oh My Zsh Configuration
 #--------------------------------------------------
@@ -13,11 +12,11 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 zstyle ':omz:plugins:nvm' lazy yes
-zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws pi 
+zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws pi prettier
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm autoswitch_virtualenv)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
-
+fpath=(~/.zfunc $fpath)
 #--------------------------------------------------
 # Environment Variables & PATH
 #--------------------------------------------------
@@ -66,6 +65,17 @@ alias n='nvim'
 alias ls='ls --color'
 alias open='dolphin'
 alias laz='lazygit'
+
+#--------------------------------------------------
+# herdr completion
+#--------------------------------------------------
+# if command -v herdr &>/dev/null
+# then
+# if (( ${+_comps[your_command]} )); then
+# echo "Completion function exists: $_comps[your_command]"
+# else
+#   # do other stuff
+# fi
 
 #--------------------------------------------------
 # Completion Styling & Zoxide
