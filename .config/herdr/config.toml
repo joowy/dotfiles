@@ -12,6 +12,8 @@ resize_mode = "prefix+shift+r"
 zoom = "prefix+m"
 split_vertical = "prefix+|"
 split_horizontal = "prefix+_"
+next_agent = "prefix+a"
+previous_agent = "prefix+shift+a"
 
 
 [experimental]
@@ -21,6 +23,9 @@ pane_history = true
 [ui]
 accent = "#ea9d34"
 pane_gaps = false
+
+agent_panel_sort = "priority"
+
 
 [[keys.command]]
 key = "ctrl+h"
@@ -63,4 +68,4 @@ type = "plugin_action"
 command = "herdr-splits.resize-right"
 
 [ui.toast]
-delivery = "herdr"
+delivery = "terminal"
