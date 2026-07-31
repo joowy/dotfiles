@@ -3,10 +3,11 @@ command = zsh
 theme = light:Rose Pine Dawn, dark:Rose Pine 
 adjust-cursor-thickness=5
 
-keybind = ctrl+shift+alt+down=resize_split:down,20
-keybind = ctrl+shift+alt+left=resize_split:left,20
-keybind = ctrl+shift+alt+right=resize_split:right,20
-keybind = ctrl+shift+alt+up=resize_split:up,20
+keybind = super+t=unbind
+keybind = super+d=unbind
+keybind = super+shift+d=unbind
 
 keybind = alt+backspace=text:\x1b\x7f
 custom-shader = ~/.config/ghostty/shaders/cursor_tail.glsl
+
+
