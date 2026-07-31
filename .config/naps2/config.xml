@@ -112,4 +112,6 @@
     <Encryption />
   </PdfSettings>
   <RememberPdfSettings>false</RememberPdfSettings>
+  <HasBeenPromptedForDonation>true</HasBeenPromptedForDonation>
+  <LastDonatePromptDate>2026-07-31T00:59:07.0892398-04:00</LastDonatePromptDate>
 </UserConfig>
