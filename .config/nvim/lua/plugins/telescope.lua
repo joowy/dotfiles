@@ -13,6 +13,7 @@ return {
           "--column",
           "--smart-case",
           "--hidden",
+          "--no-ignore",
           "--fixed-strings",
         },
       },
