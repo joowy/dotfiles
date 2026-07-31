@@ -25,7 +25,7 @@ push_to_talk=none,none,Push to talk
 
 [ksmserver]
 Halt Without Confirmation=none,none,Shut Down Without Confirmation
-Lock Session=Screensaver\tMeta+L,Screensaver\tMeta+L,Lock Session
+Lock Session=Screensaver,Screensaver\tMeta+L,Lock Session
 Log Out=Ctrl+Alt+Del,Ctrl+Alt+Del,Show Logout Screen
 Log Out Without Confirmation=none,none,Log Out Without Confirmation
 LogOut=none,none,Log Out

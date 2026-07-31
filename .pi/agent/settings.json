@@ -1,9 +1,8 @@
 {
-  "lastChangelogVersion": "0.82.1",
+  "lastChangelogVersion": "0.83.0",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
-    "npm:pi-llama-cpp",
     "npm:pi-web-access",
     "npm:@gotgenes/pi-permission-system"
   ],
