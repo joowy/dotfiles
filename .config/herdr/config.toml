@@ -10,11 +10,15 @@ prefix = "ctrl+a"
 reload_config = "prefix+r"
 resize_mode = "prefix+shift+r"
 zoom = "prefix+m"
+
 split_vertical = "prefix+|"
 split_horizontal = "prefix+_"
+
 next_agent = "prefix+a"
 previous_agent = "prefix+shift+a"
+focus_agent = "prefix+shift+1..9"
 
+last_pane = "prefix+;"
 
 [experimental]
 pane_history = true
