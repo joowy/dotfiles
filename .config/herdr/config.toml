@@ -74,7 +74,8 @@ command = "herdr-splits.resize-right"
 [ui.toast]
 delivery = "terminal"
 
-
+[ui.sound]
+enabled = false
 [[keys.command]]
 key = "prefix+alt+g"
 type = "popup"
