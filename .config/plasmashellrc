@@ -13,7 +13,7 @@ shell=org.kde.plasma.desktop
 thickness=27
 
 [PlasmaViews][Panel 114]
-floating=1
+floating=0
 panelOpacity=2
 shell=org.kde.plasma.desktop
 
@@ -31,7 +31,7 @@ shell=org.kde.plasma.desktop
 thickness=26
 
 [PlasmaViews][Panel 30]
-floating=1
+floating=0
 panelOpacity=2
 shell=org.kde.plasma.desktop
 
