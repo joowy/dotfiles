@@ -143,6 +143,10 @@ location=3
 plugin=org.kde.panel
 wallpaperplugin=org.kde.image
 
+[Containments][30][Applets][126]
+immutability=1
+plugin=org.kde.plasma.panelspacer
+
 [Containments][30][Applets][56]
 immutability=1
 plugin=org.kde.plasma.brightness
@@ -168,8 +172,21 @@ immutability=1
 plugin=org.kde.plasma.digitalclock
 
 [Containments][30][Applets][60][Configuration]
-popupHeight=400
+popupHeight=451
 popupWidth=560
+
+[Containments][30][Applets][60][Configuration][Appearance]
+boldText=true
+customDateFormat=dddd, MMMM d\s
+dateDisplayFormat=BesideTime
+dateFormat=longDate
+fontFamily=Atkinson Hyperlegible Next
+fontStyleName=Bold
+fontWeight=700
+
+[Containments][30][Applets][60][Configuration][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
 
 [Containments][30][Applets][61]
 immutability=1
@@ -248,7 +265,7 @@ DialogHeight=853
 DialogWidth=1446
 
 [Containments][30][General]
-AppletOrder=65;85;64;59;66;63;61;56;62;57;60
+AppletOrder=65;85;64;59;60;126;66;63;61;56;62;57
 
 [ScreenMapping]
 itemsOnDisabledScreens=
