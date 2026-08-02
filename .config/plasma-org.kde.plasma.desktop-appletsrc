@@ -147,6 +147,14 @@ wallpaperplugin=org.kde.image
 immutability=1
 plugin=org.kde.plasma.panelspacer
 
+[Containments][30][Applets][127]
+immutability=1
+plugin=org.kde.plasma.battery
+
+[Containments][30][Applets][127][Configuration]
+popupHeight=213
+popupWidth=360
+
 [Containments][30][Applets][56]
 immutability=1
 plugin=org.kde.plasma.brightness
@@ -265,7 +273,7 @@ DialogHeight=853
 DialogWidth=1446
 
 [Containments][30][General]
-AppletOrder=65;85;64;59;60;126;66;63;61;56;62;57
+AppletOrder=65;85;64;59;60;126;66;63;61;56;62;57;127
 
 [ScreenMapping]
 itemsOnDisabledScreens=
