@@ -155,6 +155,13 @@ plugin=org.kde.plasma.battery
 popupHeight=213
 popupWidth=360
 
+[Containments][30][Applets][128]
+immutability=1
+plugin=org.kde.plasma.lock_logout
+
+[Containments][30][Applets][128][Configuration][General]
+actionsOrder=lockScreen,switchUser,requestShutDown,requestReboot,requestLogout,requestLogoutScreen,suspendToRam,suspendToDisk
+
 [Containments][30][Applets][56]
 immutability=1
 plugin=org.kde.plasma.brightness
@@ -203,6 +210,9 @@ plugin=org.kde.plasma.bluetooth
 [Containments][30][Applets][61][Configuration]
 popupHeight=400
 popupWidth=560
+
+[Containments][30][Applets][61][Configuration][General]
+showNumberOfConnectedDevices=true
 
 [Containments][30][Applets][62]
 immutability=1
@@ -273,7 +283,7 @@ DialogHeight=853
 DialogWidth=1446
 
 [Containments][30][General]
-AppletOrder=65;85;64;59;60;126;66;63;61;56;62;57;127
+AppletOrder=65;85;64;59;60;126;66;63;61;56;62;57;127;128
 
 [ScreenMapping]
 itemsOnDisabledScreens=

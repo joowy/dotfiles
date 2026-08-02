@@ -17,5 +17,5 @@
     "ctrl+j"
   ],
   "defaultProvider": "llama.cpp",
-  "defaultModel": "Qwen3.6-27B-MTP-Q5_K_M-coding"
+  "defaultModel": "Qwen3.6-27B-MTP-Q5_K_M-general"
 }
