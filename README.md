@@ -57,11 +57,20 @@ git clone https://github.com/MichaelAquilina/zsh-autoswitch-virtualenv ${ZSH_CUS
 chsh -s $(which zsh)
 ```
 
-### 3. tmux
+### 3. tmux/herdr
+
+#### tmux
 
 ```bash
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 # Start tmux and run: prefix + I (capital i) to install plugins
+```
+
+#### herdr
+
+```
+herdr plugin install lmilojevicc/herdr-splits.nvim
+herdr plugin install paulbkim-dev/vim-herdr-navigation
 ```
 
 ### 4. Neovim
