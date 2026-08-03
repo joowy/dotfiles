@@ -76,10 +76,20 @@ delivery = "terminal"
 
 [ui.sound]
 enabled = false
+
 [[keys.command]]
 key = "prefix+alt+g"
 type = "popup"
 command = "lazygit"
 description = "run lazygit"
+width = "80%"
+height = "80%"
+
+
+[[keys.command]]
+key = "prefix+alt+r"
+type = "popup"
+command = "tuicr"
+description = "run tuicr"
 width = "80%"
 height = "80%"

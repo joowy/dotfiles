@@ -2,20 +2,10 @@
   "lastChangelogVersion": "0.83.0",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
-  "packages": [
-    "npm:pi-web-access",
-    "npm:@gotgenes/pi-permission-system"
-  ],
-  "llamaServerUrl": "http://127.0.0.1:8001",
+  "packages": ["npm:pi-web-access", "npm:@gotgenes/pi-permission-system"],
   "defaultThinkingLevel": "high",
-  "skills": [
-    "~/.claude/skills",
-    "~/.codex/skills"
-  ],
-  "newLine": [
-    "shift+enter",
-    "ctrl+j"
-  ],
+  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
+  "newLine": ["shift+enter", "ctrl+j"],
   "defaultProvider": "llama.cpp",
   "defaultModel": "Qwen3.6-27B-MTP-Q5_K_M-general"
 }
