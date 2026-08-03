@@ -2,10 +2,16 @@
   "lastChangelogVersion": "0.83.0",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
-  "packages": ["npm:pi-web-access", "npm:@gotgenes/pi-permission-system"],
+  "packages": [
+    "npm:pi-web-access",
+    "npm:@gotgenes/pi-permission-system",
+    "git:github.com/obra/superpowers",
+    "npm:@juicesharp/rpiv-ask-user-question"
+  ],
   "defaultThinkingLevel": "high",
   "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
   "newLine": ["shift+enter", "ctrl+j"],
   "defaultProvider": "llama.cpp",
-  "defaultModel": "Qwen3.6-27B-MTP-Q5_K_M-general"
+  "defaultModel": "Qwen3.6-35B-MTP-Q5_K_M-general",
+  "hideThinkingBlock": true
 }

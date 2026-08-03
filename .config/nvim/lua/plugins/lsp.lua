@@ -15,6 +15,7 @@ return {
     opts = {
       formatters_by_ft = {
         zsh = { "shfmt_zsh" },
+        rust = { "rustfmt" },
       },
       formatters = {
         shfmt_zsh = {
