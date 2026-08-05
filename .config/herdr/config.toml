@@ -25,8 +25,8 @@ pane_history = true
 
 
 [ui]
-accent = "#ea9d34"
-pane_gaps = false
+accent = "#f6c17"
+pane_gaps = true
 
 agent_panel_sort = "priority"
 
@@ -91,5 +91,14 @@ key = "prefix+alt+r"
 type = "popup"
 command = "tuicr"
 description = "run tuicr"
+width = "80%"
+height = "80%"
+
+
+[[keys.command]]
+key = "prefix+alt+d"
+type = "popup"
+command = "lazydocker"
+description = "run lazydocker"
 width = "80%"
 height = "80%"
