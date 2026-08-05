@@ -25,7 +25,7 @@ pane_history = true
 
 
 [ui]
-accent = "#f6c17"
+accent = "#f6c17"
 pane_gaps = true
 
 agent_panel_sort = "priority"
