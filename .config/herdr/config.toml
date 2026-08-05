@@ -29,7 +29,10 @@ accent = "#f6c17"
 pane_gaps = true
 
 agent_panel_sort = "priority"
+show_agent_labels_on_pane_borders = true
 
+[ui.sidebar.agents]
+rows = [["state_icon", "terminal_title_stripped"], ["workspace"], ["pane"]]
 
 [[keys.command]]
 key = "ctrl+h"

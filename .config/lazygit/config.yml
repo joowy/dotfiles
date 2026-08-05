@@ -1,8 +1,8 @@
 git:
-  pagers:
+  diffRenderers:
     - colorArg: always
       # pager: delta --paging=never --side-by-side --line-numbers --detect-dark-light always
-      pager: delta --paging=never --side-by-side --line-numbers --light
+      command: delta --paging=never --side-by-side --line-numbers --light
       # pager: delta --paging=never --side-by-side --line-numbers --dark
 gui:
   showFileTree: false
