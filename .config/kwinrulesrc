@@ -1,2 +1,11 @@
+[076c3e80-a3e8-4ee5-bce7-d5124c0b010f]
+Description=Application settings for md.Obsidian
+desktopfile=obsidian.desktop
+desktopfilerule=3
+wmclass=electron md.Obsidian
+wmclasscomplete=true
+wmclassmatch=1
+
 [General]
-rules=
+count=1
+rules=076c3e80-a3e8-4ee5-bce7-d5124c0b010f

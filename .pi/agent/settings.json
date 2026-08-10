@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.83.0",
+  "lastChangelogVersion": "0.84.1",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
@@ -9,9 +9,16 @@
     "npm:@juicesharp/rpiv-ask-user-question"
   ],
   "defaultThinkingLevel": "high",
-  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
-  "newLine": ["shift+enter", "ctrl+j"],
+  "skills": [
+    "~/.claude/skills",
+    "~/.codex/skills",
+    "../.claude/skills"
+  ],
+  "newLine": [
+    "shift+enter",
+    "ctrl+j"
+  ],
   "defaultProvider": "llama.cpp",
-  "defaultModel": "Qwen3.6-35B-MTP-Q5_K_M-general",
+  "defaultModel": "Qwen3.6-27B-MTP-Q5_K_M-coding",
   "hideThinkingBlock": true
 }

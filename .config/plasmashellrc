@@ -13,6 +13,7 @@ thickness=23
 [PlasmaViews][Panel 3]
 floating=0
 floatingApplets=1
+panelLengthMode=1
 panelOpacity=0
 panelVisibility=1
 shell=org.kde.plasma.desktop

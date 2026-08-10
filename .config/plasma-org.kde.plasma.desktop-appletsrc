@@ -112,14 +112,6 @@ location=4
 plugin=org.kde.panel
 wallpaperplugin=org.kde.image
 
-[Containments][3][Applets][28]
-immutability=1
-plugin=org.kde.plasma.panelspacer
-
-[Containments][3][Applets][29]
-immutability=1
-plugin=org.kde.plasma.panelspacer
-
 [Containments][3][Applets][6]
 immutability=1
 plugin=org.kde.plasma.icontasks
@@ -132,7 +124,7 @@ DialogWidth=810
 launchers=applications:firefox.desktop,applications:com.mitchellh.ghostty.desktop,applications:obsidian.desktop,applications:org.kde.dolphin.desktop
 
 [Containments][3][General]
-AppletOrder=29;6;28
+AppletOrder=6
 
 [Containments][30]
 activityId=
