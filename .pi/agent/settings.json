@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.84.1",
+  "lastChangelogVersion": "0.84.2",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
@@ -19,6 +19,6 @@
     "ctrl+j"
   ],
   "defaultProvider": "llama.cpp",
-  "defaultModel": "Qwen3.6-27B-MTP-Q5_K_M-coding",
-  "hideThinkingBlock": true
+  "defaultModel": "Qwen3.8-27B-Q5_K_M",
+  "hideThinkingBlock": false
 }
