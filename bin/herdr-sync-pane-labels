@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# herdr-sync-pane-labels — set each Herdr agent's pane label to
+# "<terminal_title_stripped> (<pane_id>)". Rerun whenever titles drift.
+#
+# Usage: herdr-sync-pane-labels [-n|--dry-run]
+#   -n, --dry-run   print the rename commands without running them
+
+set -euo pipefail
+
+# A single compact JSON object per line avoids delimiter clashes with
+# titles that contain spaces, tabs, or other punctuation.
+AGENT_JSON_FILTER='.result.agents[]'
+
+usage() {
+    echo "usage: $(basename "$0") [-n|--dry-run]" >&2
+}
+
+# --- Parse arguments ---------------------------------------------------------
+
+dry_run=false
+case "${1:-}" in
+    -n | --dry-run) dry_run=true ;;
+    "") ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
+
+# --- Check dependencies ------------------------------------------------------
+
+for tool in herdr jq; do
+    command -v "$tool" >/dev/null 2>&1 || {
+        echo "error: '$tool' not found on PATH" >&2
+        exit 1
+    }
+done
+
+# --- Sync pane labels --------------------------------------------------------
+
+count=0
+while IFS= read -r record; do
+    [ -n "$record" ] || continue
+
+    pane_id=$(jq -r '.pane_id' <<<"$record")
+    title=$(jq -r '.terminal_title_stripped' <<<"$record")
+    [ -n "$pane_id" ] || continue
+
+    label="$title ($pane_id)"
+
+    if $dry_run; then
+        printf 'would rename %s %q\n' "$pane_id" "$label"
+    else
+        herdr pane rename "$pane_id" "$label"
+        printf 'renamed %s %s\n' "$pane_id" "$label"
+    fi
+
+    count=$((count + 1))
+done < <(herdr agent list | jq -c "$AGENT_JSON_FILTER")
+
+echo "processed $count agent pane(s)"
