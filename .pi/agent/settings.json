@@ -20,5 +20,6 @@
   ],
   "defaultProvider": "llama.cpp",
   "defaultModel": "Qwen3.8-27B-Q5_K_M-thinking",
-  "hideThinkingBlock": true
+  "hideThinkingBlock": true,
+  "showHardwareCursor": true
 }

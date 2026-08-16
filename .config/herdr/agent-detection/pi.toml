@@ -16,17 +16,33 @@ contains = ["Working..."]
 id = "live_blocked_form"
 state = "blocked"
 priority = 980
-region = "after_last_horizontal_rule"
+region = "whole_recent"
 visible_blocker = true
-contains = ["esc to cancel"]
 any = [
-  { contains = ["enter to confirm"] },
-  { contains = ["enter to select"], any = [
-    { contains = ["tab/arrow keys to navigate"] },
-    { contains = ["arrow keys to navigate"] },
-    { contains = ["arrows to navigate"] },
-    { contains = ["↑/↓ to navigate"] },
-    { contains = ["↑↓ to navigate"] },
+
+  { contains = [
+    "Permission Required",
+  ] },
+  { contains = [
+    "enter to confirm",
+  ] },
+  { contains = [
+    "enter to select",
+  ], any = [
+    { contains = [
+      "tab/arrow keys to navigate",
+    ] },
+    { contains = [
+      "arrow keys to navigate",
+    ] },
+    { contains = [
+      "arrows to navigate",
+    ] },
+    { contains = [
+      "↑/↓ to navigate",
+    ] },
+    { contains = [
+      "↑↓ to navigate",
+    ] },
   ] },
 ]
-

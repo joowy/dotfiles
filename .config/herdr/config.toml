@@ -75,7 +75,7 @@ type = "plugin_action"
 command = "herdr-splits.resize-right"
 
 [ui.toast]
-delivery = "terminal"
+delivery = "herdr"
 
 [ui.sound]
 enabled = false

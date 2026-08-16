@@ -6,6 +6,18 @@ wmclass=electron md.Obsidian
 wmclasscomplete=true
 wmclassmatch=1
 
+[5e043d65-8e5f-484a-af83-dcfcb710d532]
+desktopfile=/usr/share/applications/obsidian
+desktopfilerule=3
+
 [General]
-count=1
-rules=076c3e80-a3e8-4ee5-bce7-d5124c0b010f
+count=2
+rules=f1c5efdc-2409-4641-919c-50dc37e19b20,076c3e80-a3e8-4ee5-bce7-d5124c0b010f
+
+[f1c5efdc-2409-4641-919c-50dc37e19b20]
+Description=Application settings for md.obsidian.Obsidian
+desktopfile=/usr/share/applications/obsidian
+desktopfilerule=3
+wmclass=electron md.obsidian.Obsidian
+wmclasscomplete=true
+wmclassmatch=1
