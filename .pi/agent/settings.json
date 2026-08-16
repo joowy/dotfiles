@@ -6,7 +6,8 @@
     "npm:pi-web-access",
     "git:github.com/obra/superpowers",
     "npm:@ogulcancelik/pi-herdr",
-    "npm:@juicesharp/rpiv-ask-user-question"
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@gotgenes/pi-permission-system"
   ],
   "defaultThinkingLevel": "high",
   "skills": [
@@ -18,8 +19,13 @@
     "shift+enter",
     "ctrl+j"
   ],
-  "defaultProvider": "llama.cpp",
-  "defaultModel": "Qwen3.8-27B-Q5_K_M-thinking",
-  "hideThinkingBlock": true,
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-flash",
+  "enabledModels": [
+    "deepseek-v4-flash",
+    "Qwen3.8*",
+    "glm-5.3"
+  ],
+  "hideThinkingBlock": false,
   "showHardwareCursor": true
 }
