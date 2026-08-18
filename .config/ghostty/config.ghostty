@@ -6,6 +6,8 @@ adjust-cursor-thickness=5
 keybind = super+t=unbind
 keybind = super+d=unbind
 keybind = super+shift+d=unbind
+keybind = ctrl+shift+e=unbind
+keybind = ctrl+shift+o=unbind
 
 keybind = alt+backspace=text:\x1b\x7f
 custom-shader = ~/.config/ghostty/shaders/cursor_tail.glsl
