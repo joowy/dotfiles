@@ -10,11 +10,23 @@
     "npm:@gotgenes/pi-permission-system"
   ],
   "defaultThinkingLevel": "high",
-  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
-  "newLine": ["shift+enter", "ctrl+j"],
-  "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-flash",
-  "enabledModels": ["deepseek-v4-flash", "Qwen3.8*", "glm-5.3"],
+  "skills": [
+    "~/.claude/skills",
+    "~/.codex/skills",
+    "../.claude/skills"
+  ],
+  "newLine": [
+    "shift+enter",
+    "ctrl+j"
+  ],
+  "defaultProvider": "llama.cpp",
+  "defaultModel": "Qwen3.8-27B-Q5_K_M-thinking",
+  "enabledModels": [
+    "opencode-go/deepseek-v4-flash",
+    "opencode-go/qwen3.8-max",
+    "opencode-go/glm-5.3",
+    "llama.cpp/Qwen3.8-27B-Q5_K_M-thinking"
+  ],
   "hideThinkingBlock": false,
   "showHardwareCursor": true
 }
