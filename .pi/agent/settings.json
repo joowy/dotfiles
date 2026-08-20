@@ -20,12 +20,13 @@
     "ctrl+j"
   ],
   "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-flash",
+  "defaultModel": "muse-spark-1.2-contributor",
   "enabledModels": [
     "opencode-go/deepseek-v4-flash",
     "opencode-go/qwen3.8-max",
     "opencode-go/glm-5.3",
-    "llama.cpp/Qwen3.8-27B-Q5_K_M-thinking"
+    "opencode-go/muse-spark-1.2-contributor",
+    "llama.cpp/Qwen3.8-27B-UD-Q5_K_M"
   ],
   "hideThinkingBlock": true,
   "showHardwareCursor": true

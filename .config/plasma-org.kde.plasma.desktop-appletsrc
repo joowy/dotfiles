@@ -255,7 +255,7 @@ immutability=1
 plugin=org.kde.plasma.clipboard
 
 [Containments][30][Applets][66][Configuration]
-popupHeight=400
+popupHeight=433
 popupWidth=560
 
 [Containments][30][Applets][85]

@@ -3,6 +3,7 @@
     "*": "allow",
     "path": {
       "*": "allow",
+      "~/.agents": "allow",
       "~/repos/": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
@@ -13,9 +14,11 @@
       "rm *": "ask",
       "rm -rf *": "deny",
       "sudo *": "deny",
-      "git commit *": "deny",
-      "git push": "deny"
+      "git commit *": "ask",
+      "* commit *": "ask",
+      "git push": "deny",
+      "* push *": "deny"
     },
-    "external_directory": "allow"
+    "external_directory": "ask"
   }
 }
