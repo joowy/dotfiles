@@ -19,14 +19,14 @@
     "shift+enter",
     "ctrl+j"
   ],
-  "defaultProvider": "llama.cpp",
-  "defaultModel": "Qwen3.8-27B-Q5_K_M-thinking",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-flash",
   "enabledModels": [
     "opencode-go/deepseek-v4-flash",
     "opencode-go/qwen3.8-max",
     "opencode-go/glm-5.3",
     "llama.cpp/Qwen3.8-27B-Q5_K_M-thinking"
   ],
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "showHardwareCursor": true
 }
