@@ -2,8 +2,7 @@
   "permission": {
     "*": "allow",
     "path": {
-      "*": "allow",
-      "~/.agents": "allow",
+      "~/.agents/": "allow",
       "~/repos/": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
@@ -17,8 +16,9 @@
       "git commit *": "ask",
       "* commit *": "ask",
       "git push": "deny",
-      "* push *": "deny"
+      "* push *": "deny",
+      "brew *": "ask"
     },
-    "external_directory": "ask"
+    "external_directory": "allow"
   }
 }

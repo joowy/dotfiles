@@ -19,8 +19,8 @@
     "shift+enter",
     "ctrl+j"
   ],
-  "defaultProvider": "opencode-go",
-  "defaultModel": "muse-spark-1.2-contributor",
+  "defaultProvider": "llama.cpp",
+  "defaultModel": "Qwen3.8-27B-UD-Q5_K_M",
   "enabledModels": [
     "opencode-go/deepseek-v4-flash",
     "opencode-go/qwen3.8-max",
@@ -28,6 +28,6 @@
     "opencode-go/muse-spark-1.2-contributor",
     "llama.cpp/Qwen3.8-27B-UD-Q5_K_M"
   ],
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "showHardwareCursor": true
 }
