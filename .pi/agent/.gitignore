@@ -1,2 +1,5 @@
-* 
+/*
+
+!/agents/
+!/agents/**
 !settings.json
