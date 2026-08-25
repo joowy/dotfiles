@@ -1,24 +1,6 @@
 {
-  "permission": {
-    "*": "allow",
-    "path": {
-      "~/.agents/": "allow",
-      "~/repos/": "allow",
-      "*.env": "deny",
-      "*.env.*": "deny",
-      "*.env.example": "allow",
-      "*personal*": "deny"
-    },
-    "bash": {
-      "rm *": "ask",
-      "rm -rf *": "deny",
-      "sudo *": "deny",
-      "git commit *": "ask",
-      "* commit *": "ask",
-      "git push": "deny",
-      "* push *": "deny",
-      "brew *": "ask"
-    },
-    "external_directory": "allow"
-  }
+  "enabled": true,
+  "debug": false,
+  "yoloMode": false,
+  "forwardedPromptTimeoutSeconds": 30
 }
