@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.84.2",
+  "lastChangelogVersion": "0.84.3",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
@@ -9,7 +9,7 @@
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@gotgenes/pi-permission-system"
   ],
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "low",
   "skills": [
     "~/.claude/skills",
     "~/.codex/skills",
