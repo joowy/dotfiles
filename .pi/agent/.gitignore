@@ -1,5 +1,7 @@
 /*
-
+!/extensions/
+!/extensions/pi-permission-system/
+!/extensions/pi-permission-system/**
 !/agents/
 !/agents/**
 !settings.json
