@@ -27,4 +27,8 @@ QtProject.conf
 KeePass/*
 btop/*
 KDE/*
-discord
+discord 
+.mono/
+libaccounts-glib/
+naps2/
+pulse/

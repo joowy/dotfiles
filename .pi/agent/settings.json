@@ -28,6 +28,6 @@
     "opencode-go/muse-spark-1.2-contributor",
     "llama.cpp/Qwen3.8-27B-UD-Q5_K_M"
   ],
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "showHardwareCursor": true
 }
