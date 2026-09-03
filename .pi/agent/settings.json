@@ -9,8 +9,15 @@
     "npm:@gotgenes/pi-permission-system"
   ],
   "defaultThinkingLevel": "high",
-  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
-  "newLine": ["shift+enter", "ctrl+j"],
+  "skills": [
+    "~/.claude/skills",
+    "~/.codex/skills",
+    "../.claude/skills"
+  ],
+  "newLine": [
+    "shift+enter",
+    "ctrl+j"
+  ],
   "defaultProvider": "llama.cpp",
   "defaultModel": "Qwen3.8-27B-UD-Q5_K_M",
   "enabledModels": [

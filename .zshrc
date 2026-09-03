@@ -82,10 +82,10 @@ zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1h --tree --level=2 --icons --color=always $realpath'
 zstyle ':fzf-tab:complete:z:*' fzf-preview 'eza -1h --tree --level=2 --icons --color=always $realpath'
 
-eval "$(zoxide init zsh)"
-source $ZSH/oh-my-zsh.sh
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
+[[ -r "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Load Angular CLI autocompletion.
-source <(ng completion script)
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+command -v ng >/dev/null && source <(ng completion script)
+[[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
