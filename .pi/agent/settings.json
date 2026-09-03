@@ -1,32 +1,24 @@
 {
-  "lastChangelogVersion": "0.84.3",
+  "lastChangelogVersion": "0.84.4",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
     "npm:pi-web-access",
-    "git:github.com/obra/superpowers",
     "npm:@ogulcancelik/pi-herdr",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@gotgenes/pi-permission-system"
   ],
-  "defaultThinkingLevel": "low",
-  "skills": [
-    "~/.claude/skills",
-    "~/.codex/skills",
-    "../.claude/skills"
-  ],
-  "newLine": [
-    "shift+enter",
-    "ctrl+j"
-  ],
+  "defaultThinkingLevel": "high",
+  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
+  "newLine": ["shift+enter", "ctrl+j"],
   "defaultProvider": "llama.cpp",
   "defaultModel": "Qwen3.8-27B-UD-Q5_K_M",
   "enabledModels": [
     "opencode-go/deepseek-v4-flash",
     "opencode-go/qwen3.8-max",
-    "opencode-go/glm-5.3",
-    "opencode-go/muse-spark-1.2-contributor",
-    "llama.cpp/Qwen3.8-27B-UD-Q5_K_M"
+    "opencode-go/glm-5.3-flash",
+    "opencode-go/muse-spark-1.2",
+    "llama.cpp/*"
   ],
   "hideThinkingBlock": true,
   "showHardwareCursor": true
