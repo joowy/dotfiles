@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+#
+# pi-docker — run pi in Docker (Colima) with the workspace mounted.
+#
+# Usage: pi-docker [--] [pi args...]
+#   -h, --help   show this help (pi's own help: pi-docker -- --help)
+#
+# Runs:
+#   HERDR_AGENT=pi docker run --rm -it \
+#     -v "$PWD:/workspace" \
+#     -v "pi-agent-home:/root/.pi/agent" \
+#     pi-sandbox [pi args...]
+#
+# Colima is auto-started if the Docker daemon is not responding.
+
+set -euo pipefail
+
+IMAGE="pi-sandbox"
+VOLUME="pi-agent-home"
+WORKDIR="/workspace"
+COLIMA_TIMEOUT=90
+
+usage() {
+    echo "usage: $(basename "$0") [--] [pi args...]" >&2
+    echo "" >&2
+    echo "Run pi in Docker (image: $IMAGE, Colima auto-start)." >&2
+    echo "All args are passed through to pi inside the container." >&2
+    echo "  pi-docker                  launch interactive pi in \$PWD" >&2
+    echo "  pi-docker -p 'fix bug'      non-interactive prompt" >&2
+    echo "  pi-docker -- --help         show pi's help (not this help)" >&2
+}
+
+# --- Parse arguments (wrapper takes no flags except help) --------------------
+
+case "${1:-}" in
+    -h | --help)
+        usage
+        exit 0
+        ;;
+esac
+
+# Allow explicit separator so pi flags can't be mistaken for wrapper flags.
+if [ "${1:-}" = "--" ]; then
+    shift
+fi
+
+# --- Check dependencies ------------------------------------------------------
+
+for tool in docker colima; do
+    command -v "$tool" >/dev/null 2>&1 || {
+        echo "error: '$tool' not found on PATH" >&2
+        exit 1
+    }
+done
+
+# --- Ensure Docker daemon (auto-start Colima) --------------------------------
+
+if ! docker info >/dev/null 2>&1; then
+    echo "docker daemon not responding, starting colima..." >&2
+    colima start >&2
+
+    elapsed=0
+    while ! docker info >/dev/null 2>&1; do
+        if [ "$elapsed" -ge "$COLIMA_TIMEOUT" ]; then
+            echo "error: docker daemon still not responding after ${COLIMA_TIMEOUT}s (colima start failed?)" >&2
+            exit 1
+        fi
+        sleep 2
+        elapsed=$((elapsed + 2))
+    done
+fi
+
+# --- Ensure persistent volume + image ----------------------------------------
+
+if ! docker volume inspect "$VOLUME" >/dev/null 2>&1; then
+    docker volume create "$VOLUME" >/dev/null
+fi
+
+if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
+    echo "error: docker image '$IMAGE' not found locally" >&2
+    echo "hint: docker images | grep $IMAGE" >&2
+    exit 1
+fi
+
+# --- TTY handling (-it only when interactive) ---------------------------------
+
+# Always keep -i so stdin reaches pi; add -t only on a TTY so
+# piped/non-interactive use (e.g. echo ... | pi-docker -p ...) still works.
+tty_flags=(-i)
+if [ -t 0 ] && [ -t 1 ]; then
+    tty_flags=(-it)
+fi
+
+# --- Run ---------------------------------------------------------------------
+
+# Quoted "$PWD" is safe for paths with spaces.
+HERDR_AGENT=pi exec docker run --rm "${tty_flags[@]}" \
+    -v "$PWD:$WORKDIR" \
+    -v "$VOLUME:/root/.pi/agent" \
+    -w "$WORKDIR" \
+    "$IMAGE" "$@"
