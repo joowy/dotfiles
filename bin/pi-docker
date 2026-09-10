@@ -3,13 +3,17 @@
 # pi-docker — run pi in Docker (Colima) with the workspace mounted.
 #
 # Usage: pi-docker [--] [pi args...]
-#   -h, --help   show this help (pi's own help: pi-docker -- --help)
+#   -h, --help                            show this help (pi's own help: pi-docker -- --help)
+#   --rebuild [dockerfile] [--no-extensions]   rebuild pi-sandbox (clean) + update extensions, then exit
 #
 # Runs:
 #   HERDR_AGENT=pi docker run --rm -it \
 #     -v "$PWD:/workspace" \
 #     -v "pi-agent-home:/root/.pi/agent" \
 #     pi-sandbox [pi args...]
+#
+# Rebuilds from (override with $PI_SANDBOX_DOCKERFILE or an arg):
+#   ~/repos/docker-images/Dockerfile.pi
 #
 # Colima is auto-started if the Docker daemon is not responding.
 
@@ -19,23 +23,42 @@ IMAGE="pi-sandbox"
 VOLUME="pi-agent-home"
 WORKDIR="/workspace"
 COLIMA_TIMEOUT=90
+DEFAULT_DOCKERFILE="$HOME/repos/docker-images/Dockerfile.pi"
+DOCKERFILE="${PI_SANDBOX_DOCKERFILE:-$DEFAULT_DOCKERFILE}"
 
 usage() {
     echo "usage: $(basename "$0") [--] [pi args...]" >&2
+    echo "       $(basename "$0") --rebuild [dockerfile] [--no-extensions]" >&2
     echo "" >&2
     echo "Run pi in Docker (image: $IMAGE, Colima auto-start)." >&2
     echo "All args are passed through to pi inside the container." >&2
     echo "  pi-docker                  launch interactive pi in \$PWD" >&2
     echo "  pi-docker -p 'fix bug'      non-interactive prompt" >&2
     echo "  pi-docker -- --help         show pi's help (not this help)" >&2
+    echo "  pi-docker --rebuild         rebuild $IMAGE (clean) + update extensions, then exit" >&2
 }
 
-# --- Parse arguments (wrapper takes no flags except help) --------------------
+# --- Parse arguments (wrapper takes no flags except help/rebuild) ------------
 
+rebuild=false
+rebuild_target=""
+skip_extensions=false
 case "${1:-}" in
     -h | --help)
         usage
         exit 0
+        ;;
+    --rebuild)
+        rebuild=true
+        # Optional: --rebuild [dockerfile] [--no-extensions] (either order).
+        for arg in "${2:-}" "${3:-}"; do
+            case "$arg" in
+                --no-extensions) skip_extensions=true ;;
+                --) ;;
+                "") ;;
+                *) rebuild_target="$arg" ;;
+            esac
+        done
         ;;
 esac
 
@@ -55,19 +78,62 @@ done
 
 # --- Ensure Docker daemon (auto-start Colima) --------------------------------
 
-if ! docker info >/dev/null 2>&1; then
+ensure_daemon() {
+    if docker info >/dev/null 2>&1; then
+        return 0
+    fi
     echo "docker daemon not responding, starting colima..." >&2
     colima start >&2
 
-    elapsed=0
+    local elapsed=0
     while ! docker info >/dev/null 2>&1; do
         if [ "$elapsed" -ge "$COLIMA_TIMEOUT" ]; then
             echo "error: docker daemon still not responding after ${COLIMA_TIMEOUT}s (colima start failed?)" >&2
-            exit 1
+            return 1
         fi
         sleep 2
         elapsed=$((elapsed + 2))
     done
+}
+
+# --- Rebuild (clean image + extensions in persistent volume) -------------------
+
+if $rebuild; then
+    if [ -n "$rebuild_target" ]; then
+        DOCKERFILE="$rebuild_target"
+    fi
+    # Allow a directory: prefer Dockerfile.pi, fall back to Dockerfile.
+    if [ -d "$DOCKERFILE" ]; then
+        if [ -f "$DOCKERFILE/Dockerfile.pi" ]; then
+            DOCKERFILE="$DOCKERFILE/Dockerfile.pi"
+        else
+            DOCKERFILE="$DOCKERFILE/Dockerfile"
+        fi
+    fi
+    if [ ! -f "$DOCKERFILE" ]; then
+        echo "error: Dockerfile not found: $DOCKERFILE" >&2
+        echo "hint: pass the path explicitly: $(basename "$0") --rebuild ~/repos/docker-images/Dockerfile.pi" >&2
+        echo "hint: or set PI_SANDBOX_DOCKERFILE" >&2
+        exit 1
+    fi
+    ensure_daemon
+    context="$(dirname "$DOCKERFILE")"
+    echo "rebuilding $IMAGE from $DOCKERFILE (context: $context)..." >&2
+    docker build --pull --no-cache -f "$DOCKERFILE" -t "$IMAGE" "$context"
+    echo "rebuilt $IMAGE:" >&2
+    docker image inspect "$IMAGE" --format 'created={{.Created}} id={{.Id}}' >&2
+    if ! $skip_extensions; then
+        if ! docker volume inspect "$VOLUME" >/dev/null 2>&1; then
+            docker volume create "$VOLUME" >/dev/null
+        fi
+        # Extensions live in $VOLUME (/root/.pi/agent), so this persists.
+        # Same entrypoint assumption as normal runs: image runs pi.
+        echo "updating pi extensions in $VOLUME..." >&2
+        HERDR_AGENT=pi docker run --rm \
+            -v "$VOLUME:/root/.pi/agent" \
+            "$IMAGE" update --extensions
+    fi
+    exit 0
 fi
 
 # --- Ensure persistent volume + image ----------------------------------------
