@@ -64,24 +64,8 @@ favoritesPortedToKAstats=true
 icon=/home/joey/images/Arch Linux.png
 systemFavorites=suspend\\,hibernate\\,reboot\\,shutdown
 
-[Containments][114][Applets][125]
-immutability=1
-plugin=com.github.antroids.application-title-bar
-
-[Containments][114][Applets][125][Configuration][Appearance]
-widgetElements=windowCloseButton,windowMaximizeButton,windowMinimizeButton,spacer,windowIcon,windowTitle,spacer
-windowTitleHideEmpty=true
-windowTitleHorizontalAlignment=Center
-windowTitleMaximumWidth=800
-windowTitleSource=AppName
-windowTitleUndefined=
-
-[Containments][114][Applets][125][Configuration][ConfigDialog]
-DialogHeight=853
-DialogWidth=1200
-
 [Containments][114][General]
-AppletOrder=123;125;122;117
+AppletOrder=123;122;117
 
 [Containments][2]
 ItemGeometries-0x0=
@@ -258,24 +242,8 @@ plugin=org.kde.plasma.clipboard
 popupHeight=433
 popupWidth=560
 
-[Containments][30][Applets][85]
-immutability=1
-plugin=com.github.antroids.application-title-bar
-
-[Containments][30][Applets][85][Configuration][Appearance]
-widgetElements=windowCloseButton,windowMaximizeButton,windowMinimizeButton,spacer,windowIcon,windowTitle,spacer
-windowTitleHideEmpty=true
-windowTitleHorizontalAlignment=Center
-windowTitleMaximumWidth=800
-windowTitleSource=AppName
-windowTitleUndefined=
-
-[Containments][30][Applets][85][Configuration][ConfigDialog]
-DialogHeight=853
-DialogWidth=1446
-
 [Containments][30][General]
-AppletOrder=65;85;64;59;60;126;66;63;61;56;62;57;127;128
+AppletOrder=65;64;59;60;126;66;63;61;56;62;57;127;128
 
 [ScreenMapping]
 itemsOnDisabledScreens=

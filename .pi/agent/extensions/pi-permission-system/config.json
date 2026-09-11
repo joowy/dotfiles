@@ -6,8 +6,8 @@
       "~/repos/": "allow",
       "*.env": "deny",
       "*.env.*": "deny",
-      "*personal*": "deny",
-      "*.env.example": "allow"
+      "*.env.example": "allow",
+      "*personal*": "deny"
     },
     "bash": {
       "rm *": "ask",
