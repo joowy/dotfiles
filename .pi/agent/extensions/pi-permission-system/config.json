@@ -13,7 +13,8 @@
       "sudo *": "deny",
       "git push": "deny",
       "* push *": "deny",
-      "brew *": "ask"
+      "brew *": "ask",
+      "pacman *": "deny"
     },
     "external_directory": "allow"
   }
