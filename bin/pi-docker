@@ -10,7 +10,14 @@
 #   HERDR_AGENT=pi docker run --rm -it \
 #     -v "$PWD:/workspace" \
 #     -v "pi-agent-home:/root/.pi/agent" \
+#     [-v "$OBSIDIAN_ROOT:/vault" + tmpfs masks, when the vault is involved] \
 #     pi-sandbox [pi args...]
+#
+# Fixed vault topology: when the host workspace involves the Obsidian vault
+# (inside it, or a project with a nested vault checkout such as
+# .worktrees/obsidian), the canonical vault is also mounted at /vault and the
+# private folder is masked with tmpfs (fail closed). The agent reads vault
+# notes via /vault, never via a nested duplicate.
 #
 # Rebuilds from (override with $PI_SANDBOX_DOCKERFILE or an arg):
 #   ~/repos/docker-images/Dockerfile.pi
@@ -36,6 +43,15 @@ usage() {
     echo "  pi-docker -p 'fix bug'      non-interactive prompt" >&2
     echo "  pi-docker -- --help         show pi's help (not this help)" >&2
     echo "  pi-docker --rebuild         rebuild $IMAGE (clean) + update extensions, then exit" >&2
+    echo "    (rebuild also syncs the permission config into $VOLUME)" >&2
+    echo "" >&2
+    echo "Vault topology (fixed container paths):" >&2
+    echo "  /workspace == \$PWD (unchanged)" >&2
+    echo "  /vault     == canonical vault (\$OBSIDIAN_ROOT, default ~/repos/Obsidian)" >&2
+    echo "Masks (tmpfs, fail closed): /vault/<private folder>, the nested" >&2
+    echo ".worktrees/obsidian duplicate, and /workspace/<private folder> when" >&2
+    echo "launching from the vault root itself." >&2
+    echo "Env: OBSIDIAN_ROOT selects the vault checkout; PI_MOUNT_VAULT=1 forces /vault." >&2
 }
 
 # --- Parse arguments (wrapper takes no flags except help/rebuild) ------------
@@ -133,6 +149,16 @@ if $rebuild; then
             -v "$VOLUME:/root/.pi/agent" \
             "$IMAGE" update --extensions
     fi
+    # Sync the permission policy (source of truth: this repo) into the
+    # persistent volume, so container-path denies stay effective in the volume
+    # that shadows the baked image config at /root/.pi/agent.
+    dotfiles_root="$(cd "$(dirname "$0")/.." && pwd)"
+    permission_source="$dotfiles_root/.pi/agent/extensions/pi-permission-system/config.json"
+    echo "syncing permission config into $VOLUME..." >&2
+    docker run --rm --entrypoint /bin/sh \
+        -v "$VOLUME:/root/.pi/agent" \
+        -v "$permission_source:/tmp/fresh-permission-config.json:ro" \
+        "$IMAGE" -c 'mkdir -p /root/.pi/agent/extensions/pi-permission-system && cp /tmp/fresh-permission-config.json /root/.pi/agent/extensions/pi-permission-system/config.json'
     exit 0
 fi
 
@@ -157,11 +183,95 @@ if [ -t 0 ] && [ -t 1 ]; then
     tty_flags=(-it)
 fi
 
+# --- Fixed vault topology (Option A) -----------------------------------------
+
+# Canonical vault checkout on the host. Overridable for testing or moves.
+OBSIDIAN_ROOT="${OBSIDIAN_ROOT:-$HOME/repos/Obsidian}"
+# Leaf name of the private folder inside the vault. Single source of truth for
+# every mask destination below; permission rules name the same leaf.
+PRIVATE_LEAF="01-personal"
+# Nested vault checkout, relative to the workspace root (myproject convention).
+NESTED_VAULT_PATH=".worktrees/obsidian"
+
+find_enclosing_vault_root() {
+    local search_dir="$PWD"
+    while true; do
+        if [ -d "$search_dir/.obsidian" ] && [ -d "$search_dir/$PRIVATE_LEAF" ]; then
+            printf '%s' "$search_dir"
+            return 0
+        fi
+        if [ "$search_dir" = "/" ]; then
+            return 1
+        fi
+        search_dir="$(dirname "$search_dir")"
+    done
+}
+
+# A nested vault checkout is present when it carries the vault marker.
+nested_vault_present=false
+if [ -d "$PWD/$NESTED_VAULT_PATH/.obsidian" ]; then
+    nested_vault_present=true
+fi
+
+# The workspace itself may sit inside the vault (vault root or a subdir).
+enclosing_vault_root="$(find_enclosing_vault_root || true)"
+
+# Decide the canonical vault source. Prefer the enclosing checkout when the
+# workspace sits inside the vault; otherwise use OBSIDIAN_ROOT, which must
+# exist when a nested vault (or an explicit opt-in) asks for /vault.
+vault_mount_source=""
+if [ -n "$enclosing_vault_root" ]; then
+    vault_mount_source="$enclosing_vault_root"
+elif [ "$nested_vault_present" = true ] || [ "${PI_MOUNT_VAULT:-}" = "1" ]; then
+    if [ ! -d "$OBSIDIAN_ROOT/.obsidian" ]; then
+        echo "error: vault requested but canonical vault is missing: $OBSIDIAN_ROOT" >&2
+        echo "hint: set OBSIDIAN_ROOT to the vault checkout" >&2
+        exit 1
+    fi
+    vault_mount_source="$OBSIDIAN_ROOT"
+fi
+
+# Extra Docker args for the vault topology. Empty when the vault is not
+# involved: other repos see zero behavior change.
+vault_docker_args=()
+if [ -n "$vault_mount_source" ]; then
+    # Fail closed: never expose the vault without its private-folder mask.
+    if [ ! -d "$vault_mount_source/$PRIVATE_LEAF" ]; then
+        echo "error: expected private folder is missing: $vault_mount_source/$PRIVATE_LEAF" >&2
+        echo "hint: refusing to launch with an unmasked vault (fail closed)" >&2
+        exit 1
+    fi
+    vault_docker_args+=(-v "$vault_mount_source:/vault")
+    vault_docker_args+=(--mount "type=tmpfs,destination=/vault/$PRIVATE_LEAF")
+    # Nested duplicate: hide the whole checkout so /vault stays the single
+    # canonical spelling the agent is allowed to read.
+    if [ "$nested_vault_present" = true ]; then
+        vault_docker_args+=(--mount "type=tmpfs,destination=/workspace/$NESTED_VAULT_PATH")
+    fi
+    # Launched from the vault root itself: the same bytes are also visible via
+    # /workspace, so mask that spelling too. (From a vault subdir the private
+    # folder sits outside $PWD, so only the /vault mask applies.)
+    if [ -d "$PWD/.obsidian" ] && [ -d "$PWD/$PRIVATE_LEAF" ]; then
+        vault_docker_args+=(--mount "type=tmpfs,destination=/workspace/$PRIVATE_LEAF")
+    fi
+fi
+
 # --- Run ---------------------------------------------------------------------
 
 # Quoted "$PWD" is safe for paths with spaces.
-HERDR_AGENT=pi exec docker run --rm "${tty_flags[@]}" \
-    -v "$PWD:$WORKDIR" \
-    -v "$VOLUME:/root/.pi/agent" \
-    -w "$WORKDIR" \
-    "$IMAGE" "$@"
+# Two branches: "${vault_docker_args[@]}" must never expand empty under
+# `set -u` on older bash (macOS ships bash 3.2).
+if [ "${#vault_docker_args[@]}" -gt 0 ]; then
+    HERDR_AGENT=pi exec docker run --rm "${tty_flags[@]}" \
+        -v "$PWD:$WORKDIR" \
+        -v "$VOLUME:/root/.pi/agent" \
+        "${vault_docker_args[@]}" \
+        -w "$WORKDIR" \
+        "$IMAGE" "$@"
+else
+    HERDR_AGENT=pi exec docker run --rm "${tty_flags[@]}" \
+        -v "$PWD:$WORKDIR" \
+        -v "$VOLUME:/root/.pi/agent" \
+        -w "$WORKDIR" \
+        "$IMAGE" "$@"
+fi
