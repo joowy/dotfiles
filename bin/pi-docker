@@ -4,6 +4,7 @@
 #
 # Usage: pi-docker [--] [pi args...]
 #   -h, --help                            show this help (pi's own help: pi-docker -- --help)
+#   --shell [CMD]                         run an interactive shell (or sh -c CMD) instead of pi
 #   --rebuild [dockerfile] [--no-extensions]   rebuild pi-sandbox (clean) + update extensions, then exit
 #
 # Runs:
@@ -42,20 +43,24 @@ usage() {
     echo "  pi-docker                  launch interactive pi in \$PWD" >&2
     echo "  pi-docker -p 'fix bug'      non-interactive prompt" >&2
     echo "  pi-docker -- --help         show pi's help (not this help)" >&2
+    echo "  pi-docker --shell           interactive shell in the container" >&2
+    echo "  pi-docker --shell 'cmd'     run sh -c cmd in the container (debugging)" >&2
     echo "  pi-docker --rebuild         rebuild $IMAGE (clean) + update extensions, then exit" >&2
     echo "    (rebuild also syncs the permission config into $VOLUME)" >&2
     echo "" >&2
     echo "Vault topology (fixed container paths):" >&2
     echo "  /workspace == \$PWD (unchanged)" >&2
     echo "  /vault     == canonical vault (\$OBSIDIAN_ROOT, default ~/repos/Obsidian)" >&2
-    echo "Masks (tmpfs, fail closed): /vault/<private folder>, the nested" >&2
-    echo ".worktrees/obsidian duplicate, and /workspace/<private folder> when" >&2
-    echo "launching from the vault root itself." >&2
+    echo "Masks (tmpfs mode 0 = \"Permission denied\", fail closed): every path" >&2
+    echo "listed in the vault's .aibox-guard marker under /vault (and /workspace" >&2
+    echo "when launching from the vault root), the vault's .git when the marker" >&2
+    echo "says deny-git, and the nested .worktrees/obsidian duplicate." >&2
     echo "Env: OBSIDIAN_ROOT selects the vault checkout; PI_MOUNT_VAULT=1 forces /vault." >&2
 }
 
 # --- Parse arguments (wrapper takes no flags except help/rebuild) ------------
 
+use_shell=false
 rebuild=false
 rebuild_target=""
 skip_extensions=false
@@ -63,6 +68,10 @@ case "${1:-}" in
     -h | --help)
         usage
         exit 0
+        ;;
+    --shell)
+        use_shell=true
+        shift
         ;;
     --rebuild)
         rebuild=true
@@ -187,9 +196,13 @@ fi
 
 # Canonical vault checkout on the host. Overridable for testing or moves.
 OBSIDIAN_ROOT="${OBSIDIAN_ROOT:-$HOME/repos/Obsidian}"
-# Leaf name of the private folder inside the vault. Single source of truth for
-# every mask destination below; permission rules name the same leaf.
+# Leaf name of the private folder inside the vault (used only to recognize a
+# vault checkout when walking up from $PWD).
 PRIVATE_LEAF="01-personal"
+# Committed protection manifest — single source of truth for the host-side
+# ACL barrier (see ~/repos/docker-images/aibox/README.md) AND for the Docker
+# masks below. The container refuses to start without it.
+AIBOX_MARKER="${AIBOX_MARKER:-.aibox-guard}"
 # Nested vault checkout, relative to the workspace root (myproject convention).
 NESTED_VAULT_PATH=".worktrees/obsidian"
 
@@ -235,24 +248,77 @@ fi
 # involved: other repos see zero behavior change.
 vault_docker_args=()
 if [ -n "$vault_mount_source" ]; then
-    # Fail closed: never expose the vault without its private-folder mask.
-    if [ ! -d "$vault_mount_source/$PRIVATE_LEAF" ]; then
-        echo "error: expected private folder is missing: $vault_mount_source/$PRIVATE_LEAF" >&2
-        echo "hint: refusing to launch with an unmasked vault (fail closed)" >&2
+    # Fail closed: never expose the vault without its protection manifest.
+    if [ ! -f "$vault_mount_source/$AIBOX_MARKER" ]; then
+        echo "error: protection manifest missing: $vault_mount_source/$AIBOX_MARKER" >&2
+        echo "hint: run 'aibox init 01-personal/' in the vault and commit the marker" >&2
+        echo "hint: refusing to launch an unmasked vault (fail closed)" >&2
         exit 1
     fi
+
+    # Host-side pre-flight: heal + verify the ACL barrier so host-launched
+    # agents are covered too, and nested duplicate checkouts get guarded.
+    if command -v aibox >/dev/null 2>&1; then
+        echo "aibox: verifying host-side guards..." >&2
+        # From $PWD (covers nested duplicate checkouts in the workspace tree)
+        # and from the vault root (covers the canonical checkout anywhere).
+        if ! ( aibox guard && cd "$vault_mount_source" && aibox guard ); then
+            echo "error: aibox could not verify protection — refusing to launch" >&2
+            exit 1
+        fi
+    else
+        echo "warning: 'aibox' not installed; host-launched agents are unprotected" >&2
+        echo "warning: (container masks still apply). See aibox/README.md" >&2
+    fi
+
+    # Parse the marker (same syntax as the aibox launcher).
+    protect_paths=()
+    deny_git=false
+    while IFS= read -r marker_line; do
+        case "$marker_line" in ''|'#'*) continue ;; esac
+        marker_kw="${marker_line%% *}"; marker_rest="${marker_line#* *}"
+        if [ "$marker_kw" = "$marker_line" ]; then marker_rest=""; fi
+        case "$marker_kw" in
+            protect)
+                case "$marker_rest" in
+                    /*|*..*)
+                        echo "error: unsafe path in $AIBOX_MARKER: $marker_rest" >&2
+                        exit 1 ;;
+                esac
+                protect_paths+=("${marker_rest%/}") ;;
+            deny-git)
+                if [ "$marker_rest" = true ]; then deny_git=true; fi ;;
+        esac
+    done < "$vault_mount_source/$AIBOX_MARKER"
+
+    # mask PATH: tmpfs with mode 0. The agent gets EACCES ("Permission
+    # denied"), never a silently empty folder — and because tmpfs shadows the
+    # originals, even root inside the container cannot read them.
+    mask() { vault_docker_args+=(--mount "type=tmpfs,destination=$1,tmpfs-mode=0"); }
+
     vault_docker_args+=(-v "$vault_mount_source:/vault")
-    vault_docker_args+=(--mount "type=tmpfs,destination=/vault/$PRIVATE_LEAF")
+    for p in "${protect_paths[@]}"; do
+        [ -n "$p" ] || continue
+        mask "/vault/$p"
+        # Launched from the vault root itself: the same bytes are also visible
+        # via /workspace, so mask that spelling too. (From a vault subdir the
+        # protected paths sit outside $PWD, so only the /vault masks apply.)
+        if [ "$PWD" = "$vault_mount_source" ] && [ -e "$PWD/$p" ]; then
+            mask "/workspace/$p"
+        fi
+    done
+    # Git history: the marker's deny-git covers `git log`/`git show` of the
+    # protected paths inside the container as well.
+    if [ "$deny_git" = true ]; then
+        mask "/vault/.git"
+        if [ "$PWD" = "$vault_mount_source" ] && [ -d "$PWD/.git" ]; then
+            mask "/workspace/.git"
+        fi
+    fi
     # Nested duplicate: hide the whole checkout so /vault stays the single
     # canonical spelling the agent is allowed to read.
     if [ "$nested_vault_present" = true ]; then
-        vault_docker_args+=(--mount "type=tmpfs,destination=/workspace/$NESTED_VAULT_PATH")
-    fi
-    # Launched from the vault root itself: the same bytes are also visible via
-    # /workspace, so mask that spelling too. (From a vault subdir the private
-    # folder sits outside $PWD, so only the /vault mask applies.)
-    if [ -d "$PWD/.obsidian" ] && [ -d "$PWD/$PRIVATE_LEAF" ]; then
-        vault_docker_args+=(--mount "type=tmpfs,destination=/workspace/$PRIVATE_LEAF")
+        mask "/workspace/$NESTED_VAULT_PATH"
     fi
 fi
 
@@ -261,17 +327,26 @@ fi
 # Quoted "$PWD" is safe for paths with spaces.
 # Two branches: "${vault_docker_args[@]}" must never expand empty under
 # `set -u` on older bash (macOS ships bash 3.2).
+image_args=("$IMAGE")
+if $use_shell; then
+    if [ "$#" -gt 0 ]; then
+        image_args=(--entrypoint /bin/sh "$IMAGE" -c "$*")
+    else
+        image_args=(--entrypoint /bin/sh "$IMAGE")
+    fi
+fi
+
 if [ "${#vault_docker_args[@]}" -gt 0 ]; then
     HERDR_AGENT=pi exec docker run --rm "${tty_flags[@]}" \
         -v "$PWD:$WORKDIR" \
         -v "$VOLUME:/root/.pi/agent" \
         "${vault_docker_args[@]}" \
         -w "$WORKDIR" \
-        "$IMAGE" "$@"
+        "${image_args[@]}"
 else
     HERDR_AGENT=pi exec docker run --rm "${tty_flags[@]}" \
         -v "$PWD:$WORKDIR" \
         -v "$VOLUME:/root/.pi/agent" \
         -w "$WORKDIR" \
-        "$IMAGE" "$@"
+        "${image_args[@]}"
 fi

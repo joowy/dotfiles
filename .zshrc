@@ -89,3 +89,23 @@ command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 # Load Angular CLI autocompletion.
 command -v ng >/dev/null && source <(ng completion script)
 [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+
+export PATH="$HOME/.pi/agent/bin:$PATH"
+pi() {
+  if ! command -v -p node >/dev/null 2>&1; then
+    [ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ] && . "${NVM_DIR:-$HOME/.nvm}/nvm.sh" >/dev/null 2>&1
+  fi
+  "$HOME/.pi/agent/bin/pi-safe" "$@"
+}
+
+# >>> obsidian-private-guard (pi-safe) >>>
+export PATH="$HOME/.pi/agent/bin:$PATH"
+# Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
+# through the guard. Defined last, so it wins over earlier functions.
+pi() {
+  if ! command -v -p node >/dev/null 2>&1; then
+    [ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ] && . "${NVM_DIR:-$HOME/.nvm}/nvm.sh" >/dev/null 2>&1
+  fi
+  "$HOME/.pi/agent/bin/pi-safe" "$@"
+}
+# <<< obsidian-private-guard (pi-safe) <<<
