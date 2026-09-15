@@ -2,6 +2,9 @@
 !/extensions/
 !/extensions/pi-permission-system/
 !/extensions/pi-permission-system/**
+!/extensions/subagent/
+!/extensions/subagent/**
+!/extensions/herdr-agent-state.ts
 !/agents/
 !/agents/**
 !settings.json
