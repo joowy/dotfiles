@@ -8,3 +8,4 @@
 !/agents/
 !/agents/**
 !settings.json
+!/extensions/obsidian-private-guard.ts

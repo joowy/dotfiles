@@ -28,7 +28,7 @@
   "enabledModels": [
     "opencode-go/deepseek-v4.1-flash",
     "opencode-go/glm-5.3-flash",
-    "opencode-go/muse-spark-1.3-contributor",
+    "opencode-go/glm-5.3",
     "llama.cpp/*"
   ],
   "hideThinkingBlock": true,
