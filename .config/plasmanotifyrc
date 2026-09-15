@@ -9,3 +9,6 @@ Seen=true
 
 [Applications][timeshift-gtk]
 Seen=true
+
+[DoNotDisturb]
+NotificationSoundsMuted=true

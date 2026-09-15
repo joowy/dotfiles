@@ -27,7 +27,7 @@ any = [
     "enter to confirm",
   ] },
   { contains = [
-    "enter to select",
+    "Enter to select",
   ], any = [
     { contains = [
       "tab/arrow keys to navigate",

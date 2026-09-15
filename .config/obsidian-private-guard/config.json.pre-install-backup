@@ -1,0 +1,20 @@
+{
+  "vault": "/home/joey/repos/Obsidian",
+  "privateFolders": [
+    "01-personal"
+  ],
+  "extraBlockedPaths": [],
+  "maskVaultGit": true,
+  "maskVaultObsidian": true,
+  "maskObsidianAppData": true,
+  "obsidianAppDataPath": "~/.config/obsidian",
+  "maskGhAuth": "vault",
+  "ghAuthPaths": [
+    "~/.config/gh/hosts.yml"
+  ],
+  "lockdownWithoutBarrier": true,
+  "realPiPath": null,
+  "localModelProviders": [
+    "llama.cpp"
+  ]
+}
