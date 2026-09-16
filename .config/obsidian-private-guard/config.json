@@ -5,6 +5,7 @@
   ],
   "extraBlockedPaths": [],
   "maskVaultGit": true,
+  "hideMaskedVaultEntries": true,
   "maskVaultObsidian": true,
   "maskObsidianAppData": true,
   "obsidianAppDataPath": "~/.config/obsidian",
