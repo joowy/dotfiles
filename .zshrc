@@ -12,7 +12,7 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="powerlevel10k/powerlevel10k"
 
 zstyle ':omz:plugins:nvm' lazy yes
-zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws pi prettier
+zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws pi prettier openspec
 export plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm autoswitch_virtualenv)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
@@ -27,7 +27,7 @@ export PATH=$VULKAN_SDK/bin:$PATH
 export LD_LIBRARY_PATH=$VULKAN_SDK/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 export VK_ADD_LAYER_PATH=$VULKAN_SDK/share/vulkan/explicit_layer.d
 export PKG_CONFIG_PATH=$VULKAN_SDK/share/pkgconfig:$VULKAN_SDK/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
-
+export OPENSPEC_TELEMETRY=0
 #--------------------------------------------------
 # Google Cloud SDK
 #--------------------------------------------------
@@ -86,18 +86,7 @@ command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 [[ -r "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# Load Angular CLI autocompletion.
-command -v ng >/dev/null && source <(ng completion script)
 [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
-
-export PATH="$HOME/.pi/agent/bin:$PATH"
-pi() {
-  if ! command -v -p node >/dev/null 2>&1; then
-    [ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ] && . "${NVM_DIR:-$HOME/.nvm}/nvm.sh" >/dev/null 2>&1
-  fi
-  "$HOME/.pi/agent/bin/pi-safe" "$@"
-}
-
 # >>> obsidian-private-guard (pi-safe) >>>
 export PATH="$HOME/.pi/agent/bin:$PATH"
 # Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
