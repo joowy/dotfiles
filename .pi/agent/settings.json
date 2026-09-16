@@ -4,7 +4,6 @@
   "theme": "light/dark",
   "packages": [
     "npm:pi-web-access",
-    "npm:@ogulcancelik/pi-herdr",
     "npm:@juicesharp/rpiv-ask-user-question",
     {
       "source": "npm:@gotgenes/pi-permission-system",

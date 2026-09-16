@@ -11,7 +11,7 @@
         "options": {
           "raw": false,
           "icon": "",
-          "fg": "cyan",
+          "fg": "brightBlack",
           "bg": "default",
           "bold": false
         }
@@ -25,7 +25,7 @@
           "hideWhenEmpty": false,
           "icon": "",
           "text": "",
-          "fg": "magenta",
+          "fg": "brightBlack",
           "bg": "default",
           "bold": false
         }
@@ -92,7 +92,7 @@
         "options": {
           "raw": false,
           "icon": "",
-          "fg": "green",
+          "fg": "brightBlack",
           "bg": "default",
           "bold": false,
           "costFormatStyle": "default",
@@ -108,7 +108,7 @@
         "options": {
           "raw": false,
           "icon": "",
-          "fg": "blue",
+          "fg": "brightBlack",
           "bg": "default",
           "bold": false,
           "cwdDisplayStyle": "full-home",
@@ -124,7 +124,7 @@
           "hideWhenEmpty": false,
           "icon": "",
           "text": "",
-          "fg": "magenta",
+          "fg": "brightBlack",
           "bg": "default",
           "bold": false,
           "gitBranchDisplayStyle": "default",
@@ -141,7 +141,7 @@
           "hideWhenEmpty": false,
           "icon": "",
           "text": "",
-          "fg": "yellow",
+          "fg": "brightBlack",
           "bg": "default",
           "bold": false
         }
@@ -155,7 +155,7 @@
           "hideWhenEmpty": false,
           "icon": "",
           "text": "",
-          "fg": "yellow",
+          "fg": "brightBlack",
           "bg": "default",
           "bold": false,
           "gitDiffMode": "compact"
@@ -164,7 +164,7 @@
     ]
   ],
   "separator": "dot",
-  "separatorFg": "default",
+  "separatorFg": "brightBlack",
   "separatorBg": "default",
   "iconMode": "nerd",
   "minimalist": false,
