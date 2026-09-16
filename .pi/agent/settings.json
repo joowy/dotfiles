@@ -11,7 +11,8 @@
       "extensions": [
         "+src/index.ts"
       ]
-    }
+    },
+    "npm:pi-footer"
   ],
   "defaultThinkingLevel": "high",
   "skills": [
@@ -35,5 +36,8 @@
   "showCacheMissNotices": true,
   "quietStartup": false,
   "treeFilterMode": "user-only",
-  "tuiMode": "regular"
+  "tuiMode": "regular",
+  "modelThinkingLevels": {
+    "opencode-go/glm-5.3-flash": "high"
+  }
 }

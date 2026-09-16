@@ -1,0 +1,179 @@
+{
+  "version": 1,
+  "enabled": true,
+  "preset": "default",
+  "lines": [
+    [
+      {
+        "id": "model-provider-model-line",
+        "type": "model-provider",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "icon": "",
+          "fg": "cyan",
+          "bg": "default",
+          "bold": false
+        }
+      },
+      {
+        "id": "thinking-level-model-line",
+        "type": "thinking-level",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": false,
+          "icon": "",
+          "text": "",
+          "fg": "magenta",
+          "bg": "default",
+          "bold": false
+        }
+      },
+      {
+        "id": "context-length-model-line",
+        "type": "context-length",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenZero": false,
+          "icon": "",
+          "fg": "brightBlack",
+          "bg": "default",
+          "bold": false,
+          "tokenFormatStyle": "default",
+          "contextConditionalColors": true,
+          "contextWarningPercent": 70,
+          "contextDangerPercent": 90,
+          "warningFg": "yellow",
+          "warningBg": "default",
+          "dangerFg": "red",
+          "dangerBg": "default"
+        }
+      },
+      {
+        "id": "context-slash-model-line",
+        "type": "separator",
+        "enabled": true,
+        "options": {
+          "hideWhenEmpty": true,
+          "separator": "custom",
+          "text": " / ",
+          "fg": "brightBlack",
+          "bg": "default",
+          "bold": false
+        }
+      },
+      {
+        "id": "context-window-model-line",
+        "type": "context-window",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenZero": false,
+          "icon": "",
+          "fg": "brightBlack",
+          "bg": "default",
+          "bold": false,
+          "tokenFormatStyle": "default",
+          "contextConditionalColors": true,
+          "contextWarningPercent": 70,
+          "contextDangerPercent": 90,
+          "warningFg": "yellow",
+          "warningBg": "default",
+          "dangerFg": "red",
+          "dangerBg": "default"
+        }
+      },
+      {
+        "id": "cost-model-line",
+        "type": "cost",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "icon": "",
+          "fg": "green",
+          "bg": "default",
+          "bold": false,
+          "costFormatStyle": "default",
+          "showSubscription": false
+        }
+      }
+    ],
+    [
+      {
+        "id": "cwd-git-line",
+        "type": "cwd",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "icon": "",
+          "fg": "blue",
+          "bg": "default",
+          "bold": false,
+          "cwdDisplayStyle": "full-home",
+          "segments": 2
+        }
+      },
+      {
+        "id": "git-branch-git-line",
+        "type": "git-branch",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": false,
+          "icon": "",
+          "text": "",
+          "fg": "magenta",
+          "bg": "default",
+          "bold": false,
+          "gitBranchDisplayStyle": "default",
+          "surroundLeft": "",
+          "surroundRight": ""
+        }
+      },
+      {
+        "id": "git-status-git-line",
+        "type": "git-status",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": false,
+          "icon": "",
+          "text": "",
+          "fg": "yellow",
+          "bg": "default",
+          "bold": false
+        }
+      },
+      {
+        "id": "git-diff-git-line",
+        "type": "git-diff",
+        "enabled": true,
+        "options": {
+          "raw": false,
+          "hideWhenEmpty": false,
+          "icon": "",
+          "text": "",
+          "fg": "yellow",
+          "bg": "default",
+          "bold": false,
+          "gitDiffMode": "compact"
+        }
+      }
+    ]
+  ],
+  "separator": "dot",
+  "separatorFg": "default",
+  "separatorBg": "default",
+  "iconMode": "nerd",
+  "minimalist": false,
+  "terminal": {
+    "widthMode": "full",
+    "colorLevel": "ansi256"
+  },
+  "extensionStatusRow": {
+    "hiddenKeys": [],
+    "knownKeys": []
+  }
+}
