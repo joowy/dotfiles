@@ -11,8 +11,7 @@
         "+src/index.ts"
       ]
     },
-    "npm:pi-footer",
-    "npm:pi-subagents"
+    "npm:pi-footer"
   ],
   "defaultThinkingLevel": "high",
   "skills": [

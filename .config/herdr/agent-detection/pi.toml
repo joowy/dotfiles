@@ -19,7 +19,6 @@ priority = 980
 region = "whole_recent"
 visible_blocker = true
 any = [
-
   { contains = [
     "Permission Required",
   ] },
