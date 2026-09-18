@@ -3,7 +3,6 @@
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
-    "npm:pi-web-access",
     "npm:@juicesharp/rpiv-ask-user-question",
     {
       "source": "npm:@gotgenes/pi-permission-system",
@@ -11,7 +10,9 @@
         "+src/index.ts"
       ]
     },
-    "npm:pi-footer"
+    "npm:pi-footer",
+    "npm:pi-context-view",
+    "npm:pi-subagents-lite"
   ],
   "defaultThinkingLevel": "high",
   "skills": [

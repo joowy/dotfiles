@@ -12,8 +12,8 @@ export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="powerlevel10k/powerlevel10k"
 
 zstyle ':omz:plugins:nvm' lazy yes
-zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws pi prettier openspec
-export plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm autoswitch_virtualenv)
+zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws prettier openspec
+export plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm npm autoswitch_virtualenv)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 fpath=(~/.zfunc $fpath)

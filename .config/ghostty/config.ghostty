@@ -11,3 +11,6 @@ keybind = ctrl+shift+o=unbind
 
 keybind = alt+backspace=text:\x1b\x7f
 custom-shader = ~/.config/ghostty/shaders/cursor_tail.glsl
+
+
+keybind = global:ctrl+`=toggle_quick_terminal
