@@ -9,11 +9,12 @@
       "*.env.example": "allow"
     },
     "bash": {
+      "*": "allow",
       "rm -rf *": "deny",
       "sudo *": "deny",
       "git push": "deny",
       "* push *": "deny",
-      "brew *": "ask",
+      "brew *": "deny",
       "pacman *": "deny"
     },
     "external_directory": "allow"
