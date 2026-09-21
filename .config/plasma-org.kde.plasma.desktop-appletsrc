@@ -138,6 +138,14 @@ plugin=org.kde.plasma.lock_logout
 [Containments][30][Applets][128][Configuration][General]
 actionsOrder=lockScreen,switchUser,requestShutDown,requestReboot,requestLogout,requestLogoutScreen,suspendToRam,suspendToDisk
 
+[Containments][30][Applets][131]
+immutability=1
+plugin=org.kde.plasma.mediacontroller
+
+[Containments][30][Applets][131][Configuration]
+popupHeight=361
+popupWidth=360
+
 [Containments][30][Applets][56]
 immutability=1
 plugin=org.kde.plasma.brightness
@@ -243,7 +251,7 @@ popupHeight=433
 popupWidth=560
 
 [Containments][30][General]
-AppletOrder=65;64;59;60;126;66;63;61;56;62;57;127;128
+AppletOrder=65;64;59;60;126;131;66;63;61;56;62;57;127;128
 
 [ScreenMapping]
 itemsOnDisabledScreens=
