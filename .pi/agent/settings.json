@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.86.1",
+  "lastChangelogVersion": "0.87.0",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
@@ -12,7 +12,8 @@
     },
     "npm:pi-footer",
     "npm:pi-context-view",
-    "npm:pi-subagents-lite"
+    "npm:pi-subagents-lite",
+    "npm:pi-slash-suggest"
   ],
   "defaultThinkingLevel": "high",
   "skills": [
