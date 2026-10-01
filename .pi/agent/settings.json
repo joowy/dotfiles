@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.87.0",
+  "lastChangelogVersion": "1.0.0",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
@@ -28,6 +28,7 @@
   "defaultProvider": "opencode-go",
   "defaultModel": "glm-5.3-flash",
   "enabledModels": [
+    "opencode-go/deepseek-v4.1-flash",
     "opencode-go/glm-5.3-flash",
     "opencode-go/glm-5.3",
     "opencode-go/muse-spark-1.3-contributor",
