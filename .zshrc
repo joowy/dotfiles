@@ -88,7 +88,7 @@ command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 
 [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 # >>> obsidian-private-guard (pi-safe) >>>
-export PATH="$HOME/.pi/agent/bin:$PATH"
+export PATH="$PATH:$HOME/.pi/agent/bin"
 # Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
 # through the guard. Defined last, so it wins over earlier functions.
 pi() {
