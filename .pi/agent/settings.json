@@ -15,6 +15,9 @@
     "npm:pi-subagents-lite",
     "npm:pi-slash-suggest"
   ],
+  "defaultTools": [
+    "+codemode"
+  ],
   "defaultThinkingLevel": "high",
   "skills": [
     "~/.claude/skills",
