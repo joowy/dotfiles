@@ -1,4 +1,4 @@
 return {
-  "ChmaraX/herdr-nvim",
+  dir = vim.fn.expand("~/repos/herdr-nvim"),
   opts = {},
 }
