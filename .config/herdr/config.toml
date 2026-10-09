@@ -96,8 +96,8 @@ key = "prefix+alt+g"
 type = "popup"
 command = "lazygit"
 description = "run lazygit"
-width = "80%"
-height = "80%"
+width = "95%"
+height = "95%"
 
 
 [[keys.command]]
@@ -105,8 +105,8 @@ key = "prefix+alt+r"
 type = "popup"
 command = "tuicr"
 description = "run tuicr"
-width = "80%"
-height = "80%"
+width = "95%"
+height = "95%"
 
 
 [[keys.command]]
@@ -114,5 +114,5 @@ key = "prefix+alt+d"
 type = "popup"
 command = "lazydocker"
 description = "run lazydocker"
-width = "80%"
-height = "80%"
+width = "95%"
+height = "95%"
