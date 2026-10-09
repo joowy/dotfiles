@@ -1,7 +1,7 @@
 ---
 name: Explore
 description: Fast codebase exploration agent (read-only), can ask clarifying questions
-tools: [read, bash, grep, find, ask_user_question]
+tools: [read, bash, grep, find, ask_user_question, codemode, tool_search]
 ---
 
 # CRITICAL: READ-ONLY MODE - NO FILE MODIFICATIONS
