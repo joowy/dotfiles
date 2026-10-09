@@ -1,0 +1,6 @@
+[sidebar]
+# nvim sidebar position for `prefix+e` (chmarax.herdr-nvim.toggle).
+# right (default), left, top, or bottom.
+position = "left"
+# binary used to spawn the per-tab nvim daemon
+nvim_bin = "nvim"
