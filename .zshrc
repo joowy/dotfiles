@@ -11,9 +11,7 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="powerlevel10k/powerlevel10k"
 
-zstyle ':omz:plugins:nvm' lazy yes
-zstyle ':omz:plugins:nvm' lazy-cmd nvim n ng gws prettier
-export plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab nvm npm autoswitch_virtualenv)
+export plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab npm autoswitch_virtualenv)
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 fpath=(~/.zfunc $fpath)
@@ -86,6 +84,13 @@ command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+
+# mise: shims mode so GUI-launched apps resolve the same tools (see ~/.zshenv)
+# Guarded: .zshenv already prepends shims for every shell; eval only if missing.
+case ":$PATH:" in
+  *":$HOME/.local/share/mise/shims:"*) ;;
+  *) eval "$(mise activate zsh --shims)" ;;
+esac
 # >>> obsidian-private-guard (pi-safe) >>>
 export PATH="$PATH:$HOME/.pi/agent/bin"
 # Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
