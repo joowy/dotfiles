@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Versatile review specialist for code diffs, plans, proposed solutions, codebase health, and PR/issue validation
-tools: [read, grep, bash, ask_user_question]
+tools: [read, grep, bash, ask_user_question, codemode, tool_search]
 thinking: high
 include_system_prompt: false
 include_context_files: true
