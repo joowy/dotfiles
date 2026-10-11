@@ -70,7 +70,6 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 ```
 herdr plugin install lmilojevicc/herdr-splits.nvim
-herdr plugin install paulbkim-dev/vim-herdr-navigation
 ```
 
 ### 4. Neovim

@@ -88,11 +88,12 @@ command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 # mise: shims mode so GUI-launched apps resolve the same tools (see ~/.zshenv)
 # Guarded: .zshenv already prepends shims for every shell; eval only if missing.
 case ":$PATH:" in
-  *":$HOME/.local/share/mise/shims:"*) ;;
-  *) eval "$(mise activate zsh --shims)" ;;
+*":$HOME/.local/share/mise/shims:"*) ;;
+*) eval "$(mise activate zsh --shims)" ;;
 esac
+
 # >>> obsidian-private-guard (pi-safe) >>>
-export PATH="$PATH:$HOME/.pi/agent/bin"
+export PATH="$HOME/.pi/agent/bin:$PATH"
 # Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
 # through the guard. Defined last, so it wins over earlier functions.
 pi() {
@@ -102,3 +103,6 @@ pi() {
   "$HOME/.pi/agent/bin/pi-safe" "$@"
 }
 # <<< obsidian-private-guard (pi-safe) <<<
+
+# Pi
+export PATH="/home/joey/.pi/agent/bin:$PATH"
