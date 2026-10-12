@@ -8,7 +8,7 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
 ```bash
 # Core CLI tools
-sudo pacman -S --needed git stow zsh tmux neovim ghostty lazygit eza fzf delta zoxide mise yazi jq docker
+sudo pacman -S --needed git stow zsh neovim ghostty lazygit eza fzf delta zoxide mise yazi jq docker
 
 # System monitoring
 sudo pacman -S --needed btop htop nvtop
@@ -64,17 +64,9 @@ git clone https://github.com/MichaelAquilina/zsh-autoswitch-virtualenv ${ZSH_CUS
 chsh -s $(which zsh)
 ```
 
-### 3. tmux/herdr
+### 3. herdr
 
-Prefix is `Ctrl-a` (not default `Ctrl-b`). Stowed: `.tmux.conf`, `.config/herdr/config.toml`, `.config/herdr-nvim/config.toml`.
-
-#### tmux
-
-```bash
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-# Start tmux and run: Ctrl-a + Shift+I to install plugins
-# Plugins: catppuccin/tmux, tmux-resurrect + continuum (auto-restore on), tmux-cpu, vim-tmux-navigator
-```
+Stowed: `.config/herdr/config.toml`, `.config/herdr-nvim/config.toml`. Prefix is `Ctrl-a`.
 
 #### herdr CLI
 
@@ -133,7 +125,7 @@ Download from <https://vulkan.lunarg.com/> and extract to `~/vulkan/`. `.zshrc` 
 
 ### Ghostty (optional)
 
-Stowed: `.config/ghostty/config.ghostty`. `scripts/tmux-autostart.sh` (`SESSION_NAME=ghostty`) is not auto-wired — run it manually or set `command` in ghostty config if you want ghostty to attach to tmux on launch.
+Stowed: `.config/ghostty/config.ghostty` (launches plain `zsh`, run `herdr` manually).
 
 ### 8. Homebrew (optional)
 
@@ -144,7 +136,6 @@ Stowed: `.config/ghostty/config.ghostty`. `scripts/tmux-autostart.sh` (`SESSION_
 ## Post-setup checks
 
 - `echo $SHELL` should show `/bin/zsh`
-- `tmux` should load with Catppuccin theme; run `Ctrl-a + Shift+I` if plugins aren't loaded
 - `nvim` should open with LazyVim; run `:Lazy` to check plugin status
 - `herdr plugin list` should show `herdr-splits` + `chmarax.herdr-nvim` enabled; inside herdr `nvim` sidebar toggles with `prefix+e`
 - `mise ls` should show node/python/rust/angular from `.config/mise/config.toml`
