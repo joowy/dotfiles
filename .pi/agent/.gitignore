@@ -9,3 +9,6 @@
 !/agents/**
 !settings.json
 !/extensions/obsidian-private-guard.ts
+
+# Permission review log — machine-generated, do not track.
+/extensions/pi-permission-system/logs/pi-permission-system-permission-review.jsonl
