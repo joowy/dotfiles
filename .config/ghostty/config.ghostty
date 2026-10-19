@@ -1,6 +1,7 @@
 language = en
 command = zsh
 theme = light:Rose Pine Dawn, dark:Rose Pine 
+font-size = 16
 adjust-cursor-thickness=5
 
 keybind = super+t=unbind
