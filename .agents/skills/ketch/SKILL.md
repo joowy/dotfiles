@@ -8,35 +8,24 @@ version: 0.1.0
 
 Route every live-source question to one of ketch's five research surfaces — search, code, docs, scrape, crawl — over the transport the operator gave you, with a token budget on every fetch and a source URL on every claim. ketch is one stateless binary — call, result, exit — with web search, OSS code grep, curated library docs, and page/site extraction together, so a complete research pipeline needs no other tool and no daemon.
 
-## Transport: stateless CLI by default, MCP when the operator wired it
+## Transport: stateless CLI by default
 
-The CLI is ketch's identity: call → result → exit, `--json` on every call, exit codes as control flow, zero daemon. That is the default transport and the zero-infrastructure path. The MCP server is a supported alternative for operators who want it — never a prerequisite.
-
-Decide once per session, before the first call:
-
-1. `which ketch` succeeds → the CLI is your transport: `--json` on every call, exit codes as control flow.
-2. Also check for ketch's five MCP tools in your tool list — `search`, `code`, `docs`, `scrape`, `crawl` from a server named `ketch` (in Claude Code: `mcp__ketch__search`, …). Present → the operator wired them up on purpose, and using them for research calls is correct and good: structured output, per-URL errors, no shell round-trip. Do not shell out around tools the operator set up.
-3. Both live → either transport serves research calls, but know the tradeoff: a running MCP server holds the single-process page-cache lock, so concurrent CLI scrapes silently run cache-disabled.
-4. Neither CLI nor MCP tools → ketch is not installed. Offer `brew install ketch` or `go install github.com/1broseidon/ketch@latest` — an operator action: propose, wait for confirmation.
-
-The rule: **use the transport the operator gave you** — when both are live, either is fine for research calls, and operator actions are always CLI.
-
-Config discovery is CLI regardless of transport: `ketch config` prints effective settings and available backends as JSON; there is no config tool over MCP. Operator actions — `config set`, `cache`, `browser install`, `crawl --background`/`status`/`stop`, `doctor` — are deliberately not in MCP. They are always CLI.
+The CLI is ketch's identity: call → result → exit, `--json` on every call, exit codes as control flow, zero daemon. That is the default transport and the zero-infrastructure path.
 
 ## Glossary
 
 Use only these terms in ketch output.
 
-| Term | Meaning |
-| --- | --- |
-| **surface** | One of the five research operations: `search`, `code`, `docs`, `scrape`, `crawl` |
-| **transport** | How a surface is called: the CLI binary (default) or the optional MCP tools |
-| **backend** | The provider behind a surface: auto (default; a fallback chain, not a provider)/brave/ddg/searxng/exa/firecrawl/keenable/tavily/parallel/serpbase/degoog/serply/youcom (search), grepapp/sourcegraph/github (code), context7 (docs) |
-| **operator action** | A system-managing or diagnostic command — `config set`, `cache`, `browser install`, background crawls, `doctor` — CLI-only by design |
-| **error prefix** | The stable class on every ketch error: CLI exit codes 2–6, mirrored as the bracketed prefix opening every MCP tool error — `[validation]`, `[not_found]`, `[upstream]`, `[precondition]`, `[cancelled]` |
-| **fan-out** | How many queries are searched and URLs scraped under one plan |
-| **token budget** | The per-call output bound: `max_chars`/`trim` on scrapes, `tokens` on docs, `limit`/`--minimal` on lists |
-| **probe** | One cheap read-only call that tests whether a surface is configured and reachable |
+| Term                | Meaning                                                                                                                                                                                                                             |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **surface**         | One of the five research operations: `search`, `code`, `docs`, `scrape`, `crawl`                                                                                                                                                    |
+| **transport**       | How a surface is called: the CLI binary (default) or the optional MCP tools                                                                                                                                                         |
+| **backend**         | The provider behind a surface: auto (default; a fallback chain, not a provider)/brave/ddg/searxng/exa/firecrawl/keenable/tavily/parallel/serpbase/degoog/serply/youcom (search), grepapp/sourcegraph/github (code), context7 (docs) |
+| **operator action** | A system-managing or diagnostic command — `config set`, `cache`, `browser install`, background crawls, `doctor` — CLI-only by design                                                                                                |
+| **error prefix**    | The stable class on every ketch error: CLI exit codes 2–6, mirrored as the bracketed prefix opening every MCP tool error — `[validation]`, `[not_found]`, `[upstream]`, `[precondition]`, `[cancelled]`                             |
+| **fan-out**         | How many queries are searched and URLs scraped under one plan                                                                                                                                                                       |
+| **token budget**    | The per-call output bound: `max_chars`/`trim` on scrapes, `tokens` on docs, `limit`/`--minimal` on lists                                                                                                                            |
+| **probe**           | One cheap read-only call that tests whether a surface is configured and reachable                                                                                                                                                   |
 
 ## How to use this skill
 
@@ -87,36 +76,36 @@ Budget: 5 of 8 calls (the rate-limited attempt counts).
 
 First match wins:
 
-| The question needs | Surface | Not |
-| --- | --- | --- |
-| Current web pages, opinions, news, comparisons | `search` | `docs` — that is curated library docs only |
-| How real projects call an API | `code` | `search` — blogs talk *about* code; `code` greps public OSS repos via grep.app |
-| A library's own documentation, version-aware | `docs` | `scrape` of the docs site — `docs` is already extracted and token-budgeted |
-| The content of a URL you already hold | `scrape` | `search` — never re-find a known URL |
-| Many pages from one site | `crawl` | looped `scrape` — crawl dedupes, bounds, and streams |
+| The question needs                             | Surface  | Not                                                                            |
+| ---------------------------------------------- | -------- | ------------------------------------------------------------------------------ |
+| Current web pages, opinions, news, comparisons | `search` | `docs` — that is curated library docs only                                     |
+| How real projects call an API                  | `code`   | `search` — blogs talk _about_ code; `code` greps public OSS repos via grep.app |
+| A library's own documentation, version-aware   | `docs`   | `scrape` of the docs site — `docs` is already extracted and token-budgeted     |
+| The content of a URL you already hold          | `scrape` | `search` — never re-find a known URL                                           |
+| Many pages from one site                       | `crawl`  | looped `scrape` — crawl dedupes, bounds, and streams                           |
 
 In reverse: `search` finds URLs; `scrape` reads them; `crawl` reads a site; `code` reads public source; `docs` reads library docs. `search` with `scrape: true` fuses the first two when you will want full content from every hit — budget it like a scrape.
 
 ## Token budgets
 
-| Call | Bound with | Measured cost |
-| --- | --- | --- |
-| `search`, limit 5 | `limit` | ~1.4 KB |
-| `code`, limit 3 | `limit` | ~0.7 KB |
-| `docs`, default budget | `tokens` (default 4000) | ~3.3 KB |
-| `scrape`, unknown page | `max_chars` 4000–8000 + `trim` | unguarded: up to ~100 KB (~25k tokens) |
-| `crawl` (MCP) | `max_pages` + per-page `max_chars` | 30 pages default, 100 cap, 3-min wall clock |
-| Any CLI list | `--minimal` | roughly halves output |
+| Call                   | Bound with                         | Measured cost                               |
+| ---------------------- | ---------------------------------- | ------------------------------------------- |
+| `search`, limit 5      | `limit`                            | ~1.4 KB                                     |
+| `code`, limit 3        | `limit`                            | ~0.7 KB                                     |
+| `docs`, default budget | `tokens` (default 4000)            | ~3.3 KB                                     |
+| `scrape`, unknown page | `max_chars` 4000–8000 + `trim`     | unguarded: up to ~100 KB (~25k tokens)      |
+| `crawl` (MCP)          | `max_pages` + per-page `max_chars` | 30 pages default, 100 cap, 3-min wall clock |
+| Any CLI list           | `--minimal`                        | roughly halves output                       |
 
 ## Error control flow
 
-| Exit (CLI) | Prefix (MCP) | Meaning | Do |
-| --- | --- | --- | --- |
-| 2 | `[validation]` | Bad input | Fix the call; retrying unchanged can never succeed |
-| 3 | `[not_found]` | Nothing matched | Change the query or selector; not an outage |
-| 4 | `[upstream]` | Backend or network failure | Explicit backend: rotate to another provider (`available_backends` in `ketch config`) or retry once. `auto` already fell through every usable provider: retry once, then report the outage |
-| 5 | `[precondition]` | Operator config missing | Stop researching; enter `ketch setup` |
-| 6 | `[cancelled]` | Cancelled or timed out | Rerun with smaller scope |
+| Exit (CLI) | Prefix (MCP)     | Meaning                    | Do                                                                                                                                                                                         |
+| ---------- | ---------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2          | `[validation]`   | Bad input                  | Fix the call; retrying unchanged can never succeed                                                                                                                                         |
+| 3          | `[not_found]`    | Nothing matched            | Change the query or selector; not an outage                                                                                                                                                |
+| 4          | `[upstream]`     | Backend or network failure | Explicit backend: rotate to another provider (`available_backends` in `ketch config`) or retry once. `auto` already fell through every usable provider: retry once, then report the outage |
+| 5          | `[precondition]` | Operator config missing    | Stop researching; enter `ketch setup`                                                                                                                                                      |
+| 6          | `[cancelled]`    | Cancelled or timed out     | Rerun with smaller scope                                                                                                                                                                   |
 
 Situations → class: unknown backend, `regexp` on github → `[validation]`. Selector matched nothing → `[not_found]`. ddg rate limit (it rate-limits readily under fan-out), DNS failure, grepapp's intermittent 504 → `[upstream]`, rotate or retry once. Missing API key, docs backend `local` (planned, unimplemented), `force_browser` with no browser configured → `[precondition]`. One asymmetry: a CLI `crawl` interrupted by SIGINT exits **0** with partial results, by design.
 
