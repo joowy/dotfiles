@@ -133,6 +133,42 @@ Stowed: `.config/ghostty/config.ghostty` (launches plain `zsh`, run `herdr` manu
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
+### 9. KDE dynamic wallpaper (day/night)
+
+Stowed: `wallpapers/lakeside-dynamic` (`stow .` creates `~/wallpapers`).
+
+Plasma 6.5+ supports day/night wallpapers natively — an `org.kde.image` package
+with both `contents/images/` (light) and `contents/images_dark/` (dark) is
+automatically treated as dynamic:
+
+```
+wallpapers/lakeside-dynamic/
+├── metadata.json
+└── contents/
+    ├── images/3840x2160.jpg       # day
+    └── images_dark/3840x2160.jpg  # night
+```
+
+Image filenames must be `WIDTHxHEIGHT`; Plasma picks the best match for each
+screen's aspect ratio, so add e.g. `1200x1920.jpg` if a monitor needs its own
+crop.
+
+Plasma only scans the standard wallpaper dirs, so link the package into one of
+them once per machine:
+
+```bash
+mkdir -p ~/.local/share/wallpapers
+ln -sfn ~/dotfiles/wallpapers/lakeside-dynamic ~/.local/share/wallpapers/lakeside-dynamic
+kpackagetool6 -t Wallpaper/Images --list   # should list lakeside-dynamic
+```
+
+Then pick **Lakeside (Day/Night)** under System Settings → Appearance →
+Wallpaper, or:
+
+```bash
+plasma-apply-wallpaperimage ~/.local/share/wallpapers/lakeside-dynamic
+```
+
 ## Post-setup checks
 
 - `echo $SHELL` should show `/bin/zsh`
