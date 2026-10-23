@@ -135,7 +135,8 @@ Stowed: `.config/ghostty/config.ghostty` (launches plain `zsh`, run `herdr` manu
 
 ### 9. KDE dynamic wallpaper (day/night)
 
-Stowed: `wallpapers/lakeside-dynamic` (`stow .` creates `~/wallpapers`).
+Stowed: `wallpapers/lakeside-dynamic` (repo path used directly, `~/wallpapers`
+from `stow .` is not involved).
 
 Plasma 6.5+ supports day/night wallpapers natively — an `org.kde.image` package
 with both `contents/images/` (light) and `contents/images_dark/` (dark) is
@@ -153,21 +154,18 @@ Image filenames must be `WIDTHxHEIGHT`; Plasma picks the best match for each
 screen's aspect ratio, so add e.g. `1200x1920.jpg` if a monitor needs its own
 crop.
 
-Plasma only scans the standard wallpaper dirs, so link the package into one of
-them once per machine:
+Point Plasma directly at the stowed package — no symlink into a wallpaper dir,
+otherwise the package is listed twice (once from the wallpaper dir, once from
+the configured path) and deleting one entry can take the repo copy with it:
 
 ```bash
-mkdir -p ~/.local/share/wallpapers
-ln -sfn ~/dotfiles/wallpapers/lakeside-dynamic ~/.local/share/wallpapers/lakeside-dynamic
-kpackagetool6 -t Wallpaper/Images --list   # should list lakeside-dynamic
+plasma-apply-wallpaperimage ~/dotfiles/wallpapers/lakeside-dynamic
+# -> writes Image=file:///home/joey/dotfiles/wallpapers/lakeside-dynamic
 ```
 
-Then pick **Lakeside (Day/Night)** under System Settings → Appearance →
-Wallpaper, or:
-
-```bash
-plasma-apply-wallpaperimage ~/.local/share/wallpapers/lakeside-dynamic
-```
+This sets it for all desktops and leaves no copy anywhere else. Pick the
+day/night behaviour (Plasma style vs. sunrise/sunset) in System Settings →
+Appearance → Wallpaper.
 
 ## Post-setup checks
 
