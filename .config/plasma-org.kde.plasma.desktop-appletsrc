@@ -20,12 +20,8 @@ wallpaperplugin=org.kde.image
 DialogHeight=630
 DialogWidth=810
 
-[Containments][1][Wallpaper][com.github.zzag.dynamic][General]
-Image=file:///home/joey/Downloads/wallpaper-lake.avif
-
 [Containments][1][Wallpaper][org.kde.image][General]
-Image=file:///home/joey/projects/wallpaper_kde/lakeside-dynamic/
-SlidePaths=/home/joey/.local/share/wallpapers/,/usr/share/wallpapers/
+Image=/home/joey/dotfiles/wallpapers/lakeside-dynamic/
 
 [Containments][114]
 activityId=
@@ -82,12 +78,8 @@ location=0
 plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.image
 
-[Containments][2][Wallpaper][com.github.zzag.dynamic][General]
-Image=file:///home/joey/Downloads/wallpaper-lake.avif
-
 [Containments][2][Wallpaper][org.kde.image][General]
-Image=file:///home/joey/projects/wallpaper_kde/lakeside-dynamic/
-SlidePaths=/home/joey/.local/share/wallpapers/,/usr/share/wallpapers/
+Image=/home/joey/dotfiles/wallpapers/lakeside-dynamic
 
 [Containments][3]
 activityId=
