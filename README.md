@@ -94,11 +94,13 @@ herdr plugin install lmilojevicc/herdr-splits.nvim
 
 ```bash
 git clone https://github.com/joowy/herdr-nvim.git ~/repos/herdr-nvim
-# register the local build with herdr
-herdr plugin link ~/repos/herdr-nvim
-```
 
-Keybindings from `.config/herdr/config.toml`: `ctrl+h/j/k/l` nav, `alt+h/j/k/l` resize (herdr-splits), `prefix+e` toggle / `prefix+o` pick-file (herdr-nvim), `prefix+alt+g/r/d` popups for lazygit/tuicr/lazydocker.
+# register the local checkout with herdr
+herdr plugin link ~/repos/herdr-nvim
+
+# build the plugin binary — `plugin link` never runs [[build]] hooks
+bash ~/repos/herdr-nvim/herdr/install.sh
+```
 
 ### 4. Pi.dev + Obsidian private guard
 
@@ -180,7 +182,7 @@ wallpapers/lakeside-dynamic/
 
 - `echo $SHELL` should show `/bin/zsh`
 - `nvim` should open with LazyVim; run `:Lazy` to check plugin status
-- `herdr plugin list` should show `herdr-splits`; `herdr-nvim` is registered as a local link (see step 3)
+- `herdr plugin list` should show `herdr-splits` and `chmarax.herdr-nvim` (as a local link); `~/repos/herdr-nvim/bin/herdr-nvim` must exist (step 3)
 - `mise ls` should show node/python/rust/angular from `.config/mise/config.toml`
 - `colima status` should show it running (after `colima start`; `bin/pi-docker` auto-starts it)
 
