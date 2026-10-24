@@ -47,11 +47,20 @@ optional `occurrence` when the same normalized line appears more than once.
 Create `/home/joey/repos/leetcode-visualization/viz/scenes/{number}.py` with one
 `SCENE` dict, following the contract you read. Give every phase a panel entry,
 and pick each panel's kind from the registry. A panel name and every log
-placeholder must be held by a traced frame at every step that uses it, so check
-the enclosing frames too.
+placeholder must be held by a traced frame at every step that uses it — unless
+the panel is listed in `persistent`, which is drawn only where its frame holds it
+— so check the enclosing frames too.
 
 Set the problem's manifest row: an `accepted` date, `"scene":
 "viz/scenes/{number}.py"`, and the skip list for unwatchable cases.
+
+Choose panels per idea, not per phase. The queue, heap, map, stack, or count array
+the algorithm mutates goes in `SCENE["persistent"]`, with its `(name, kind)` pair
+written once in the phase where it is introduced; every other phase then lists
+only its own values. A static input such as `wordList` or `taskCounts` stays in
+the phase that reads it, and a one-shot result belongs to its answer phase. A
+persistent panel is drawn at every step whose frame holds it, so the reader
+watches the container change instead of watching it disappear and come back.
 
 ## See it in the browser
 
@@ -63,8 +72,8 @@ uv run viz serve --port 8123
 
 Open `http://127.0.0.1:8123/problem/{number}?case=N` for a case that reaches
 every phase. Confirm the phase rail lists them all, each panel draws a real
-value for its kind, each prose line describes the state on entry, and no
-missing-phase note appears.
+value for its kind, no core container disappears between phases, each prose line
+describes the state on entry, and no missing-phase note appears.
 
 ## Fix only the scene
 

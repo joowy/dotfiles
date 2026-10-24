@@ -76,8 +76,12 @@ fi
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1h --tree --level=2 --icons --color=always $realpath'
-zstyle ':fzf-tab:complete:z:*' fzf-preview 'eza -1h --tree --level=2 --icons --color=always $realpath'
+zstyle ':fzf-tab:complete:*' fzf-preview '
+     if [[ -n $realpath && -d $realpath ]]; then
+       eza -1h --tree --level=2 --icons --color=always -- "$realpath"
+     elif [[ -n $realpath && -f $realpath ]]; then
+       bat --style=numbers --color=always --line-range=:500 -- "$realpath"
+     fi'
 
 command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 [[ -r "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
