@@ -92,6 +92,13 @@ case ":$PATH:" in
 *) eval "$(mise activate zsh --shims)" ;;
 esac
 
+export PATH="$HOME/dotfiles/bin:$PATH"
+# git worktrees: wt prints the path, then cd into it
+wt() {
+  local d
+  d=$(command wt "$@") && cd -- "$d"
+}
+
 # >>> obsidian-private-guard (pi-safe) >>>
 export PATH="$HOME/.pi/agent/bin:$PATH"
 # Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes

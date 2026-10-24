@@ -44,7 +44,7 @@ stow .
 
 ### 2. Zsh
 
-Stowed files: `.zshrc`, `.zshenv` (mise shims on `PATH`), `.p10k.zsh`. `~/.local/bin` is on `PATH` — `~/bin` from `stow .` is not, use `~/.local/bin` symlinks for `bin/*`.
+Stowed files: `.zshrc`, `.zshenv` (mise shims on `PATH`), `.p10k.zsh`. `~/.local/bin` is on `PATH` — `~/bin` from `stow .` is not, so each `bin/*` is currently reached through a `~/.local/bin` symlink (see TODO).
 
 ```bash
 # Oh My Zsh
@@ -175,3 +175,11 @@ Appearance → Wallpaper.
 - `mise ls` should show node/python/rust/angular from `.config/mise/config.toml`
 - `gcloud auth list` should show your account
 - `colima status` should show it running (after `colima start`; `bin/pi-docker` auto-starts it)
+
+## TODO
+
+- [ ] Remove the per-file `~/.local/bin` symlinks into `bin/*`
+      (`herdr-sync-pane-labels`, `pi-docker`, `wt`) and put the directory on
+      `PATH` instead — `stow .` already creates `~/bin -> ~/dotfiles/bin`, so a
+      single `export PATH="$HOME/dotfiles/bin:$PATH"` in `.zshrc` replaces all
+      of them (and any future `bin/*` scripts work without a new symlink).
