@@ -14,7 +14,7 @@
 .config/bluedevilglobalrc
 .config/session/
 .config/QtProject.conf
-
+.config/KeePass 
 # Desktop toolkit / display server state
 .config/dconf/
 .config/gtk-3.0/
