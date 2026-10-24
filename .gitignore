@@ -8,6 +8,8 @@
 .config/ktimezonedrc
 .config/kwinrc
 .config/kwinoutputconfig.json
+.config/plasmanotifyrc
+.config/spectaclerc
 .config/bluedevilglobalrc
 .config/session/
 .config/QtProject.conf
