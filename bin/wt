@@ -6,67 +6,59 @@
 # UI, progress output, and messages go to stderr/tty so stdout stays clean
 # for the shell function in ~/dotfiles/.zshrc that cd's into the result:
 #
-# wt() { local d; d=$(command wt "$@") && cd -- "$d" }
+#   wt() { local d; d=$(command wt "$@") && cd -- "$d"; }
 
 emulate -L zsh
 setopt pipefail
+bindkey -e
 
 usage() {
-  local requested_status="${1:-0}"
-  print -u2 -- "Usage: wt [--repo PATH] [--branch NAME] [--path PATH]"
-  print -u2 -- ""
-  print -u2 -- "Create or attach to a git worktree, prompting via fzf for any argument not"
-  print -u2 -- "given explicitly. Prints the resolved worktree path on stdout; wrap with a"
-  print -u2 -- "shell function to cd into it (see ~/dotfiles/.zshrc)."
-  print -u2 -- ""
-  print -u2 -- "  --repo PATH      Path to the target repository (default: fzf picker over ~/repos)"
-  print -u2 -- "  --branch NAME    Branch to check out or create (default: fzf picker + type-to-create)"
-  print -u2 -- "  --path PATH      Worktree directory (default: <repo>/.worktrees/<branch-slug>, editable)"
-  exit "$requested_status"
-}
+  cat <<'EOF'
+Usage: wt [--repo PATH] [--branch NAME] [--path PATH]
 
-die() {
-  print -u2 -- "wt: $*"
-  exit 1
-}
+Create or attach to a git worktree, prompting via fzf for any argument not
+given explicitly. Prints the resolved worktree path on stdout; wrap with a
+shell function to cd into it (see ~/dotfiles/.zshrc).
 
-warn() {
-  print -u2 -- "wt: $*"
+  --repo PATH       Path to the target repository (default: fzf picker over ~/repos)
+  --branch NAME     Branch to check out or create (default: fzf picker + type-to-create)
+  --path PATH       Worktree directory (default: <repo>/.worktrees/<branch-slug>, editable)
+EOF
 }
 
 slugify() {
-  local candidate="${1:l}"
-  candidate="${candidate//[^a-z0-9]/-}"
-  while [[ "$candidate" == *--* ]]; do candidate="${candidate//--/-}"; done
-  candidate="${candidate#-}"
-  candidate="${candidate%-}"
-  print -r -- "$candidate"
+  local s="${1}"
+  s="${s//[^a-z0-9]/-}"
+  while [[ "$s" == *--* ]]; do s="${s//--/-}"; done
+  s="${s#-}"
+  s="${s%-}"
+  [[ -z "$s" ]] && s="worktree"
+  print -r -- "$s"
 }
 
 default_branch_of() {
-  local repo="$1" default_name="" candidate
+  local repo="$1" base candidate
   if [[ -n "$(git -C "$repo" remote 2>/dev/null)" ]]; then
-    default_name=$(git -C "$repo" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null)
-    default_name="${default_name#origin/}"
-    if [[ -z "$default_name" ]]; then
+    base=$(git -C "$repo" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null)
+    base="${base#origin/}"
+    if [[ -z "$base" ]]; then
       for candidate in main master; do
-        if git -C "$repo" rev-parse --verify --quiet "refs/remotes/origin/$candidate" >/dev/null 2>&1; then
-          default_name="$candidate"
+        if git -C "$repo" rev-parse --verify "origin/$candidate" >/dev/null 2>&1; then
+          base="$candidate"
           break
         fi
       done
     fi
   fi
-  # Local-only repos (and remotes lacking origin/HEAD) still fall back here.
-  if [[ -z "$default_name" ]]; then
+  if [[ -z "$base" ]]; then
     for candidate in main master; do
-      if git -C "$repo" rev-parse --verify --quiet "refs/heads/$candidate" >/dev/null 2>&1; then
-        default_name="$candidate"
+      if git -C "$repo" rev-parse --verify "$candidate" >/dev/null 2>&1; then
+        base="$candidate"
         break
       fi
     done
   fi
-  print -r -- "$default_name"
+  print -r -- "$base"
 }
 
 repo=""
@@ -75,106 +67,115 @@ wt_path=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --repo|--branch|--path)
-      [[ $# -ge 2 ]] || die "$1 requires a value"
-      case "$1" in
-        --repo) repo="$2" ;;
-        --branch) branch="$2" ;;
-        --path) wt_path="$2" ;;
-      esac
-      shift 2
-      ;;
-    -h|--help) usage 0 ;;
-    *) die "unknown argument: '$1' (try --help)" ;;
+  --repo)
+    repo="$2"
+    shift 2
+    ;;
+  --branch)
+    branch="$2"
+    shift 2
+    ;;
+  --path)
+    wt_path="$2"
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  *)
+    echo "wt: unknown argument: $1" >&2
+    usage >&2
+    exit 1
+    ;;
   esac
 done
 
-command -v fzf >/dev/null 2>&1 || die "fzf is required"
+if ! command -v fzf >/dev/null 2>&1; then
+  echo "wt: fzf is required" >&2
+  exit 1
+fi
 
 # --- resolve repo ---
 if [[ -z "$repo" ]]; then
-  typeset -a repo_list
-  repo_list=("${(@f)$(find ~/repos -maxdepth 1 -mindepth 1 -type d 2>/dev/null | while read -r candidate_dir; do
-    [[ -e "$candidate_dir/.git" ]] && print -r -- "$candidate_dir"
-  done | sort)}")
-  (( ${#repo_list} )) || die "no git repos found under ~/repos"
-  repo=$(print -rl -- "${repo_list[@]}" | fzf --prompt="repo> --header=worktree repo")
-  [[ -n "$repo" ]] || die "no repo selected"
+  repo_list=$(find ~/repos -maxdepth 1 -mindepth 1 -type d 2>/dev/null | while read -r d; do
+    [[ -e "$d/.git" ]] && print -r -- "$d"
+  done | sort)
+  if [[ -z "$repo_list" ]]; then
+    echo "wt: no git repos found under ~/repos" >&2
+    exit 1
+  fi
+  repo=$(print -r -- "$repo_list" | fzf --prompt="repo ")
+  [[ -z "$repo" ]] && {
+    echo "wt: no repo selected" >&2
+    exit 1
+  }
 fi
-
-[[ -d "$repo" ]] || die "repo not found: $repo"
-repo=$(cd -- "${repo%/}" && pwd -P) || die "cannot enter repo: $repo"
-git -C "$repo" rev-parse --is-inside-work-tree >/dev/null 2>&1 || die "not a git repository: $repo"
+repo=$(cd "${repo}/" 2>/dev/null && pwd) || {
+  echo "wt: repo not found: $repo" >&2
+  exit 1
+}
+if ! git -C "$repo" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "wt: not a git repository: $repo" >&2
+  exit 1
+fi
 
 # --- resolve branch ---
 if [[ -z "$branch" ]]; then
-  typeset picker_output picker_status query selection
-  picker_output=$(git -C "$repo" branch --format='%(refname:short)' \
-    | fzf --prompt="branch> " --header="pick a branch, or type a new name" --print-query)
-  picker_status=$?
-  (( picker_status == 130 )) && die "aborted"
-  (( picker_status == 1 )) && die "no branch selected"
-  query=$(print -r -- "$picker_output" | sed -n '1p')
-  selection=$(print -r -- "$picker_output" | sed -n '2p')
+  output=$(git -C "$repo" branch --format='%(refname:short)' | fzf --prompt="branch " --print-query)
+  fzf_status=$?
+  if [[ $fzf_status -eq 130 ]]; then
+    echo "wt: aborted" >&2
+    exit 1
+  fi
+  query=$(print -r -- "$output" | sed -n '1p')
+  selection=$(print -r -- "$output" | sed -n '2p')
   branch="${selection:-$query}"
 fi
-
-[[ -n "$branch" ]] || die "no branch given"
-git check-ref-format --branch "$branch" >/dev/null 2>&1 || die "invalid branch name: $branch"
+[[ -z "$branch" ]] && {
+  echo "wt: no branch given" >&2
+  exit 1
+}
 
 # --- resolve path ---
 if [[ -z "$wt_path" ]]; then
-  typeset slug
   slug=$(slugify "$branch")
-  [[ -n "$slug" ]] || slug="worktree"
   wt_path="$repo/.worktrees/$slug"
-  vared -p "worktree path: " wt_path </dev/tty >/dev/tty || die "aborted"
+  vared -p "path> " wt_path </dev/tty >/dev/tty
 fi
-
-wt_path="${wt_path/#\~/$HOME}"
-[[ "$wt_path" == /* ]] || wt_path="$PWD/$wt_path"
-wt_path="${wt_path:A}"   # normalize + resolve symlinks in the existing prefix
-
-# Worktrees created inside the repo must not show up as untracked files.
-# Use .git/info/exclude: local-only, never committed.
-if [[ "$wt_path" == "$repo/.worktrees/"* ]] && [[ -d "$repo/.git" ]]; then
-  exclude_file="$repo/.git/info/exclude"
-  mkdir -p "$repo/.git/info"
-  grep -qxF '.worktrees/' "$exclude_file" 2>/dev/null || print -r -- '.worktrees/' >> "$exclude_file"
-fi
+wt_path="${wt_path#}"
+case "$wt_path" in
+/*) ;;
+*) wt_path="$PWD/$wt_path" ;;
+esac
+wt_path="${wt_path%/}"
+[[ -z "$wt_path" ]] && {
+  echo "wt: no path given" >&2
+  exit 1
+}
 
 # --- act ---
-typeset already_worktree="" porcelain_line
-while IFS= read -r porcelain_line; do
-  [[ "$porcelain_line" == "worktree "* ]] || continue
-  if [[ "${porcelain_line#worktree }" == "$wt_path" ]]; then
-    already_worktree="yes"
-    break
-  fi
-done <<< "$(git -C "$repo" worktree list --porcelain)"
+already_worktree=$(git -C "$repo" worktree list --porcelain | awk -v p="$wt_path" '
+/^worktree / { wt = substr($0, 10) }
+wt == p { found = 1 }
+END { if (found) print "yes" }
+')
 
-if [[ -n "$already_worktree" ]]; then
-  warn "$wt_path is already a worktree, attaching"
+if [[ "$already_worktree" == "yes" ]]; then
+  echo "wt: $wt_path is already a worktree, attaching" >&2
 elif git -C "$repo" show-ref --verify --quiet "refs/heads/$branch"; then
   git -C "$repo" worktree add "$wt_path" "$branch" 1>&2 || exit $?
 else
   base=$(default_branch_of "$repo")
-  [[ -n "$base" ]] || die "could not determine default branch for $repo"
-
-  base_ref=""
-  if git -C "$repo" remote get-url origin >/dev/null 2>&1; then
-    if git -C "$repo" fetch --quiet origin "$base" >/dev/null 2>&1; then
-      base_ref="refs/remotes/origin/$base"
-    else
-      warn "failed to fetch origin/$base, branching from local state"
-    fi
+  if [[ -z "$base" ]]; then
+    echo "wt: could not determine default branch for $repo" >&2
+    exit 1
   fi
-  if ! git -C "$repo" rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1; then
-    base_ref="refs/heads/$base"
+  if ! git -C "$repo" fetch origin "$base" >/dev/null 2>&1; then
+    echo "wt: warning: failed to fetch origin/$base, branching from local state" >&2
   fi
-  git -C "$repo" rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1 \
-    || die "base ref not found: $base"
-
+  base_ref="origin/$base"
+  git -C "$repo" rev-parse --verify "$base_ref" >/dev/null 2>&1 || base_ref="$base"
   git -C "$repo" worktree add --no-track -b "$branch" "$wt_path" "$base_ref" 1>&2 || exit $?
 fi
 
