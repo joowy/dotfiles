@@ -9,6 +9,7 @@
 .config/kwinrc
 .config/kwinoutputconfig.json
 .config/plasmanotifyrc
+.config/plasma-welcomerc
 .config/spectaclerc
 .config/bluedevilglobalrc
 .config/session/
