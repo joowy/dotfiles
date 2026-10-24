@@ -1,16 +1,22 @@
 #!/usr/bin/env zsh
-# ABOUTME: Creates or attaches to a git worktree, prompting via fzf/vared for
-# ABOUTME: any of --repo/--branch/--path not given explicitly.
+# ABOUTME: Creates or attaches to a git worktree, prompting via fzf for any of
+# ABOUTME: --repo/--branch/--path not given explicitly.
 #
 # Prints the resolved worktree path as the LAST line of stdout. All picker
 # UI, progress output, and messages go to stderr/tty so stdout stays clean
 # for the shell function in ~/dotfiles/.zshrc that cd's into the result:
 #
 #   wt() { local d; d=$(command wt "$@") && cd -- "$d"; }
+#
+# Worktrees live outside the repository: ~/projects/<project>/<folder>.
+# The project folder defaults to the repo's own directory name, and both the
+# project and the folder are picked via fzf with type-to-create.
 
 emulate -L zsh
 setopt pipefail
 bindkey -e
+
+projects_root="$HOME/projects"
 
 usage() {
   cat <<'EOF'
@@ -22,7 +28,12 @@ shell function to cd into it (see ~/dotfiles/.zshrc).
 
   --repo PATH       Path to the target repository (default: fzf picker over ~/repos)
   --branch NAME     Branch to check out or create (default: fzf picker + type-to-create)
-  --path PATH       Worktree directory (default: <repo>/.worktrees/<branch-slug>, editable)
+  --path PATH       Worktree directory (default: ~/projects/<project>/<branch-slug>).
+
+Interactively the worktree location is two fzf steps: pick a project folder
+under ~/projects (defaults to the repo name, type a new name to create it),
+then pick a folder inside that project (defaults to the branch slug). Typing
+an absolute or ~/ path in either step is honored verbatim.
 EOF
 }
 
@@ -61,6 +72,59 @@ default_branch_of() {
   print -r -- "$base"
 }
 
+warn() {
+  print -u2 -r -- "wt: $*"
+}
+
+canonical_path() {
+  local target="$1" resolved
+  resolved=$(realpath -m -- "$target" 2>/dev/null) || resolved="$target"
+  print -r -- "$resolved"
+}
+
+expand_user_path() {
+  local target="$1"
+  case "$target" in
+  "~") target="$HOME" ;;
+  "~/"*) target="$HOME/${target#\~/}" ;;
+  esac
+  print -r -- "$target"
+}
+
+is_explicit_path() {
+  case "$1" in
+  /* | "~" | "~/"*) return 0 ;;
+  esac
+  return 1
+}
+
+# Picks one line with fzf. Input is piped on stdin; the prefilled query is
+# editable, so pressing enter on a non-matching query creates a new name.
+# Prints the query on line 1 and the accepted selection on line 2 (fzf
+# --print-query), exits 1 when nothing matched, 130 when the user escaped.
+run_fzf_pick() {
+  local prompt="$1" query="$2"
+  fzf --prompt="$prompt" --query="$query" --print-query
+}
+
+typeset -A branch_by_worktree_path
+typeset -A worktree_path_by_branch
+
+load_worktrees() {
+  local line current_path="" worktree_listing
+  worktree_listing=$(git -C "$repo" worktree list --porcelain) || return 1
+  while IFS= read -r line; do
+    case "$line" in
+    "worktree "*) current_path=$(canonical_path "${line#worktree }") ;;
+    "branch refs/heads/"*)
+      branch_by_worktree_path[$current_path]="${line#branch refs/heads/}"
+      worktree_path_by_branch[${line#branch refs/heads/}]=$current_path
+      ;;
+    detached) branch_by_worktree_path[$current_path]="detached" ;;
+    esac
+  done <<<"$worktree_listing"
+}
+
 repo=""
 branch=""
 wt_path=""
@@ -92,7 +156,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if ! command -v fzf >/dev/null 2>&1; then
-  echo "wt: fzf is required" >&2
+  warn "fzf is required"
   exit 1
 fi
 
@@ -102,30 +166,30 @@ if [[ -z "$repo" ]]; then
     [[ -e "$d/.git" ]] && print -r -- "$d"
   done | sort)
   if [[ -z "$repo_list" ]]; then
-    echo "wt: no git repos found under ~/repos" >&2
+    warn "no git repos found under ~/repos"
     exit 1
   fi
   repo=$(print -r -- "$repo_list" | fzf --prompt="repo ")
   [[ -z "$repo" ]] && {
-    echo "wt: no repo selected" >&2
+    warn "no repo selected"
     exit 1
   }
 fi
 repo=$(cd "${repo}/" 2>/dev/null && pwd) || {
-  echo "wt: repo not found: $repo" >&2
+  warn "repo not found: $repo"
   exit 1
 }
 if ! git -C "$repo" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "wt: not a git repository: $repo" >&2
+  warn "not a git repository: $repo"
   exit 1
 fi
 
 # --- resolve branch ---
 if [[ -z "$branch" ]]; then
-  output=$(git -C "$repo" branch --format='%(refname:short)' | fzf --prompt="branch " --print-query)
+  output=$(git -C "$repo" branch --format='%(refname:short)' | run_fzf_pick "branch " "")
   fzf_status=$?
   if [[ $fzf_status -eq 130 ]]; then
-    echo "wt: aborted" >&2
+    warn "aborted"
     exit 1
   fi
   query=$(print -r -- "$output" | sed -n '1p')
@@ -133,46 +197,128 @@ if [[ -z "$branch" ]]; then
   branch="${selection:-$query}"
 fi
 [[ -z "$branch" ]] && {
-  echo "wt: no branch given" >&2
+  warn "no branch given"
   exit 1
 }
 
-# --- resolve path ---
+load_worktrees
+
+# --- resolve worktree path ---
 if [[ -z "$wt_path" ]]; then
+  mkdir -p "$projects_root" || exit $?
+
+  # project folder: ~/projects/<name>, defaulting to the repo's own name
+  project_default="${repo:t}"
+  project_names=()
+  for project_path in "$projects_root"/*(N/); do
+    project_names+=("${project_path:t}")
+  done
+  if (( ! ${project_names[(Ie)$project_default]} )); then
+    project_names=("$project_default" "${project_names[@]}")
+  fi
+  project_list=""
+  for project_name in "${project_names[@]}"; do
+    project_list+="$project_name"$'\n'
+  done
+
+  output=$(printf '%s' "$project_list" | run_fzf_pick "project " "$project_default")
+  fzf_status=$?
+  if [[ $fzf_status -eq 130 ]]; then
+    warn "aborted"
+    exit 1
+  fi
+  query=$(print -r -- "$output" | sed -n '1p')
+  selection=$(print -r -- "$output" | sed -n '2p')
+  project_input="${selection:-$query}"
+  project_input="${project_input%%$'\t'*}"
+  [[ -z "$project_input" ]] && project_input="$project_default"
+
+  if is_explicit_path "$project_input"; then
+    project_directory=$(expand_user_path "$project_input")
+  else
+    project_directory="$projects_root/$project_input"
+  fi
+  while [[ "$project_directory" == */ && ${#project_directory} -gt 1 ]]; do
+    project_directory="${project_directory%/}"
+  done
+
+  # folder inside the project: existing subdirs, annotated with their state
   slug=$(slugify "$branch")
-  wt_path="$repo/.worktrees/$slug"
-  vared -p "path> " wt_path </dev/tty >/dev/tty
+  folder_list=""
+  for folder_path in "$project_directory"/*(N/); do
+    folder_name="${folder_path:t}"
+    canonical_folder=$(canonical_path "$folder_path")
+    if (( ${+branch_by_worktree_path[$canonical_folder]} )); then
+      folder_list+="$folder_name"$'\t'"(worktree, ${branch_by_worktree_path[$canonical_folder]})"$'\n'
+    else
+      folder_list+="$folder_name"$'\t'"(dir, not a worktree)"$'\n'
+    fi
+  done
+  if [[ ! -d "$project_directory/$slug" ]]; then
+    folder_list="$slug"$'\t'"(new worktree, $branch)"$'\n'"$folder_list"
+  fi
+
+  output=$(printf '%s' "$folder_list" | run_fzf_pick "folder " "$slug")
+  fzf_status=$?
+  if [[ $fzf_status -eq 130 ]]; then
+    warn "aborted"
+    exit 1
+  fi
+  query=$(print -r -- "$output" | sed -n '1p')
+  selection=$(print -r -- "$output" | sed -n '2p')
+  folder_input="${selection:-$query}"
+  folder_input="${folder_input%%$'\t'*}"
+  [[ -z "$folder_input" ]] && {
+    warn "no worktree folder given"
+    exit 1
+  }
+
+  if is_explicit_path "$folder_input"; then
+    wt_path=$(expand_user_path "$folder_input")
+  else
+    wt_path="$project_directory/$folder_input"
+  fi
 fi
-wt_path="${wt_path#}"
+
 case "$wt_path" in
 /*) ;;
 *) wt_path="$PWD/$wt_path" ;;
 esac
-wt_path="${wt_path%/}"
+while [[ "$wt_path" == */ && ${#wt_path} -gt 1 ]]; do
+  wt_path="${wt_path%/}"
+done
 [[ -z "$wt_path" ]] && {
-  echo "wt: no path given" >&2
+  warn "no path given"
   exit 1
 }
 
 # --- act ---
-already_worktree=$(git -C "$repo" worktree list --porcelain | awk -v p="$wt_path" '
-/^worktree / { wt = substr($0, 10) }
-wt == p { found = 1 }
-END { if (found) print "yes" }
-')
+wt_canonical=$(canonical_path "$wt_path")
 
-if [[ "$already_worktree" == "yes" ]]; then
-  echo "wt: $wt_path is already a worktree, attaching" >&2
+if (( ${+branch_by_worktree_path[$wt_canonical]} )); then
+  existing_branch="${branch_by_worktree_path[$wt_canonical]}"
+  if [[ "$existing_branch" == "detached" ]]; then
+    warn "warning: $wt_path has a detached HEAD, not branch $branch; attaching"
+  elif [[ "$existing_branch" != "$branch" ]]; then
+    warn "warning: $wt_path is on branch $existing_branch, not $branch; attaching"
+  else
+    warn "$wt_path is already a worktree, attaching"
+  fi
+elif [[ -e "$wt_path" ]]; then
+  warn "warning: $wt_path is not a worktree of $repo; attaching"
+elif (( ${+worktree_path_by_branch[$branch]} )); then
+  wt_path="${worktree_path_by_branch[$branch]}"
+  warn "warning: branch $branch is already checked out at $wt_path; attaching"
 elif git -C "$repo" show-ref --verify --quiet "refs/heads/$branch"; then
   git -C "$repo" worktree add "$wt_path" "$branch" 1>&2 || exit $?
 else
   base=$(default_branch_of "$repo")
   if [[ -z "$base" ]]; then
-    echo "wt: could not determine default branch for $repo" >&2
+    warn "could not determine default branch for $repo"
     exit 1
   fi
   if ! git -C "$repo" fetch origin "$base" >/dev/null 2>&1; then
-    echo "wt: warning: failed to fetch origin/$base, branching from local state" >&2
+    warn "warning: failed to fetch origin/$base, branching from local state"
   fi
   base_ref="origin/$base"
   git -C "$repo" rev-parse --verify "$base_ref" >/dev/null 2>&1 || base_ref="$base"
