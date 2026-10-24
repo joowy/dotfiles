@@ -26,6 +26,8 @@
 .config/gh/hosts.yml
 .config/go/
 .config/libaccounts-glib/
+.config/.mono/
+.config/mozilla/
 
 # Private / sensitive local data
 .config/obsidian/
