@@ -13,9 +13,12 @@ draw beside it. The scene is data; the panel registry draws.
 
 Read all of these before writing anything:
 
-- The solution file for the problem in `/home/joey/repos/LeetCode/Python/`,
-  matched as `{number}.*.py`. Read the whole file; the quotes must come from the
-  exact current text.
+- The frozen solution copy at
+  `/home/joey/repos/leetcode-visualization/viz/solutions/{number}.*.py`. Read the
+  whole file; the quotes must come from the exact current text. The copy is
+  pinned by a checksum: a quote that no longer resolves means the copy is stale,
+  so re-copy the accepted file and update `viz/solutions/provenance.toml` — never
+  edit a copy to make a scene fit.
 - The statement at
   `/home/joey/repos/leetcode-visualization/viz/statements/{number}.md`. If the
   file does not exist yet, continue and say so in your summary.
