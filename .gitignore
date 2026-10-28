@@ -33,3 +33,6 @@
 .config/obsidian/
 .config/obsidian-private-guard/config.json.pre-install-backup
 .pi/agent/extensions/obsidian-private-guard.ts
+
+#.zfunc 
+.zfunc/_herdr
