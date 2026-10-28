@@ -65,6 +65,13 @@ the phase that reads it, and a one-shot result belongs to its answer phase. A
 persistent panel is drawn at every step whose frame holds it, so the reader
 watches the container change instead of watching it disappear and come back.
 
+In a tree recursion, put the reserved `@tree` panel in `persistent` and write its
+`(name, kind)` pair in the first phase. It draws the case's input tree with the
+node this step is about ringed, and the mark follows the innermost frame's `root`
+or `node`, so a nested helper such as `dfs(node)` works too. Drop per-phase
+subtree panels: keep `@tree`, the scalars each phase reads, and `@stack`. `@tree`
+is the one reserved name a scene may mark persistent.
+
 ## See it in the browser
 
 From `/home/joey/repos/leetcode-visualization`, start the server:
@@ -75,8 +82,9 @@ uv run viz serve --port 8123
 
 Open `http://127.0.0.1:8123/problem/{number}?case=N` for a case that reaches
 every phase. Confirm the phase rail lists them all, each panel draws a real
-value for its kind, no core container disappears between phases, each prose line
-describes the state on entry, and no missing-phase note appears.
+value for its kind, no core container disappears between phases, the tree keeps
+one shape while its ring moves, each prose line describes the state on entry, and
+no missing-phase note appears.
 
 ## Fix only the scene
 

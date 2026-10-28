@@ -1,0 +1,390 @@
+#compdef pi
+# zsh completion for pi (AI coding assistant)
+# Generated against pi 1.4.0 — re-check `pi --help` after `pi update`.
+#
+# Install: file must be named `_pi` in a directory on your $fpath
+# (e.g. ~/.zfunc/_pi with `fpath=(~/.zfunc $fpath)` before `compinit`).
+# Then: `rm -f ~/.zcompdump && exec zsh`
+#
+# Conventions (per project instructions): no variable abbreviations.
+# Well-established initialisms (ID, URL, API) are permitted.
+
+__pi_providers() {
+  local -a providers
+  providers=(
+    'anthropic:Anthropic Claude API'
+    'ant-ling:Ant Ling API'
+    'azure-openai-responses:Azure OpenAI Responses'
+    'openai:OpenAI GPT API'
+    'openai-codex:OpenAI Codex (ChatGPT Plus/Pro subscription)'
+    'github-copilot:GitHub Copilot subscription'
+    'deepseek:DeepSeek API'
+    'nvidia:NVIDIA NIM API'
+    'google:Google Gemini API'
+    'google-vertex:Google Vertex AI'
+    'amazon-bedrock:Amazon Bedrock'
+    'mistral:Mistral API'
+    'groq:Groq API'
+    'cerebras:Cerebras API'
+    'cloudflare-ai-gateway:Cloudflare AI Gateway'
+    'cloudflare-workers-ai:Cloudflare Workers AI'
+    'xai:xAI Grok API / subscription'
+    'openrouter:OpenRouter API / OAuth'
+    'vercel-ai-gateway:Vercel AI Gateway'
+    'zai:ZAI Coding Plan (Global)'
+    'zai-coding-cn:ZAI Coding Plan (China)'
+    'opencode:OpenCode Zen'
+    'opencode-go:OpenCode Go'
+    'radius:Radius gateway (OAuth)'
+    'huggingface:Hugging Face'
+    'fireworks:Fireworks AI'
+    'together:Together AI'
+    'baseten:Baseten'
+    'kimi-coding:Kimi For Coding'
+    'minimax:MiniMax'
+    'minimax-cn:MiniMax (China)'
+    'qwen-token-plan:Qwen Token Plan'
+    'qwen-token-plan-individual:Qwen Token Plan (Individual)'
+    'qwen-token-plan-cn:Qwen Token Plan (China)'
+    'xiaomi:Xiaomi MiMo'
+    'xiaomi-token-plan-cn:Xiaomi MiMo Token Plan (China)'
+    'xiaomi-token-plan-ams:Xiaomi MiMo Token Plan (Amsterdam)'
+    'xiaomi-token-plan-sgp:Xiaomi MiMo Token Plan (Singapore)'
+    'llama.cpp:llama.cpp router (local)'
+  )
+  _describe -t providers 'provider' providers
+}
+
+__pi_models() {
+  # Cached-dynamic model completion.
+  # Static fallback keeps TAB fast/offline; cache refreshes at most once per 24h.
+  # Force refresh: `rm -f "${TMPDIR:-/tmp}/pi-models-cache-$UID"`.
+  local cache_file="${TMPDIR:-/tmp}/pi-models-cache-$UID"
+  local cache_age=999999999
+  local current_time
+  local -a models
+  current_time=$(date +%s 2>/dev/null || echo 0)
+  if [[ -f "$cache_file" ]]; then
+    local modified_time
+    modified_time=$(stat -c %Y "$cache_file" 2>/dev/null || stat -f %m "$cache_file" 2>/dev/null || echo 0)
+    cache_age=$(( current_time - modified_time ))
+  fi
+  if [[ ! -f "$cache_file" ]] || (( cache_age > 86400 )); then
+    # Columns: provider + model; offer both `provider/model` and bare `model`.
+    # Refresh is best-effort and never blocks completion on failure.
+    local fresh_list
+    fresh_list=$(pi --list-models 2>/dev/null | tail -n +2 | awk '{print $1"/"$2; print $2}' | sort -u)
+    if [[ -n "$fresh_list" ]]; then
+      printf '%s\n' "$fresh_list" >| "$cache_file" 2>/dev/null
+    fi
+  fi
+  if [[ -f "$cache_file" ]]; then
+    models=(${(f)"$(<$cache_file)"})
+    if (( ${#models} > 0 )); then
+      _describe -t models 'model' models
+      return
+    fi
+  fi
+  # Static fallback when pi is unavailable/offline.
+  models=(
+    'anthropic/claude-sonnet-4-5'
+    'anthropic/claude-haiku-4-5'
+    'anthropic/claude-opus-4-1'
+    'openai/gpt-4o'
+    'openai/gpt-4o-mini'
+    'google/gemini-2.5-pro'
+    'google/gemini-2.5-flash'
+    'xai/grok-4'
+    'openrouter/anthropic/claude-sonnet-4'
+  )
+  _describe -t models 'model' models
+}
+
+__pi_thinking_levels() {
+  local -a levels
+  levels=(off minimal low medium high xhigh max)
+  _describe -t thinking 'thinking level' levels
+}
+
+__pi_tool_names() {
+  local -a tools
+  tools=(
+    'read:Read file contents'
+    'bash:Execute bash commands'
+    'powershell:Execute PowerShell commands on Windows'
+    'edit:Edit files with find/replace'
+    'write:Write files (creates/overwrites)'
+    'grep:Search file contents (read-only, off by default)'
+    'find:Find files by glob pattern (read-only, off by default)'
+    'ls:List directory contents (read-only, off by default)'
+    'codemode:Run a JavaScript script that calls other tools and models'
+  )
+  _describe -t tools 'tool' tools
+}
+
+__pi_mcp_servers() {
+  # Server names from the global mcp.json and the project-local one.
+  local -a servers
+  local configuration_file
+  local server_name
+  for configuration_file in "${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/mcp.json" "${PWD}/.pi/mcp.json"; do
+    [[ -r "$configuration_file" ]] || continue
+    command -v jq >/dev/null 2>&1 || continue
+    while IFS= read -r server_name; do
+      [[ -n "$server_name" ]] && servers+=("$server_name")
+    done < <(jq -r '(.mcpServers // {}) | keys[]' "$configuration_file" 2>/dev/null)
+  done
+  (( ${#servers} == 0 )) && return 1
+  servers=(${(u)servers})
+  _describe -t mcp-servers 'MCP server' servers
+}
+
+_pi_auth() {
+  local context state state_descr line
+  typeset -A option_arguments
+  local return_status=1
+
+  _arguments -C \
+    '1:auth command:(print-api-key print-bearer-token check)' \
+    '*:: :->auth_args' \
+    && return_status=0
+
+  case $state in
+    auth_args)
+      # _arguments -C renumbered words, so the auth command is words[1] here.
+      case $words[1] in
+        print-api-key)
+          _arguments \
+            '--provider[name of provider to print key for]:provider:__pi_providers' \
+            '--model[model to resolve provider from]:model:__pi_models' \
+            '--help[Show help]' \
+            && return_status=0
+          ;;
+        print-bearer-token)
+          _arguments \
+            '--provider[name of provider to print token for]:provider:__pi_providers' \
+            '--model[model to resolve provider from]:model:__pi_models' \
+            '--min-expiry[minimum acceptable token lifetime, e.g. 10m]:duration:' \
+            '--help[Show help]' \
+            && return_status=0
+          ;;
+        check)
+          _arguments \
+            '--provider[check only this provider]:provider:__pi_providers' \
+            '--model[check only the provider for this model]:model:__pi_models' \
+            '--json[Output results as JSON]' \
+            '--credentials[Include the credential in output]' \
+            '--no-refresh[Do not refresh expired OAuth credentials]' \
+            '--help[Show help]' \
+            && return_status=0
+          ;;
+      esac
+      ;;
+  esac
+  return return_status
+}
+
+_pi_mcp() {
+  local -a original_words
+  local original_current
+  if (( CURRENT == 2 )); then
+    # Completing the mcp command itself.
+    _arguments -C \
+      '1:mcp command:(add remove list login logout)'
+    return 0
+  fi
+
+  # Drop the `mcp` word so the subcommand handlers use normal positions.
+  original_words=("${words[@]}")
+  original_current=$CURRENT
+  words=("${words[@]:1}")
+  (( CURRENT-- ))
+
+  case $words[1] in
+    add)
+      _arguments \
+        '1:server name to add or replace:' \
+        '(-l --local)'{-l,--local}'[Use .pi/mcp.json in this project]' \
+        '--url[Streamable HTTP server URL instead of a command]:url:' \
+        '--env[Environment variable for a stdio server (repeatable)]:KEY=VALUE:' \
+        '--cwd[Working directory for a stdio server]:directory:_files -/' \
+        '--header[HTTP header for the server (repeatable)]:KEY=VALUE:' \
+        '--bearer-token-env-var[Send Authorization: Bearer from this env var]:variable name:' \
+        '--oauth-client-id[Pre-registered OAuth client ID]:id:' \
+        '--oauth-client-secret[OAuth client secret]:secret:' \
+        '--oauth-callback-port[Fixed OAuth callback port]:port:' \
+        '--oauth-client-name[Client name sent when registering with the server]:name:' \
+        '--exposure[Tool exposure mode]:mode:(codemode deferred direct hidden)' \
+        '--description[What the server offers, shown in the system prompt]:text:' \
+        '--[End options; remaining arguments are the server command]' \
+        '*::server command or argument:_normal' \
+        '--help[Show help]'
+      ;;
+    remove)
+      _arguments \
+        '1:MCP server:__pi_mcp_servers' \
+        '(-l --local)'{-l,--local}'[Remove from project .pi/mcp.json]' \
+        '--help[Show help]'
+      ;;
+    list)
+      _arguments \
+        '--json[Print the list as JSON]' \
+        '--help[Show help]'
+      ;;
+    login)
+      _arguments \
+        '1:MCP server:__pi_mcp_servers' \
+        '--timeout[Time limit for the whole sign-in in seconds]:seconds:' \
+        '--help[Show help]'
+      ;;
+    logout)
+      _arguments \
+        '1:MCP server:__pi_mcp_servers' \
+        '--help[Show help]'
+      ;;
+  esac
+
+  words=("${original_words[@]}")
+  CURRENT=$original_current
+  return 0
+}
+
+_pi() {
+  local context state state_descr line
+  typeset -A option_arguments
+  local return_status=1
+
+  # Subcommand dispatch: `pi <subcommand> ...` has its own flags.
+  # Drop the command name so the subcommand handlers use normal argument
+  # positions (position 1 is the first word after the subcommand).
+  local -a original_words
+  local original_current
+  local handled=0
+  if (( CURRENT > 2 )); then
+    case $words[2] in
+      install|remove|uninstall|update|list|config|auth|mcp)
+        original_words=("${words[@]}")
+        original_current=$CURRENT
+        words=("${words[@]:1}")
+        (( CURRENT-- ))
+        ;;
+    esac
+  fi
+
+  if (( ${#original_words} )); then
+    case $words[1] in
+      install)
+        _arguments \
+          '1:package source:_files' \
+          '(-l --local)'{-l,--local}'[Install project-locally (.pi/settings.json)]' \
+          '(-a --approve)'{-a,--approve}'[Trust project-local files for this command]' \
+          '(-na --no-approve)'{-na,--no-approve}'[Ignore project-local files for this command]' \
+          '--help[Show help]'
+        handled=1
+        ;;
+      remove|uninstall)
+        _arguments \
+          '1:package source:' \
+          '(-l --local)'{-l,--local}'[Remove from project settings (.pi/settings.json)]' \
+          '(-a --approve)'{-a,--approve}'[Trust project-local files for this command]' \
+          '(-na --no-approve)'{-na,--no-approve}'[Ignore project-local files for this command]' \
+          '--help[Show help]'
+        handled=1
+        ;;
+      update)
+        _arguments \
+          '1:update target:(self pi)' \
+          '--self[Update pi only]' \
+          '--extensions[Update installed packages only]' \
+          '--models[Refresh model catalogs only]' \
+          '--all[Update pi and installed packages]' \
+          '--extension[Update one package only]:package source:' \
+          '--force[Reinstall pi even if current version is latest]' \
+          '(-a --approve)'{-a,--approve}'[Trust project-local files for this command]' \
+          '(-na --no-approve)'{-na,--no-approve}'[Ignore project-local files for this command]' \
+          '--help[Show help]'
+        handled=1
+        ;;
+      list)
+        _arguments \
+          '(-a --approve)'{-a,--approve}'[Trust project-local files for this command]' \
+          '(-na --no-approve)'{-na,--no-approve}'[Ignore project-local files for this command]' \
+          '--help[Show help]'
+        handled=1
+        ;;
+      config)
+        _arguments \
+          '(-l --local)'{-l,--local}'[Edit project overrides (.pi/settings.json)]' \
+          '(-a --approve)'{-a,--approve}'[Trust project-local files for this command]' \
+          '(-na --no-approve)'{-na,--no-approve}'[Ignore project-local files for this command]' \
+          '--help[Show help]'
+        handled=1
+        ;;
+      auth)
+        _pi_auth
+        handled=1
+        ;;
+      mcp)
+        _pi_mcp
+        handled=1
+        ;;
+    esac
+
+    # Restore the real command line before any fallthrough.
+    words=("${original_words[@]}")
+    CURRENT=$original_current
+  fi
+
+  (( handled )) && return 0
+
+  _arguments -C -S \
+    '1:subcommand:(install remove uninstall update list config auth mcp)' \
+    '*:message or @file:_files' \
+    '--provider[Provider name]:provider:__pi_providers' \
+    '--model[Model pattern or ID (provider/id, optional :thinking)]:model:__pi_models' \
+    '--api-key[API key (overrides env vars)]:key:' \
+    '--system-prompt[Replace default system prompt]:text:' \
+    '--append-system-prompt[Append to system prompt (repeatable)]:text or file:_files' \
+    '--mode[Output mode]:mode:(text json rpc)' \
+    '(-p --print)'{-p,--print}'[Non-interactive mode: process prompt and exit]' \
+    '(-c --continue)'{-c,--continue}'[Continue previous session]' \
+    '(-r --resume)'{-r,--resume}'[Select a session to resume]' \
+    '--session[Use specific session file or partial UUID]:session:_files' \
+    '--session-id[Use exact project session ID, creating it if missing]:id:' \
+    '--fork[Fork session file or partial UUID into a new session]:session:_files' \
+    '--session-dir[Directory for session storage and lookup]:directory:_files -/' \
+    '--no-session[Do not save session (ephemeral)]' \
+    '(-n --name)'{-n,--name}'[Set session display name]:name:' \
+    '--models[Comma-separated model patterns for Ctrl+P cycling]:patterns:__pi_models' \
+    '(-nt --no-tools)'{-nt,--no-tools}'[Disable all tools by default]' \
+    '(-nbt --no-builtin-tools)'{-nbt,--no-builtin-tools}'[Disable built-in tools, keep extension tools]' \
+    '(-t --tools)'{-t,--tools}'[Allowlist of tool names to enable]:tools:__pi_tool_names' \
+    '(-xt --exclude-tools)'{-xt,--exclude-tools}'[Denylist of tool names to disable]:tools:__pi_tool_names' \
+    '--thinking[Set thinking level]:level:__pi_thinking_levels' \
+    '(-e --extension)'{-e,--extension}'[Load an extension file (repeatable)]:file:_files' \
+    '(-ne --no-extensions)'{-ne,--no-extensions}'[Disable extension discovery]' \
+    '--no-mcp[Disable built-in MCP support: no servers connect and no MCP tools]' \
+    '--skill[Load a skill file or directory (repeatable)]:path:_files' \
+    '(-ns --no-skills)'{-ns,--no-skills}'[Disable skills discovery and loading]' \
+    '--prompt-template[Load a prompt template file or directory (repeatable)]:path:_files' \
+    '(-np --no-prompt-templates)'{-np,--no-prompt-templates}'[Disable prompt template discovery]' \
+    '--theme[Load a theme file or directory (repeatable)]:path:_files' \
+    '--use-theme[Set the initial interactive theme for this run]:theme:' \
+    '--no-themes[Disable theme discovery and loading]' \
+    '(-nc --no-context-files)'{-nc,--no-context-files}'[Disable AGENTS.md and CLAUDE.md discovery]' \
+    '--export[Export session file to HTML and exit]:file:_files' \
+    '--list-models[List available models (optional fuzzy search)]::search:__pi_models' \
+    '--verbose[Force verbose startup]' \
+    '--tui-mode[TUI mode]:mode:(regular fullscreen)' \
+    '(-a --approve)'{-a,--approve}'[Trust project-local files for this run]' \
+    '(-na --no-approve)'{-na,--no-approve}'[Ignore project-local files for this run]' \
+    '--offline[Disable startup network operations]' \
+    '--[End option parsing; remaining args are prompts or @files]' \
+    '(-h --help)'{-h,--help}'[Show help]' \
+    '(-v --version)'{-v,--version}'[Show version number]' \
+    && return_status=0
+
+  return return_status
+}
+
+_pi "$@"
