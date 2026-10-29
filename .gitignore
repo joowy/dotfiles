@@ -37,3 +37,11 @@
 #.zfunc 
 .zfunc/_herdr
 .config/kwin_dialogsrc
+
+.config/user-dirs.dirs
+.config/user-dirs.locale
+
+# Zoom
+.config/zoom/
+.config/zoom.conf
+.config/zoomus.conf
