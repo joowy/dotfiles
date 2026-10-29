@@ -9,6 +9,30 @@ A scene picks the few lines of an accepted solution that explain its algorithm,
 gives each line a phase and one sentence of prose, and chooses the values to
 draw beside it. The scene is data; the panel registry draws.
 
+## Solutions carry no documentation
+
+Strip the frozen copy down to code before writing a scene. Delete the module
+docstring, any Intuition/Approach/Complexity block, any `@lc` header, the
+TypedDict and helper docstrings, and every comment above the `tests` list. Keep
+the `tests` list and the `VIZ_CASE` guard, which the runner requires.
+
+The page draws the whole file in a code card that has no height cap and no
+scroll-to-current-line, so the card scrolls the page instead of itself. Each
+line above the algorithm is about 19px of that card. The 542 copy carried 93
+lines of documentation above `class Solution`, which put its first traced line
+roughly 1800px down the page, past the bottom of the window. A stripped copy
+starts the same algorithm at line 12.
+
+Stripping never changes the steps. The tracer emits a step only for a code line,
+and every quote re-resolves from normalized text on each load, so a stripped
+copy keeps its scenes as long as the quoted lines survive intact. Never quote a
+comment line.
+
+`tests/test_solution_style.py` enforces the rule. After stripping, recompute the
+file's sha256 and set `stripped = true` on its row in
+`viz/solutions/provenance.toml`; `tests/test_golden_solutions.py` pins the
+digest.
+
 ## Read first
 
 Read all of these before writing anything:
@@ -17,8 +41,9 @@ Read all of these before writing anything:
   `/home/joey/repos/leetcode-visualization/viz/solutions/{number}.*.py`. Read the
   whole file; the quotes must come from the exact current text. The copy is
   pinned by a checksum: a quote that no longer resolves means the copy is stale,
-  so re-copy the accepted file and update `viz/solutions/provenance.toml` — never
-  edit a copy to make a scene fit.
+  so re-copy the accepted file, strip its documentation, and update
+  `viz/solutions/provenance.toml` — never reshape the copy's code to make a
+  scene fit.
 - The statement at
   `/home/joey/repos/leetcode-visualization/viz/statements/{number}.md`. If the
   file does not exist yet, continue and say so in your summary.
@@ -83,15 +108,17 @@ uv run viz serve --port 8123
 Open `http://127.0.0.1:8123/problem/{number}?case=N` for a case that reaches
 every phase. Confirm the phase rail lists them all, each panel draws a real
 value for its kind, no core container disappears between phases, the tree keeps
-one shape while its ring moves, each prose line describes the state on entry, and
-no missing-phase note appears.
+one shape while its ring moves, each prose line describes the state on entry, no
+missing-phase note appears, and the highlighted line sits near the top of the
+code card rather than below the fold.
 
 ## Fix only the scene
 
 If the page shows a loader error, read the message: it names the scene file and
 the quote. Fix the quote, the phase, the panel name, or the log template in the
-scene. Never edit the accepted solution to make a scene fit, and never ignore a
-missing panel or a missing phase silently. Re-run the scene check until the page
-renders cleanly.
+scene. Never change the copy's code to make a scene fit. Stripping documentation
+is the one sanctioned edit to a copy, and it happens at freeze time, not to
+rescue a scene. Never ignore a missing panel or a missing phase silently. Re-run
+the scene check until the page renders cleanly.
 
 Stop the server when finished.
