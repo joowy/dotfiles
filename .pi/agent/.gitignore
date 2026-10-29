@@ -7,6 +7,8 @@
 !/extensions/herdr-agent-state.ts
 !/agents/
 !/agents/**
+!/prompts/
+!/prompts/**
 !settings.json
 
 # Permission review log — machine-generated, do not track.
