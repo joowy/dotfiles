@@ -6,33 +6,21 @@
     "npm:@juicesharp/rpiv-ask-user-question",
     {
       "source": "npm:@gotgenes/pi-permission-system",
-      "extensions": [
-        "+src/index.ts"
-      ]
+      "extensions": ["+src/index.ts"]
     },
     "npm:pi-footer",
     "npm:pi-context-view",
     "npm:pi-subagents-lite",
     "npm:pi-slash-suggest"
   ],
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "defaultThinkingLevel": "high",
-  "skills": [
-    "~/.claude/skills",
-    "~/.codex/skills",
-    "../.claude/skills"
-  ],
-  "newLine": [
-    "shift+enter",
-    "ctrl+j"
-  ],
+  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
+  "newLine": ["shift+enter", "ctrl+j"],
   "defaultProvider": "opencode-go",
   "enabledModels": [
     "opencode-go/deepseek-v4.1-flash",
-    "opencode-go/glm-5.3",
-    "opencode-go/glm-5.3-flash",
+    "opencode-go/gemini-4-argon",
     "llama.cpp/*"
   ],
   "hideThinkingBlock": true,
