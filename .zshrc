@@ -103,6 +103,17 @@ wt() {
   d=$(command wt "$@") && cd -- "$d"
 }
 
+notify() {
+  "$@"
+  local rc=$?
+  (($+commands[herdr])) || return $rc
+  if ((rc == 0)); then
+    herdr notification show "done: $1" --body "$*" --sound done
+  else
+    herdr notification show "failed ($rc): $1" --body "$*" --sound request
+  fi
+  return $rc
+}
 # >>> obsidian-private-guard (pi-safe) >>>
 export PATH="$HOME/.pi/agent/bin:$PATH"
 # Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
