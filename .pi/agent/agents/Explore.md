@@ -2,6 +2,7 @@
 name: Explore
 description: Fast codebase exploration agent (read-only), can ask clarifying questions
 tools: [read, bash, grep, find, ask_user_question, codemode, tool_search]
+model: opencode-go/deepseek-v4.1-flash
 ---
 
 # CRITICAL: READ-ONLY MODE - NO FILE MODIFICATIONS

@@ -114,6 +114,8 @@ notify() {
   fi
   return $rc
 }
+# Pi
+export PATH="/home/joey/.pi/agent/bin:$PATH"
 # >>> obsidian-private-guard (pi-safe) >>>
 export PATH="$HOME/.pi/agent/bin:$PATH"
 # Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
@@ -125,6 +127,3 @@ pi() {
   "$HOME/.pi/agent/bin/pi-safe" "$@"
 }
 # <<< obsidian-private-guard (pi-safe) <<<
-
-# Pi
-export PATH="/home/joey/.pi/agent/bin:$PATH"

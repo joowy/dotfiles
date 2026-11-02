@@ -2,6 +2,7 @@
 name: reviewer
 description: Versatile review specialist for code diffs, plans, proposed solutions, codebase health, and PR/issue validation
 tools: [read, grep, bash, ask_user_question, codemode, tool_search]
+model: opencode-go/gemini-4-argon
 thinking: high
 include_system_prompt: false
 include_context_files: true

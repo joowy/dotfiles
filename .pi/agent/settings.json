@@ -1,33 +1,19 @@
 {
-  "lastChangelogVersion": "1.4.0",
+  "lastChangelogVersion": "1.5.0",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
     "npm:@juicesharp/rpiv-ask-user-question",
-    {
-      "source": "npm:@gotgenes/pi-permission-system",
-      "extensions": [
-        "+src/index.ts"
-      ]
-    },
     "npm:pi-footer",
     "npm:pi-context-view",
     "npm:pi-subagents-lite",
-    "npm:pi-slash-suggest"
+    "npm:pi-slash-suggest",
+    "npm:@gotgenes/pi-permission-system"
   ],
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "defaultThinkingLevel": "high",
-  "skills": [
-    "~/.claude/skills",
-    "~/.codex/skills",
-    "../.claude/skills"
-  ],
-  "newLine": [
-    "shift+enter",
-    "ctrl+j"
-  ],
+  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
+  "newLine": ["shift+enter", "ctrl+j"],
   "defaultProvider": "opencode-go",
   "enabledModels": [
     "opencode-go/deepseek-v4.1-flash",
@@ -40,5 +26,9 @@
   "showCacheMissNotices": true,
   "quietStartup": false,
   "treeFilterMode": "user-only",
-  "tuiMode": "regular"
+  "tuiMode": "regular",
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-footer\",\"scope\":\"user\"}": "0.5.1",
+    "{\"source\":\"npm:@gotgenes/pi-permission-system\",\"scope\":\"user\"}": "42.0.0"
+  }
 }
