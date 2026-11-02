@@ -4,22 +4,20 @@ description: Parallel subagents research
 
 Launch parallel research agents to build a grounded answer to the current question or decision.
 
-Use the `Agent` tool. Agents run with fresh context, so researchers and scouts must inspect sources directly instead of relying on the main conversation history. Give each agent the full question, scope, and any needed background in its prompt.
+Use the `Agent` tool with `Explore` agents. Agents run with fresh context, so they must inspect sources directly instead of relying on the main conversation history. Give each agent the full question, scope, and any needed background in its prompt.
 
-Use a combination of `researcher` and `scout` agents:
-- Use `researcher` for web, docs, standards, ecosystem, recent changes, benchmarks, and primary-source evidence.
-- Use `scout` for local codebase context, existing implementation patterns, repo constraints, and files that would be affected.
+Use `Explore` agents for local codebase context: existing implementation patterns, repo constraints, and files that would be affected. Gather external evidence yourself with the `ketch` skill and direct fetches; you have no research agent.
 
-Give each agent a distinct angle. Unless I specify angles, use these three:
+Give each angle a distinct owner. Unless I specify angles, use these three:
 
 1. External evidence
-   Use `researcher` to find current, authoritative sources: official docs, specs, release notes, benchmarks, issue threads, or primary explanations.
+   Do this yourself, not in an agent. Use the `ketch` skill to find current, authoritative sources: official docs, specs, release notes, benchmarks, issue threads, or primary explanations.
 
 2. Local code context
-   Use `scout` to inspect the repository for relevant files, existing patterns, constraints, tests, and likely integration points.
+   Use an `Explore` agent to inspect the repository for relevant files, existing patterns, constraints, tests, and likely integration points.
 
 3. Practical tradeoffs
-   Use `researcher` or `scout`, whichever fits the question, to compare options, risks, edge cases, maintenance cost, and what would be easiest to validate.
+   Use an `Explore` agent for local cost and risk, and reason about the rest yourself. Compare options, risks, edge cases, maintenance cost, and what would be easiest to validate.
 
 Adapt the angles when the question calls for it:
 - Library/API questions: include official docs and recent examples.
@@ -28,17 +26,16 @@ Adapt the angles when the question calls for it:
 - UI/product questions: include user flow, accessibility, design precedent, and implementation constraints.
 - Time-sensitive topics: include a recent-developments angle and prefer recent sources.
 
-Prefer two or three strong agents over many vague ones. The parent agent should frame the question and assign angles; the child agents should research or scout, not invent broad plans.
+Prefer two or three strong angles over many vague ones. The parent agent should frame the question and assign angles; child agents should explore, not invent broad plans.
 
 Ask each agent to return concise findings with evidence:
 - file paths and line ranges for local findings
-- source links for external findings
 - confidence level and gaps
 - recommended next step or decision implication
 
 Do not ask agents to edit files. This is a research pass only unless I explicitly ask for implementation.
 
-After the agents return, synthesize the answer into:
+After the agents return, synthesize your own findings and theirs into:
 - what we know
 - what the local codebase implies
 - tradeoffs and risks
