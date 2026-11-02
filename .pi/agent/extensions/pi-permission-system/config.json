@@ -1,4 +1,6 @@
 {
+  "authorizerChain": ["permission-judge"],
+  "promptTimeoutMs": 300000,
   "permission": {
     "*": "allow",
     "path": {
@@ -10,7 +12,9 @@
     },
     "bash": {
       "*": "allow",
+      "rm": "ask",
       "rm -rf *": "deny",
+      "* rm -rf *": "deny",
       "sudo *": "deny",
       "git push": "deny",
       "* push *": "deny",

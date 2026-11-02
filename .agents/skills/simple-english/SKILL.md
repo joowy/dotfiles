@@ -1,8 +1,7 @@
 ---
-description: Write or rewrite text in plain, layman-readable English (ASD-STE100 style)
-argument-hint: "[text to write or rewrite, or CHECK <text>]"
+name: simple-english
+description: Write or rewrite text in plain, layman-readable English modeled on ASD-STE100. Use when the user asks for plain English, simple English, STE, or layman-readable prose, or asks to CHECK text against the rules. Covers documentation, error messages, runbooks, incident reports, release notes, commit messages, agent prompts, and UI copy.
 ---
-Task: $@
 
 # Simple English
 
@@ -25,7 +24,7 @@ When asked to write or rewrite documentation, apply these rules to the prose:
 11. **Format for the eye, not for decoration.** No bold lead-ins, no bold as emphasis, no emoji, no heading over two sentences. A vertical list is for three or more parallel items or steps: colon on the lead-in, uppercase start, one instruction per item.
 12. **Warnings: command or condition first, then the risk.** "Do not run this against production. The command deletes rows."
 
-Use American spelling. `/home/joey/.pi/agent/prompts/simple-english/references/word-swaps.md` maps the overused words to plain ones. For an error message, a runbook, an incident report, release notes, a commit message, or UI copy, read `/home/joey/.pi/agent/prompts/simple-english/references/use-cases.md` first: it names the mode and the pattern for each.
+Use American spelling. `references/word-swaps.md` maps the overused words to plain ones. For an error message, a runbook, an incident report, release notes, a commit message, or UI copy, read `references/use-cases.md` first: it names the mode and the pattern for each.
 
 **Before (real AI output):**
 
@@ -62,9 +61,9 @@ Every chat reply, in every mode, follows these rules. Read them last, apply them
 
 ## Modes
 
-**Plain** is the default and is all of the above. **Strict** applies when the user names STE, ASD-STE100, or compliance: read `/home/joey/.pi/agent/prompts/simple-english/references/strict-vocabulary.md` before you draft the document, and say once that no tool guarantees compliance. The reply stays Plain in every mode.
+**Plain** is the default and is all of the above. **Strict** applies when the user names STE, ASD-STE100, or compliance: read `references/strict-vocabulary.md` before you draft the document, and say once that no tool guarantees compliance. The reply stays Plain in every mode.
 
-When asked to CHECK text instead of writing it, first open `/home/joey/.pi/agent/prompts/simple-english/references/rule-catalog.md`. Then report each violation as: rule number quoted from that file, the offending text, a compliant rewrite. Never cite a rule number from memory. When the user asked for compliance, end with one sentence: no tool can guarantee ASD-STE100 compliance, and the standard is a free download at asd-ste100.org.
+When asked to CHECK text instead of writing it, first open `references/rule-catalog.md`. Then report each violation as: rule number quoted from that file, the offending text, a compliant rewrite. Never cite a rule number from memory. When the user asked for compliance, end with one sentence: no tool can guarantee ASD-STE100 compliance, and the standard is a free download at asd-ste100.org.
 
 ## Limits
 
@@ -74,7 +73,7 @@ These rules are for facts and instructions, not marketing copy or brand writing:
 
 Read these files from disk when the mode needs them:
 
-- `/home/joey/.pi/agent/prompts/simple-english/references/rule-catalog.md` — the 53 rules of Issue 9 with software examples, for CHECK mode
-- `/home/joey/.pi/agent/prompts/simple-english/references/strict-vocabulary.md` — the dictionary discipline for Strict mode
-- `/home/joey/.pi/agent/prompts/simple-english/references/word-swaps.md` — slop-to-plain word map
-- `/home/joey/.pi/agent/prompts/simple-english/references/use-cases.md` — mode and pattern for error messages, runbooks, incident reports, release notes, commits, agent prompts, UI copy, translation prep
+- `references/rule-catalog.md` — the 53 rules of Issue 9 with software examples, for CHECK mode
+- `references/strict-vocabulary.md` — the dictionary discipline for Strict mode
+- `references/word-swaps.md` — slop-to-plain word map
+- `references/use-cases.md` — mode and pattern for error messages, runbooks, incident reports, release notes, commits, agent prompts, UI copy, translation prep

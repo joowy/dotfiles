@@ -10,6 +10,7 @@ fi
 #--------------------------------------------------
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_THEME="powerlevel10k/powerlevel10k"
+export AUTOSWITCH_SILENT=1
 
 export plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab npm autoswitch_virtualenv)
 
