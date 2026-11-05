@@ -11,24 +11,15 @@
     "npm:@gotgenes/pi-permission-system",
     "npm:@narumitw/pi-usage"
   ],
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "defaultThinkingLevel": "high",
-  "skills": [
-    "~/.claude/skills",
-    "~/.codex/skills",
-    "../.claude/skills"
-  ],
-  "newLine": [
-    "shift+enter",
-    "ctrl+j"
-  ],
+  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
+  "newLine": ["shift+enter", "ctrl+j"],
   "defaultProvider": "opencode-go",
   "enabledModels": [
     "opencode-go/deepseek-v4.1-flash",
     "opencode-go/gemini-4-argon",
-    "opencode-go/glm-5.3-flash",
+    "opencode-go/kimi-k3.1-pro",
     "llama.cpp/*"
   ],
   "hideThinkingBlock": true,
@@ -39,6 +30,8 @@
   "tuiMode": "regular",
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-footer\",\"scope\":\"user\"}": "0.5.1",
-    "{\"source\":\"npm:@gotgenes/pi-permission-system\",\"scope\":\"user\"}": "42.0.0"
+    "{\"source\":\"npm:@gotgenes/pi-permission-system\",\"scope\":\"user\"}": "42.0.0",
+    "{\"source\":\"npm:pi-context-view\",\"scope\":\"user\"}": "0.8.3",
+    "{\"source\":\"npm:@narumitw/pi-usage\",\"scope\":\"user\"}": "0.69.2"
   }
 }
