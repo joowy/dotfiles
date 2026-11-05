@@ -19,7 +19,8 @@
       "git push": "deny",
       "* push *": "deny",
       "brew *": "deny",
-      "pacman *": "deny"
+      "pacman *": "deny",
+      "yay *": "deny"
     },
     "external_directory": "allow"
   }
