@@ -20,7 +20,7 @@ fpath=(~/.zfunc $fpath)
 # Environment Variables & PATH
 #--------------------------------------------------
 export PATH=/opt/cuda/bin:$PATH
-export PATH=/home/joey/.local/bin:$PATH
+export PATH="$HOME/.local/bin:$PATH"
 export VULKAN_SDK=~/vulkan/1.4.341.1/x86_64
 export PATH=$VULKAN_SDK/bin:$PATH
 export LD_LIBRARY_PATH=$VULKAN_SDK/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
@@ -29,8 +29,8 @@ export PKG_CONFIG_PATH=$VULKAN_SDK/share/pkgconfig:$VULKAN_SDK/lib/pkgconfig${PK
 #--------------------------------------------------
 # Google Cloud SDK
 #--------------------------------------------------
-if [ -f '/home/joey/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/home/joey/Downloads/google-cloud-sdk/path.zsh.inc'; fi
-if [ -f '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f "$HOME/Downloads/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/Downloads/google-cloud-sdk/path.zsh.inc"; fi
+if [ -f "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/Downloads/google-cloud-sdk/completion.zsh.inc"; fi
 
 #--------------------------------------------------
 # Editor
@@ -97,7 +97,7 @@ case ":$PATH:" in
 *) eval "$(mise activate zsh --shims)" ;;
 esac
 
-export PATH="$HOME/dotfiles/bin:$PATH"
+export PATH="$HOME/bin:$PATH"
 # git worktrees: wt prints the path, then cd into it
 wt() {
   local d
@@ -116,7 +116,7 @@ notify() {
   return $rc
 }
 # Pi
-export PATH="/home/joey/.pi/agent/bin:$PATH"
+export PATH="$HOME/.pi/agent/bin:$PATH"
 # >>> obsidian-private-guard (pi-safe) >>>
 export PATH="$HOME/.pi/agent/bin:$PATH"
 # Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
