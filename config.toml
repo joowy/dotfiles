@@ -16,16 +16,11 @@ dotfiles.root = "{{ mise_config_dir }}"
 python.uv_venv_auto = false
 
 # --- dotfile group ----------------------------------------------------------
-# One group deploys the whole checkout into $HOME at the same paths, which is
-# what `stow .` used to do.
 [dotfile_groups.home]
 root = "."
 target = "~"
 mode = "symlink-each"
-# Only git-indexed files deploy. This is the permanent fix for "stow links
-# files git ignores": generated, gitignored state cannot leak into $HOME.
 manifest = "git"
-# Mirror the relative symlinks stow created, so the checkout can move with $HOME.
 relative = true
 
 # Tracked files that belong to the repository, never to $HOME.
@@ -47,9 +42,8 @@ exclude = [
 ]
 
 [dotfile_groups.home.entries]
-# Whole-tree links, matching the directory folding stow did.
 "~/bin" = { mode = "symlink" }
-"~/images" = { mode = "symlink" }        # referenced by absolute path from the KDE applet config
+"~/images" = { mode = "symlink" }     # referenced by absolute path from the KDE applet config
 "~/wallpapers" = { mode = "symlink" }
 # .pi, .zfunc, and .agents stay real directories with one link per file, so the
 # tools that write into them (herdr completions, the skill lock file, pi
@@ -66,7 +60,7 @@ exclude = [
 node = "lts"
 python = "3.14"
 rust = "stable"
-uv = "latest"            # Python project and package management; mise owns it, not pacman
+uv = "latest"                         # Python project and package management; mise owns it, not pacman
 "npm:@angular/cli" = "latest"
 "npm:@googleworkspace/cli" = "latest"
 "github:agavra/tuicr" = "latest"
@@ -93,10 +87,6 @@ uv = "latest"            # Python project and package management; mise owns it, 
 "pacman:go" = "latest"
 "pacman:cmake" = "latest"
 "pacman:github-cli" = "latest"
-# Keep stow until the cutover is verified on a real machine, then delete this
-# line. `base-devel` is a package group, so pacman -Q never reports it as
-# installed; a fresh machine needs it before yay can build anything.
-"pacman:stow" = "latest"
 
 # --- login shell ------------------------------------------------------------
 # Replaces the manual `chsh -s $(which zsh)` the old README asked for.

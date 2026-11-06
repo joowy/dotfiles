@@ -37,11 +37,6 @@
 .config/obsidian-private-guard/config.json.pre-install-backup
 .pi/agent/extensions/obsidian-private-guard.ts
 
-# Transitional: the old global mise config at .config/mise/config.toml is gone
-# from the tree (the checkout root is the global config now), but the file stays
-# on disk untracked so the stow-based setup keeps working until the cutover.
-.config/mise/
-
 # The checkout keeps a per-machine environment selection and the mise lockfile
 # next to the tracked config. The lockfile is tracked once generated; the local
 # miserc is never tracked.
