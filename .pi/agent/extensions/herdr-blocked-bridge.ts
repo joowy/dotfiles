@@ -6,6 +6,16 @@
 // pi core emits it. Pi core does emit "ui_prompt_start" / "ui_prompt_end"
 // around every blocking UI prompt, so those are forwarded.
 //
+// The bridge also reports "blocked" over the socket itself. Herdr accepts a
+// pane state report only when its `seq` is higher than the last one for that
+// pane and source. The managed integration counts up from its load time
+// (`Date.now() * 1000`, +1 per report), while this bridge takes
+// `Date.now() * 1000` on every report, so once the bridge publishes anything
+// (a subagent run is enough) every later managed report is stale and dropped.
+// Relaying "herdr:blocked" alone therefore leaves the pane stuck on the
+// bridge's last "working" while a prompt waits. Reporting blocked here keeps
+// the prompt state on the sequence this bridge owns.
+//
 // Bridge 2 — background subagents → working:
 // The main agent settles as soon as it starts background workers, so a pane
 // with an idle main agent and a running worker is classified "idle". This
@@ -106,7 +116,6 @@ export default function (pi: ExtensionAPI) {
 	let packageBusyActive = false;
 	let packageBusyLabel: string | undefined;
 	const liveChildSessions = new Set<string>();
-	let reportedBusyWorking = false;
 	let sessionRef: Record<string, unknown> = {};
 	let publishTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -125,7 +134,7 @@ export default function (pi: ExtensionAPI) {
 		}
 	}
 
-	function sendState(state: "working" | "idle", message: string | undefined) {
+	function sendState(state: "working" | "idle" | "blocked", message: string | undefined) {
 		debugLog("send", { state, message });
 		void sendPayload(
 			{
@@ -171,11 +180,9 @@ export default function (pi: ExtensionAPI) {
 			packageBusyActive,
 			liveChildSessions: liveChildSessions.size,
 			mainActive,
-			reportedBusyWorking,
 		});
 		if (!rootSession) return;
-		// A visible prompt takes precedence: the managed integration reports
-		// "blocked" for it, and needing user input outranks background work.
+		// A visible prompt takes precedence and is published by its own handler.
 		if (uiPromptDepth > 0) return;
 		const runningSubagents = liveChildSessions.size;
 		if (packageBusyActive || runningSubagents > 0) {
@@ -185,16 +192,11 @@ export default function (pi: ExtensionAPI) {
 					? (packageBusyLabel ?? "subagent running")
 					: `${runningSubagents} subagent${runningSubagents === 1 ? "" : "s"} running`,
 			);
-			reportedBusyWorking = true;
 			return;
 		}
-		// The busy run ended. The managed integration has no transition for
-		// this, so repair the state it last reported only if this bridge had
-		// previously overridden it with busy-driven "working".
-		if (reportedBusyWorking) {
-			reportedBusyWorking = false;
-			sendState(mainActive ? "working" : "idle", undefined);
-		}
+		// Always re-assert: the managed integration's own report for this
+		// transition carries a stale sequence and is dropped.
+		sendState(mainActive ? "working" : "idle", undefined);
 	}
 
 	function schedulePublish() {
@@ -208,20 +210,24 @@ export default function (pi: ExtensionAPI) {
 
 	// Bridge 1: blocking UI prompts (permission dialogs, confirms, selects).
 	pi.on("ui_prompt_start", (event) => {
+		const firstPrompt = uiPromptDepth === 0;
 		uiPromptDepth += 1;
 		const prompt = event as unknown as PromptEvent;
-		pi.events.emit("herdr:blocked", {
-			active: true,
-			label: prompt.title ?? prompt.kind ?? "waiting for input",
-		});
+		const label = prompt.title ?? prompt.kind ?? "waiting for input";
+		pi.events.emit("herdr:blocked", { active: true, label });
+		if (firstPrompt && rootSession) {
+			sendState("blocked", label);
+		}
 	});
 
 	pi.on("ui_prompt_end", () => {
 		uiPromptDepth = Math.max(0, uiPromptDepth - 1);
 		pi.events.emit("herdr:blocked", { active: false });
-		// A prompt closing while subagents run leaves the pane working, but the
-		// managed integration has no transition to report — re-assert it.
-		schedulePublish();
+		// The prompt is gone: publish the real state now, because the managed
+		// integration's report for the same transition is stale and dropped.
+		if (uiPromptDepth === 0) {
+			publishLifecycle();
+		}
 	});
 
 	// Bridge 2: background subagent runs reported by pi-subagents.
