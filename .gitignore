@@ -33,8 +33,14 @@
 
 # Private / sensitive local data
 .config/obsidian/
+.config/obsidian-private-guard/config.json
 .config/obsidian-private-guard/config.json.pre-install-backup
 .pi/agent/extensions/obsidian-private-guard.ts
+
+# The checkout keeps a per-machine environment selection and the mise lockfile
+# next to the tracked config. The lockfile is tracked once generated; the local
+# miserc is never tracked.
+miserc.local.toml
 
 #.zfunc 
 .zfunc/_herdr

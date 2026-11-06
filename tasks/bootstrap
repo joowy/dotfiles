@@ -1,0 +1,169 @@
+#!/usr/bin/env bash
+# mise bootstrap task — run order step 19.
+#
+# `mise bootstrap` runs this after packages, repositories, and dotfiles, and
+# before plugin packages and the final hook. mise runs it on every bootstrap,
+# so every step checks first and does nothing when the work is already done.
+#
+# What belongs here is everything the declarative sections cannot express:
+# upstream installers, plugin clones, and build steps. Host packages live in
+# [bootstrap.packages], toolchains in [tools], and clones in [bootstrap.repos].
+#
+# Run it on its own with `mise run bootstrap`.
+set -euo pipefail
+
+say() {
+  printf '\n==> %s\n' "$*"
+}
+
+warn() {
+  printf 'WARNING: %s\n' "$*" >&2
+}
+
+# --- 1. Oh My Zsh and its plugins -------------------------------------------
+# The dotfile link for ~/.zshrc already exists at this point (dotfiles runs
+# before this task), so the installer must never rewrite it: --keep-zshrc.
+install_oh_my_zsh() {
+  local zsh_dir="${ZSH:-$HOME/.oh-my-zsh}"
+  local custom_dir="${ZSH_CUSTOM:-$zsh_dir/custom}"
+
+  if [ ! -d "$zsh_dir/.git" ]; then
+    say "installing Oh My Zsh"
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+      "" --unattended --keep-zshrc
+  else
+    say "Oh My Zsh already installed"
+  fi
+
+  local repository
+  while IFS=' ' read -r target repository; do
+    if [ -d "$custom_dir/$target/.git" ]; then
+      continue
+    fi
+    say "cloning $repository"
+    git clone --depth 1 "$repository" "$custom_dir/$target"
+  done <<'PLUGINS'
+themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
+plugins/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
+plugins/zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting
+plugins/zsh-completions https://github.com/zsh-users/zsh-completions
+plugins/fzf-tab https://github.com/Aloxaf/fzf-tab
+plugins/autoswitch_virtualenv https://github.com/MichaelAquilina/zsh-autoswitch-virtualenv
+PLUGINS
+}
+
+# --- 2. herdr ---------------------------------------------------------------
+install_herdr() {
+  if ! command -v herdr >/dev/null 2>&1; then
+    say "installing herdr"
+    curl -fsSL https://herdr.dev/install.sh | sh
+    export PATH="$HOME/.local/bin:$PATH"
+  fi
+
+  if ! command -v herdr >/dev/null 2>&1; then
+    warn "herdr is still not on PATH, skipping its plugins and completions"
+    return 0
+  fi
+
+  say "installing herdr plugins"
+  herdr plugin install lmilojevicc/herdr-splits.nvim
+
+  if [ -d "$HOME/repos/herdr-nvim" ]; then
+    herdr plugin link "$HOME/repos/herdr-nvim"
+    # `plugin link` never runs [[build]] hooks, so build the binary here.
+    bash "$HOME/repos/herdr-nvim/herdr/install.sh"
+  else
+    warn "$HOME/repos/herdr-nvim is missing, skipping the local herdr-nvim build"
+  fi
+
+  # ~/.zfunc is a real directory with per-file links, so the generated
+  # completion file stays on this machine and never enters the repository.
+  mkdir -p "$HOME/.zfunc"
+  herdr completion zsh >"$HOME/.zfunc/_herdr"
+}
+
+# --- 3. pi and the Obsidian private guard -----------------------------------
+install_pi() {
+  if ! command -v pi >/dev/null 2>&1 && [ ! -x "$HOME/.pi/agent/bin/pi" ]; then
+    say "installing pi"
+    curl -fsSL https://pi.dev/install.sh | sh
+  else
+    say "pi already installed"
+  fi
+
+  # The installer rewrites ~/.config/obsidian-private-guard/config.json from
+  # its own defaults. Those defaults match the rendered dotfile template, so a
+  # bootstrap run leaves no dotfile drift. Change both together.
+  if [ -x "$HOME/repos/pi-private-folder-guard/install.sh" ]; then
+    say "installing the obsidian private guard"
+    "$HOME/repos/pi-private-folder-guard/install.sh"
+  else
+    warn "$HOME/repos/pi-private-folder-guard is missing, skipping the guard"
+  fi
+}
+
+# --- 4. agent skills --------------------------------------------------------
+# The skills themselves are tracked files under ~/.agents/skills. The skills
+# CLI writes ~/.agents/.skill-lock.json in place, which is gitignored, so
+# nothing to restore here. Install extra skills with the CLI when you want them.
+install_skills() {
+  say "agent skills are tracked in the dotfiles; the skill lock file stays local"
+}
+
+# --- 5. Vulkan SDK ----------------------------------------------------------
+# The registry has no Vulkan SDK package, and the tarball is a large manual
+# download. ~/.zshrc points VULKAN_SDK at this exact directory.
+report_vulkan_sdk() {
+  if [ -d "$HOME/vulkan/1.4.341.1/x86_64" ]; then
+    say "Vulkan SDK 1.4.341.1 already extracted"
+    return 0
+  fi
+  warn "Vulkan SDK missing: download it from https://vulkan.lunarg.com/ and"
+  warn "extract to ~/vulkan/1.4.341.1/x86_64, or update VULKAN_SDK in .zshrc"
+}
+
+# --- 6. KDE profile (konsave) ----------------------------------------------
+import_konsave_profile() {
+  if ! command -v konsave >/dev/null 2>&1; then
+    warn "konsave is not installed, skipping the KDE profile import"
+    return 0
+  fi
+  local profile="$HOME/arch-profile-1.knsv"
+  if [ ! -f "$profile" ]; then
+    warn "$profile is missing, skipping the KDE profile import"
+    return 0
+  fi
+  say "importing the konsave profile arch-profile-1"
+  konsave -i "$profile" || warn "konsave import failed; the profile is often already imported"
+}
+
+# --- 7. Neovim plugins ------------------------------------------------------
+# This runs after dotfiles link ~/.config/nvim and after [tools] installed
+# nvim-adjacent tooling, so LazyVim can sync its plugins in one pass.
+sync_neovim_plugins() {
+  if ! command -v nvim >/dev/null 2>&1; then
+    warn "nvim is not installed, skipping the LazyVim sync"
+    return 0
+  fi
+  say "syncing LazyVim plugins"
+  nvim --headless "+Lazy! sync" +qa
+}
+
+# --- 8. stale tool versions -------------------------------------------------
+# `mise install --locked` never removes old versions; prune does.
+prune_tool_versions() {
+  say "pruning tool versions nothing selects"
+  mise prune || warn "mise prune reported a problem"
+}
+
+say "mise bootstrap task starting"
+install_oh_my_zsh
+install_herdr
+install_pi
+install_skills
+report_vulkan_sdk
+import_konsave_profile
+sync_neovim_plugins
+prune_tool_versions
+say "mise bootstrap task finished"
