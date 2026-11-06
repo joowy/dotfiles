@@ -29,6 +29,13 @@ git clone https://aur.archlinux.org/yay.git /tmp/yay
 cd /tmp/yay && makepkg -si
 ```
 
+### AUR packages
+
+```bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/bin:/bin \
+  yay -S --needed lact konsave naps2
+```
+
 Adoption clones this repository into `~/.config/mise` and then runs bootstrap
 in its fixed order: packages, repositories, dotfiles, login shell, tools, then
 the `bootstrap` task. Preview it first with `--dry-run`.
@@ -67,12 +74,12 @@ Modes:
 committing it in the checkout; `mise dot add` refuses to capture into a
 git-manifest group. Generated state never enters the repository:
 
-| Generated in place            | Written by                    |
-| ----------------------------- | ----------------------------- |
-| `~/.zfunc/_herdr`             | `herdr completion zsh`        |
-| `~/.agents/.skill-lock.json`  | the skills CLI                |
-| `~/.config/kglobalshortcutsrc`| Plasma                        |
-| `~/.config/plasma-welcomerc`  | Plasma                        |
+| Generated in place             | Written by             |
+| ------------------------------ | ---------------------- |
+| `~/.zfunc/_herdr`              | `herdr completion zsh` |
+| `~/.agents/.skill-lock.json`   | the skills CLI         |
+| `~/.config/kglobalshortcutsrc` | Plasma                 |
+| `~/.config/plasma-welcomerc`   | Plasma                 |
 
 ## Per-machine settings
 
@@ -105,8 +112,10 @@ safe to repeat:
 5. The konsave KDE profile, when the file is present.
 6. `mise prune`, which removes tool versions nothing selects.
 
-Two steps stay manual because no package manager covers them:
+Steps that stay manual because no package manager covers them:
 
+- **AUR packages** (`lact`, `konsave`, `naps2`): install them by hand. See
+  "AUR packages" under "New machine".
 - **Vulkan SDK**: download from <https://vulkan.lunarg.com/> and extract to
   `~/vulkan/1.4.341.1/x86_64`. `.zshrc` points `VULKAN_SDK` there.
 - **Homebrew**: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`.
