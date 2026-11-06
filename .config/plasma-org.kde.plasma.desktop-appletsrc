@@ -251,6 +251,14 @@ windowTitleUndefined=
 DialogHeight=630
 DialogWidth=810
 
+[Containments][30][Applets][171]
+immutability=1
+plugin=org.kde.plasma.battery
+
+[Containments][30][Applets][171][Configuration]
+popupHeight=207
+popupWidth=360
+
 [Containments][30][Applets][59]
 immutability=1
 plugin=org.kde.plasma.panelspacer
@@ -302,7 +310,7 @@ icon=/home/joey/images/Arch Linux.png
 systemFavorites=suspend\\,hibernate\\,reboot\\,shutdown
 
 [Containments][30][General]
-AppletOrder=65;169;64;59;60;126;168;150;128
+AppletOrder=65;169;64;59;60;126;168;171;150;128
 
 [ScreenMapping]
 itemsOnDisabledScreens=
