@@ -9,8 +9,8 @@
 # Nothing machine-specific is ported yet. The two known differences are
 # documented in the README instead of encoded here:
 #
-# - colima is AUR-only and nested virtualization usually fails under WSL2, so
-#   Docker is expected to come from the host.
+# - colima is a Homebrew formula and nested virtualization usually fails under
+#   WSL2, so Docker is expected to come from the host.
 # - The nvim config detects WSL and installs the WslClipboard provider for
 #   `clip.exe`, so no clipboard setting belongs in this file.
 

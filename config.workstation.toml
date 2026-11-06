@@ -7,6 +7,6 @@
 "pacman:obsidian" = "latest"
 "pacman:keepass" = "latest"
 "aur:naps2" = "latest"
-"aur:colima" = "latest"
+"brew:colima" = "latest"         # Homebrew, not the AUR: this machine already has it there
 "aur:lact" = "latest"
 "aur:konsave" = "latest"

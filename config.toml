@@ -41,6 +41,7 @@ exclude = [
   "/miserc.toml",
   "/miserc.local.toml",
   "/mise.lock",
+  "/locks/**",
   "/tasks/**",
   "/.mise/**",
 ]
@@ -65,6 +66,7 @@ exclude = [
 node = "lts"
 python = "3.14"
 rust = "stable"
+uv = "latest"            # Python project and package management; mise owns it, not pacman
 "npm:@angular/cli" = "latest"
 "npm:@googleworkspace/cli" = "latest"
 "github:agavra/tuicr" = "latest"
@@ -90,7 +92,6 @@ rust = "stable"
 "pacman:nvtop" = "latest"
 "pacman:go" = "latest"
 "pacman:cmake" = "latest"
-"pacman:uv" = "latest"            # Python project management only, not the runtime
 "pacman:github-cli" = "latest"
 # Keep stow until the cutover is verified on a real machine, then delete this
 # line. `base-devel` is a package group, so pacman -Q never reports it as

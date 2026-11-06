@@ -114,9 +114,9 @@ Two steps stay manual because no package manager covers them:
 
 ## Language toolchains
 
-mise owns `node`, `python`, `rust`, `@angular/cli`, `@googleworkspace/cli`, and
-`tuicr` from `[tools]`. Do not install `nodejs`, `npm`, `python`, or `rustup`
-from pacman. `uv` from pacman is for Python project management only.
+mise owns `node`, `python`, `rust`, `uv`, `@angular/cli`,
+`@googleworkspace/cli`, and `tuicr` from `[tools]`. Do not install `nodejs`,
+`npm`, `python`, `rustup`, or `uv` from pacman.
 
 ```bash
 mise install --locked    # install from the committed mise.lock
@@ -143,9 +143,9 @@ disk, qemu, docker. `bin/pi-docker` auto-starts the daemon (up to 90 seconds)
 and defaults to `~/repos/docker-images/Dockerfile.pi`, which
 `[bootstrap.repos]` clones.
 
-On WSL2, colima is AUR-only and nested virtualization usually fails. Use the
-host Docker daemon instead; the nvim config already detects WSL and installs
-the `clip.exe` clipboard provider.
+On WSL2, nested virtualization usually fails under colima. Use the host Docker
+daemon instead; the nvim config already detects WSL and installs the `clip.exe`
+clipboard provider.
 
 ## Ghostty
 
