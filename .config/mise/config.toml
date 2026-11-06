@@ -4,6 +4,7 @@ python = "3.14"
 rust = "stable"
 "npm:@angular/cli" = "latest"
 "npm:@googleworkspace/cli" = "latest"
+"github:agavra/tuicr" = "latest"
 
 [settings]
 python.uv_venv_auto = false # never auto-rebuild venvs; renamed from venv_auto_create
