@@ -25,8 +25,21 @@
 // ("subagents:child:session-created" / "subagents:child:disposed"). Reports
 // are debounced so they land after the managed integration's own reports and
 // always reflect the newest state.
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+//
+// Disposal is not the end of a run: pi-subagents-lite keeps a settled child
+// session alive for continuations and announces "disposed" only when the record
+// is stopped, cleared, or the manager goes down. Counting an announced child as
+// running therefore wedges the pane on "working" forever after the first
+// subagent finishes. Instead, every child session instance writes its own run
+// state to a ledger file, and the root instance counts a child as running only
+// while that file says "running". A child whose ledger is missing is not
+// counted, so an agent type that excludes extensions can under-report a busy
+// pane but can never wedge one.
+import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import net from "node:net";
+import path from "node:path";
+import { getAgentDir } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const SOURCE = "herdr:pi";
 const AGENT = "pi";
@@ -91,6 +104,71 @@ function sendPayload(payload: unknown, timeoutMs: number): Promise<boolean> {
 	});
 }
 
+const LEDGER_DIRECTORY = path.join(getAgentDir(), "tmp", "herdr-subagent-state");
+const CHILD_POLL_MS = 2000;
+
+type ChildLedgerState = "running" | "done";
+
+function sessionIdOf(ctx: unknown): string | undefined {
+	try {
+		const id = (ctx as { sessionManager?: { getSessionId?: () => unknown } })?.sessionManager?.getSessionId?.();
+		return typeof id === "string" && id.length > 0 ? id : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function ledgerFileOf(sessionId: string): string {
+	return path.join(LEDGER_DIRECTORY, `${sessionId}.json`);
+}
+
+/** Written by a child session instance, read by the root instance of its pane. */
+function writeChildLedger(ctx: unknown, state: ChildLedgerState): void {
+	if (process.env.HERDR_ENV !== "1") return;
+	const sessionId = sessionIdOf(ctx);
+	if (!sessionId) return;
+	try {
+		mkdirSync(LEDGER_DIRECTORY, { recursive: true });
+		const target = ledgerFileOf(sessionId);
+		const temporary = `${target}.${process.pid}.${Date.now()}.tmp`;
+		writeFileSync(
+			temporary,
+			JSON.stringify({
+				session_id: sessionId,
+				pane_id: process.env.HERDR_PANE_ID ?? null,
+				state,
+				updated_at_ms: Date.now(),
+			}),
+		);
+		renameSync(temporary, target);
+	} catch {
+		// Accuracy only: an unreadable ledger makes the root count the child as done.
+	}
+}
+
+function readChildLedgerState(sessionId: string): ChildLedgerState | undefined {
+	try {
+		const parsed = JSON.parse(readFileSync(ledgerFileOf(sessionId), "utf8")) as { state?: unknown };
+		return parsed?.state === "running" || parsed?.state === "done" ? parsed.state : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function removeChildLedger(sessionId: string): void {
+	try {
+		rmSync(ledgerFileOf(sessionId), { force: true });
+	} catch {
+		// Nothing to clean up.
+	}
+}
+
+/** The TUI session owns a pane; children and headless runs report a mode that is not "tui". */
+function noteChildLedgerState(ctx: unknown, state: ChildLedgerState): void {
+	if ((ctx as { mode?: string } | undefined)?.mode === "tui") return;
+	writeChildLedger(ctx, state);
+}
+
 let lifecycleSeq = Date.now() * 1000;
 
 function nextLifecycleSeq(): number {
@@ -118,6 +196,9 @@ export default function (pi: ExtensionAPI) {
 	const liveChildSessions = new Set<string>();
 	let sessionRef: Record<string, unknown> = {};
 	let publishTimer: ReturnType<typeof setTimeout> | undefined;
+	let childPollTimer: ReturnType<typeof setInterval> | undefined;
+	let lastPublishedState: "working" | "idle" | "blocked" | undefined;
+	let lastPublishedMessage: string | undefined;
 
 	function captureSessionRef(ctx: unknown) {
 		try {
@@ -134,68 +215,91 @@ export default function (pi: ExtensionAPI) {
 		}
 	}
 
-	function sendState(state: "working" | "idle" | "blocked", message: string | undefined) {
-		debugLog("send", { state, message });
-		void sendPayload(
-			{
-				id: `${SOURCE}:busy:${Date.now()}:${Math.random().toString(36).slice(2)}`,
-				method: "pane.report_agent",
-				params: {
-					pane_id: process.env.HERDR_PANE_ID,
-					source: SOURCE,
-					agent: AGENT,
-					state,
-					message,
-					seq: nextLifecycleSeq(),
-					...sessionRef,
-				},
+	function reportPayload(state: "working" | "idle" | "blocked", message: string | undefined) {
+		return {
+			id: `${SOURCE}:busy:${Date.now()}:${Math.random().toString(36).slice(2)}`,
+			method: "pane.report_agent",
+			params: {
+				pane_id: process.env.HERDR_PANE_ID,
+				source: SOURCE,
+				agent: AGENT,
+				state,
+				message,
+				seq: nextLifecycleSeq(),
+				...sessionRef,
 			},
-			500,
-		).then((delivered) => {
-			if (!delivered) {
-				void sendPayload(
-					{
-						id: `${SOURCE}:busy:${Date.now()}:${Math.random().toString(36).slice(2)}`,
-						method: "pane.report_agent",
-						params: {
-							pane_id: process.env.HERDR_PANE_ID,
-							source: SOURCE,
-							agent: AGENT,
-							state,
-							message,
-							seq: nextLifecycleSeq(),
-							...sessionRef,
-						},
-					},
-					1500,
-				);
-			}
+		};
+	}
+
+	function sendState(state: "working" | "idle" | "blocked", message: string | undefined) {
+		// An unchanged state adds nothing, and the child poll would otherwise report
+		// the same value every couple of seconds.
+		if (state === lastPublishedState && message === lastPublishedMessage) return;
+		lastPublishedState = state;
+		lastPublishedMessage = message;
+		debugLog("send", { state, message });
+		const forgetDroppedReport = () => {
+			// A report that never reached Herdr must not be suppressed as a repeat.
+			lastPublishedState = undefined;
+			lastPublishedMessage = undefined;
+		};
+		void sendPayload(reportPayload(state, message), 500).then((delivered) => {
+			if (delivered) return;
+			void sendPayload(reportPayload(state, message), 1500).then((retried) => {
+				if (!retried) forgetDroppedReport();
+			});
 		});
 	}
 
+	function runningChildSessions(): string[] {
+		return [...liveChildSessions].filter(
+			(sessionId) => readChildLedgerState(sessionId) === "running",
+		);
+	}
+
+	function stopChildPolling() {
+		if (!childPollTimer) return;
+		clearInterval(childPollTimer);
+		childPollTimer = undefined;
+	}
+
+	/** Child runs settle on their own bus, so the root has to look again. */
+	function ensureChildPolling() {
+		if (childPollTimer || liveChildSessions.size === 0) return;
+		childPollTimer = setInterval(() => {
+			if (liveChildSessions.size === 0) {
+				stopChildPolling();
+				return;
+			}
+			publishLifecycle();
+		}, CHILD_POLL_MS);
+		childPollTimer.unref?.();
+	}
+
 	function publishLifecycle() {
+		const runningSubagents = liveChildSessions.size === 0 ? [] : runningChildSessions();
 		debugLog("publish", {
 			rootSession,
 			promptDepth: uiPromptDepth,
 			packageBusyActive,
-			liveChildSessions: liveChildSessions.size,
+			announcedChildren: liveChildSessions.size,
+			runningSubagents: runningSubagents.length,
 			mainActive,
 		});
 		if (!rootSession) return;
 		// A visible prompt takes precedence and is published by its own handler.
 		if (uiPromptDepth > 0) return;
-		const runningSubagents = liveChildSessions.size;
-		if (packageBusyActive || runningSubagents > 0) {
+		if (packageBusyActive || runningSubagents.length > 0) {
 			sendState(
 				"working",
 				packageBusyActive
 					? (packageBusyLabel ?? "subagent running")
-					: `${runningSubagents} subagent${runningSubagents === 1 ? "" : "s"} running`,
+					: `${runningSubagents.length} subagent${runningSubagents.length === 1 ? "" : "s"} running`,
 			);
 			return;
 		}
-		// Always re-assert: the managed integration's own report for this
-		// transition carries a stale sequence and is dropped.
+		// Re-assert every transition: the managed integration's own report for it
+		// carries a stale sequence and is dropped.
 		sendState(mainActive ? "working" : "idle", undefined);
 	}
 
@@ -244,19 +348,30 @@ export default function (pi: ExtensionAPI) {
 	pi.events.on(CHILD_SESSION_CREATED_CHANNEL, (data) => {
 		const sessionId = announcedSessionId(data);
 		debugLog("child created", { sessionId, live: liveChildSessions.size, rootSession });
-		if (sessionId) liveChildSessions.add(sessionId);
+		if (sessionId) {
+			liveChildSessions.add(sessionId);
+			ensureChildPolling();
+		}
 		schedulePublish();
 	});
 
 	pi.events.on(CHILD_SESSION_DISPOSED_CHANNEL, (data) => {
 		const sessionId = announcedSessionId(data);
-		if (sessionId) liveChildSessions.delete(sessionId);
+		if (sessionId) {
+			liveChildSessions.delete(sessionId);
+			removeChildLedger(sessionId);
+			if (liveChildSessions.size === 0) stopChildPolling();
+		}
 		schedulePublish();
 	});
 
 	pi.on("session_start", (_event, ctx) => {
 		const context = ctx as { mode?: string; isIdle?: () => boolean };
-		if (context?.mode !== "tui") return;
+		if (context?.mode !== "tui") {
+			// A child session instance publishes its own runs for the root to read.
+			noteChildLedgerState(ctx, "done");
+			return;
+		}
 		rootSession = true;
 		captureSessionRef(ctx);
 		mainActive = context?.isIdle?.() === false;
@@ -267,6 +382,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.on("agent_start", (_event, ctx) => {
+		noteChildLedgerState(ctx, "running");
 		if (!rootSession) return;
 		captureSessionRef(ctx);
 		mainActive = true;
@@ -276,6 +392,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.on("agent_settled", (_event, ctx) => {
+		noteChildLedgerState(ctx, "done");
 		if (!rootSession) return;
 		const context = ctx as { isIdle?: () => boolean };
 		if (context?.isIdle?.() !== true) return;

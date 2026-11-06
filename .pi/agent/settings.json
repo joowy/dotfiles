@@ -9,22 +9,12 @@
     "npm:pi-subagents-lite",
     "npm:pi-slash-suggest",
     "npm:@gotgenes/pi-permission-system",
-    "npm:@narumitw/pi-usage",
-    "npm:@yukikisaku/pi-herdr-status"
+    "npm:@narumitw/pi-usage"
   ],
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "defaultThinkingLevel": "high",
-  "skills": [
-    "~/.claude/skills",
-    "~/.codex/skills",
-    "../.claude/skills"
-  ],
-  "newLine": [
-    "shift+enter",
-    "ctrl+j"
-  ],
+  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
+  "newLine": ["shift+enter", "ctrl+j"],
   "defaultProvider": "opencode-go",
   "enabledModels": [
     "opencode-go/deepseek-v4.1-flash",
@@ -33,7 +23,6 @@
     "opencode-go/glm-5.3-flash",
     "llama.cpp/*"
   ],
-  "hideThinkingBlock": true,
   "showHardwareCursor": true,
   "showCacheMissNotices": true,
   "quietStartup": false,

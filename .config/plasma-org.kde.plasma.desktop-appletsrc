@@ -256,7 +256,7 @@ immutability=1
 plugin=org.kde.plasma.battery
 
 [Containments][30][Applets][171][Configuration]
-popupHeight=207
+popupHeight=181
 popupWidth=360
 
 [Containments][30][Applets][59]
