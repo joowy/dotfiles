@@ -1,174 +1,160 @@
 # joey's dotfiles
 
-Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Personal dotfiles and machine setup, driven by [mise](https://mise.jdx.dev).
+This repository **is** the global mise config: `mise bootstrap --adopt` clones
+it to `~/.config/mise` on every machine.
 
-## Prerequisites
+- `config.toml` — global mise config: `[tools]`, `[bootstrap.packages]`,
+  `[bootstrap.repos]`, and the `[dotfile_groups.home]` group that deploys the
+  checkout into `$HOME`.
+- `config.workstation.toml` — desktop applications, selected by default.
+- `config.wsl2.toml` — WSL2 overlay, empty until that machine exists.
+- `miserc.toml` — tracked default environment selection (`workstation`).
+- `tasks/bootstrap` — the `bootstrap` task that runs installers mise cannot
+  express declaratively.
+- Everything else is a dotfile, deployed at the same path under `$HOME`.
 
-### pacman
-
-```bash
-# Core CLI tools
-sudo pacman -S --needed git stow zsh neovim ghostty lazygit eza fzf git-delta zoxide mise yazi jq docker bubblewrap
-
-# System monitoring
-sudo pacman -S --needed btop htop nvtop
-
-# Languages & runtimes (compilers / build tools; versioned toolchains come from mise below)
-sudo pacman -S --needed go cmake nodejs npm python uv rustup
-
-# Desktop (KDE Plasma + apps)
-sudo pacman -S --needed dolphin obsidian keepass
-
-# Cloud CLIs
-sudo pacman -S --needed github-cli
-```
-
-### yay (AUR)
+## New machine
 
 ```bash
-git clone https://aur.archlinux.org/yay.git /tmp/yay && cd /tmp/yay && makepkg -si
-yay -S --needed naps2 colima lact konsave
+sudo pacman -S --needed mise git
+mise bootstrap --adopt 'joowy/dotfiles?ref=main'
 ```
 
-## Setup
-
-### 1. Zsh
-
-Install Oh My Zsh first. Its installer writes a stock `~/.zshrc`; step 2 replaces that with the stowed one.
+`base-devel` is needed before `yay` can build any AUR package:
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sudo pacman -S --needed base-devel
+git clone https://aur.archlinux.org/yay.git /tmp/yay
+cd /tmp/yay && makepkg -si
 ```
 
-Then the theme and custom plugins (fzf + npm are OMZ builtins, no clone needed):
+Adoption clones this repository into `~/.config/mise` and then runs bootstrap
+in its fixed order: packages, repositories, dotfiles, login shell, tools, then
+the `bootstrap` task. Preview it first with `--dry-run`.
+
+## Refresh a machine
 
 ```bash
-# Powerlevel10k theme (used by ZSH_THEME in .zshrc)
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
-
-# Custom OMZ plugins
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
-git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab
-git clone https://github.com/MichaelAquilina/zsh-autoswitch-virtualenv ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/autoswitch_virtualenv
+mise bootstrap --update     # fast-forward the checkout, then apply
+mise bootstrap status       # what still differs from the config
+mise bootstrap plan         # resource-level changes
 ```
+
+`--update` only fast-forwards. Commit and pull inside `~/.config/mise` like any
+other checkout.
+
+## Dotfiles
+
+The `home` group deploys every file in the git index at the same path under
+`$HOME`. Run these from `~/.config/mise`:
 
 ```bash
-# Set zsh as default shell
-chsh -s $(which zsh)
+mise dot status     # deployed, orphaned, and differing files
+mise dot diff       # what apply would change
+mise dot apply      # deploy
 ```
 
-### 2. Clone & stow
+Modes:
+
+- One symlink per file (`symlink-each`), relative, so the checkout can move with
+  `$HOME`.
+- `~/bin`, `~/images`, and `~/wallpapers` are whole-tree links.
+- `~/.config/obsidian-private-guard/config.json` is rendered from
+  `config.json.tera` because JSON cannot expand `$HOME`.
+
+`manifest = "git"` means only committed files deploy. A new file is deployed by
+committing it in the checkout; `mise dot add` refuses to capture into a
+git-manifest group. Generated state never enters the repository:
+
+| Generated in place            | Written by                    |
+| ----------------------------- | ----------------------------- |
+| `~/.zfunc/_herdr`             | `herdr completion zsh`        |
+| `~/.agents/.skill-lock.json`  | the skills CLI                |
+| `~/.config/kglobalshortcutsrc`| Plasma                        |
+| `~/.config/plasma-welcomerc`  | Plasma                        |
+
+## Per-machine settings
+
+`miserc.toml` selects the `workstation` environment, which loads
+`config.workstation.toml`. A machine that wants something else creates
+`~/.config/mise/miserc.local.toml` (untracked, gitignored):
+
+```toml
+# WSL2 machine
+env = ["wsl2"]
+```
+
+`miserc.local.toml` sits at the checkout root, so the `home` group excludes it
+and it never deploys to `$HOME`.
+
+## What the bootstrap task does
+
+`mise run bootstrap` runs after packages, repositories, and dotfiles, and is
+safe to repeat:
+
+1. Oh My Zsh with `--keep-zshrc`, then the p10k theme and the custom plugin
+   clones. The flag matters: dotfiles are already in place, so the installer
+   must not overwrite `~/.zshrc`.
+2. `herdr` from herdr.dev, its plugins, the local `herdr-nvim` build, and the
+   zsh completion.
+3. Pi, then `~/repos/pi-private-folder-guard/install.sh`, which wraps every
+   `pi` launch in a bubblewrap namespace that hides the private folders of the
+   Obsidian vault.
+4. The Neovim plugin sync (`nvim --headless "+Lazy! sync" +qa`).
+5. The konsave KDE profile, when the file is present.
+6. `mise prune`, which removes tool versions nothing selects.
+
+Two steps stay manual because no package manager covers them:
+
+- **Vulkan SDK**: download from <https://vulkan.lunarg.com/> and extract to
+  `~/vulkan/1.4.341.1/x86_64`. `.zshrc` points `VULKAN_SDK` there.
+- **Homebrew**: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`.
+  `.zshrc` sources `brew shellenv` when it exists.
+
+## Language toolchains
+
+mise owns `node`, `python`, `rust`, `@angular/cli`, `@googleworkspace/cli`, and
+`tuicr` from `[tools]`. Do not install `nodejs`, `npm`, `python`, or `rustup`
+from pacman. `uv` from pacman is for Python project management only.
 
 ```bash
-git clone https://github.com/joowy/dotfiles ~/dotfiles
-cd ~/dotfiles
-rm ~/.zshrc  # stock OMZ template; stow links the repo's .zshrc in its place
-stow .
+mise install --locked    # install from the committed mise.lock
+mise lock --global       # refresh the lockfile after a tool change
+mise prune               # drop versions nothing selects
 ```
 
-Stowed files: `.zshrc`, `.zshenv` (mise shims on `PATH`), `.p10k.zsh`. `.zshrc` prepends `~/dotfiles/bin` to `PATH`, so every `bin/*` script is directly on `PATH`.
+`~/.zshenv` puts the mise shims first on `PATH`, so GUI-launched applications
+resolve the same tool versions as the terminal.
 
-### 3. herdr
+## Post-setup checks
 
-Stowed: `.config/herdr/config.toml`, `.config/herdr-nvim/config.toml`. Prefix is `Ctrl-a`.
+- `echo $SHELL` shows `/bin/zsh`
+- `mise bootstrap status` shows no drift
+- `nvim` opens with LazyVim
+- `herdr plugin list` shows `herdr-splits` and `chmarax.herdr-nvim`, and
+  `~/repos/herdr-nvim/bin/herdr-nvim` exists
+- `colima status` shows it running (desktop machines only)
 
-#### herdr CLI
+## Docker
 
-Install the `herdr` binary (stable channel) so it is on `PATH`:
+`.config/colima/default/colima.yaml` is deployed: 4 CPU, 8 GiB RAM, 100 GiB
+disk, qemu, docker. `bin/pi-docker` auto-starts the daemon (up to 90 seconds)
+and defaults to `~/repos/docker-images/Dockerfile.pi`, which
+`[bootstrap.repos]` clones.
 
-```bash
-curl -fsSL https://herdr.dev/install.sh | sh
-```
+On WSL2, colima is AUR-only and nested virtualization usually fails. Use the
+host Docker daemon instead; the nvim config already detects WSL and installs
+the `clip.exe` clipboard provider.
 
-Then install plugins from a plain shell:
+## Ghostty
 
-```bash
-herdr plugin install lmilojevicc/herdr-splits.nvim
-```
+`.config/ghostty/config.ghostty` is deployed and launches plain `zsh`. Run
+`herdr` yourself.
 
-#### herdr-nvim (local build)
+## KDE dynamic wallpaper
 
-`nvim` uses a local checkout (`lua/plugins/herdr-nvim.lua` points at `~/repos/herdr-nvim`) of your fork `joowy/herdr-nvim` (upstream `ChmaraX/herdr-nvim`):
-
-```bash
-git clone https://github.com/joowy/herdr-nvim.git ~/repos/herdr-nvim
-
-# register the local checkout with herdr
-herdr plugin link ~/repos/herdr-nvim
-
-# build the plugin binary — `plugin link` never runs [[build]] hooks
-bash ~/repos/herdr-nvim/herdr/install.sh
-```
-
-### 4. Pi.dev + Obsidian private guard
-
-[Pi](https://pi.dev) is a coding agent; [obsidian-private-guard](https://github.com/joowy/pi-private-folder-guard) wraps every `pi` launch in a bubblewrap namespace that cuts the private folders of your Obsidian vault out of view.
-
-Install Pi:
-
-```bash
-curl -fsSL https://pi.dev/install.sh | sh
-```
-
-Pi needs Node ≥ 22.19 — run step 6 first, or let the Pi installer fetch Node. Start Pi once and use `/login` to connect a provider.
-
-```bash
-git clone https://github.com/joowy/pi-private-folder-guard.git ~/repos/pi-private-folder-guard
-cd ~/repos/pi-private-folder-guard
-./install.sh
-```
-
-### 5. Neovim
-
-```bash
-nvim --headless "+Lazy! sync" +qa
-```
-
-Stowed: `.config/nvim/`. `herdr-splits.nvim` only loads when `HERDR_ENV=1`. `herdr-nvim` loads from `~/repos/herdr-nvim` (see step 3) — fresh clone without that dir will fail to start the sidebar.
-
-### 6. Language toolchains (mise only)
-
-`mise` owns the node/python/rust/angular toolchain versions. Do not install `nvm`, and do not use uv or rustup to install language runtimes — `uv` (from pacman) is for Python project/package management only.
-
-```bash
-# .config/mise/config.toml pins: node=lts, python=3.14, rust=stable, npm:@angular/cli=latest, npm:@googleworkspace/cli=latest
-mise install
-# shims already on PATH via .zshenv; verify with:
-mise ls
-```
-
-### 7. Cloud & Docker
-
-```bash
-# colima profile is stowed at .config/colima/default/colima.yaml (cpu 4 / mem 8 / disk 100 / qemu / docker)
-# On Arch bare metal: colima start
-# On WSL2: nested virt may fail — prefer Docker Desktop passthrough or colima start with host-compatible vm-type; nvim clipboard already handles WSL via clip.exe
-colima start
-colima status
-```
-
-`bin/pi-docker` requires both `docker` and `colima` on `PATH` and auto-starts the daemon (up to 90s). It defaults to `~/repos/docker-images/Dockerfile.pi` which lives outside dotfiles — clone it before `--rebuild`.
-
-### 8. Vulkan SDK
-
-Download from <https://vulkan.lunarg.com/> and extract to `~/vulkan/`. `.zshrc` expects `~/vulkan/1.4.341.1/x86_64` — update `VULKAN_SDK` if you install a newer version.
-
-### 9. Ghostty
-
-Stowed: `.config/ghostty/config.ghostty` (launches plain `zsh`, run `herdr` manually).
-
-### 10. Homebrew
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-### 11. KDE dynamic wallpaper (day/night)
-
-Stowed: `wallpapers/lakeside-dynamic` (repo path used directly, `~/wallpapers`
-from `stow .` is not involved).
+`wallpapers/lakeside-dynamic` is deployed through the whole-tree link:
 
 ```
 wallpapers/lakeside-dynamic/
@@ -178,18 +164,19 @@ wallpapers/lakeside-dynamic/
     └── images_dark/3840x2160.jpg  # night
 ```
 
-## Post-setup checks
+The KDE wallpaper and layout state (`kdynamicwallpaperrc`,
+`plasma-org.kde.plasma.desktop-appletsrc`) is tracked and linked, with absolute
+paths on purpose. A wallpaper or panel change made in the GUI shows up as a git
+diff: commit it or revert it.
 
-- `echo $SHELL` should show `/bin/zsh`
-- `nvim` should open with LazyVim; run `:Lazy` to check plugin status
-- `herdr plugin list` should show `herdr-splits` and `chmarax.herdr-nvim` (as a local link); `~/repos/herdr-nvim/bin/herdr-nvim` must exist (step 3)
-- `mise ls` should show node/python/rust/angular from `.config/mise/config.toml`
-- `colima status` should show it running (after `colima start`; `bin/pi-docker` auto-starts it)
+## Rollback
 
-## TODO
+mise keeps a link ledger in `~/.local/state/mise`. To undo a deployment,
+`mise dot unapply` the entries listed by `mise dot status`. A full return to the
+previous stow-based setup needs the archived `~/dotfiles` checkout and its
+`stow .` run.
 
-- [ ] Remove the per-file `~/.local/bin` symlinks into `bin/*`
-      (`herdr-sync-pane-labels`, `pi-docker`, `wt`) and put the directory on
-      `PATH` instead — `stow .` already creates `~/bin -> ~/dotfiles/bin`, so a
-      single `export PATH="$HOME/dotfiles/bin:$PATH"` in `.zshrc` replaces all
-      of them (and any future `bin/*` scripts work without a new symlink).
+## History
+
+This repository used GNU Stow and a README-as-installer until mise 2026.11
+gained `[dotfiles]`, `[dotfile_groups]`, and `[bootstrap]`.

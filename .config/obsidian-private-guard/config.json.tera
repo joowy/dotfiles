@@ -1,5 +1,5 @@
 {
-  "vault": "/home/joey/repos/Obsidian",
+  "vault": "{{ env.HOME }}/repos/Obsidian",
   "privateFolders": [
     "01-personal"
   ],
@@ -8,7 +8,7 @@
     "~/.config/gh/hosts.yml"
   ],
   "lockdownWithoutBarrier": true,
-  "realPiPath": "/home/joey/.local/share/obsidian-private-guard/assets/pi-managed-trampoline.sh",
+  "realPiPath": "{{ env.HOME }}/.local/share/obsidian-private-guard/assets/pi-managed-trampoline.sh",
   "localModelProviders": [
     "llama.cpp"
   ]

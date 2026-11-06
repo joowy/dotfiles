@@ -1,0 +1,12 @@
+# Workstation overlay: desktop applications that belong on a machine with a GUI.
+# Selected by default from miserc.toml. A WSL2 or headless machine overrides
+# that in miserc.local.toml and gets the CLI set from config.toml only.
+
+[bootstrap.packages]
+"pacman:dolphin" = "latest"
+"pacman:obsidian" = "latest"
+"pacman:keepass" = "latest"
+"aur:naps2" = "latest"
+"aur:colima" = "latest"
+"aur:lact" = "latest"
+"aur:konsave" = "latest"

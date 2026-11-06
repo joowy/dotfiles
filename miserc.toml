@@ -1,0 +1,3 @@
+# Read by mise before config.toml. A per-machine miserc.local.toml overrides
+# this list, so a fresh machine with nothing local still gets the desktop set.
+env = ["workstation"]

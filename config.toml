@@ -1,0 +1,109 @@
+# Global mise config for joey's machines.
+#
+# `mise bootstrap --adopt 'joowy/dotfiles?ref=main'` clones this repository to
+# ~/.config/mise, so this file IS the global config on every machine.
+# Refresh a machine with `mise bootstrap --update`.
+
+# --- settings ---------------------------------------------------------------
+[settings]
+# The checkout is the global config directory after --adopt, so the dotfile
+# root is that directory itself.
+# Do not use {{ config_root }} here: for the global config it resolves to
+# $HOME. `global_config_root` is environment-only, so it cannot be set here.
+dotfiles.root = "{{ mise_config_dir }}"
+
+# Keep the uv toolchain from rebuilding project venvs on its own.
+python.uv_venv_auto = false
+
+# --- dotfile group ----------------------------------------------------------
+# One group deploys the whole checkout into $HOME at the same paths, which is
+# what `stow .` used to do.
+[dotfile_groups.home]
+root = "."
+target = "~"
+mode = "symlink-each"
+# Only git-indexed files deploy. This is the permanent fix for "stow links
+# files git ignores": generated, gitignored state cannot leak into $HOME.
+manifest = "git"
+# Mirror the relative symlinks stow created, so the checkout can move with $HOME.
+relative = true
+
+# Tracked files that belong to the repository, never to $HOME.
+# Every pattern is anchored with a leading slash: a name without a slash matches
+# at any depth, so `config.toml` would also drop .config/herdr/config.toml.
+exclude = [
+  "/.git/**",
+  "/README.md",
+  "/.gitignore",
+  "/config.toml",
+  "/config.workstation.toml",
+  "/config.wsl2.toml",
+  "/miserc.toml",
+  "/miserc.local.toml",
+  "/mise.lock",
+  "/tasks/**",
+  "/.mise/**",
+]
+
+[dotfile_groups.home.entries]
+# Whole-tree links, matching the directory folding stow did.
+"~/bin" = { mode = "symlink" }
+"~/images" = { mode = "symlink" }        # referenced by absolute path from the KDE applet config
+"~/wallpapers" = { mode = "symlink" }
+# .pi, .zfunc, and .agents stay real directories with one link per file, so the
+# tools that write into them (herdr completions, the skill lock file, pi
+# installs) keep their state out of this checkout.
+#
+# Rendered, because JSON cannot expand $HOME. The source is config.json.tera,
+# and mise does not also deploy the .tera file.
+"~/.config/obsidian-private-guard/config.json" = { mode = "template" }
+
+# --- tools ------------------------------------------------------------------
+# mise owns these toolchains. Do not install nodejs, npm, python, or rustup
+# from pacman.
+[tools]
+node = "lts"
+python = "3.14"
+rust = "stable"
+"npm:@angular/cli" = "latest"
+"npm:@googleworkspace/cli" = "latest"
+"github:agavra/tuicr" = "latest"
+
+# --- host packages: CLI and system ------------------------------------------
+[bootstrap.packages]
+"pacman:git" = "latest"
+"pacman:zsh" = "latest"
+"pacman:neovim" = "latest"
+"pacman:ghostty" = "latest"
+"pacman:lazygit" = "latest"
+"pacman:eza" = "latest"
+"pacman:fzf" = "latest"
+"pacman:git-delta" = "latest"
+"pacman:zoxide" = "latest"
+"pacman:mise" = "latest"
+"pacman:yazi" = "latest"
+"pacman:jq" = "latest"
+"pacman:docker" = "latest"
+"pacman:bubblewrap" = "latest"
+"pacman:btop" = "latest"
+"pacman:htop" = "latest"
+"pacman:nvtop" = "latest"
+"pacman:go" = "latest"
+"pacman:cmake" = "latest"
+"pacman:uv" = "latest"            # Python project management only, not the runtime
+"pacman:github-cli" = "latest"
+# Keep stow until the cutover is verified on a real machine, then delete this
+# line. `base-devel` is a package group, so pacman -Q never reports it as
+# installed; a fresh machine needs it before yay can build anything.
+"pacman:stow" = "latest"
+
+# --- login shell ------------------------------------------------------------
+# Replaces the manual `chsh -s $(which zsh)` the old README asked for.
+[bootstrap.user]
+login_shell = "zsh"
+
+# --- repositories cloned before dotfiles (run order step 4) -----------------
+[bootstrap.repos]
+"~/repos/herdr-nvim" = { url = "https://github.com/joowy/herdr-nvim.git" }
+"~/repos/pi-private-folder-guard" = { url = "https://github.com/joowy/pi-private-folder-guard.git" }
+"~/repos/docker-images" = { url = "https://github.com/joowy/docker-images.git" }
