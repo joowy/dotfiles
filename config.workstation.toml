@@ -2,8 +2,6 @@
 # Selected by default from miserc.toml. A WSL2 or headless machine overrides
 # that in miserc.local.toml and gets the CLI set from config.toml only.
 
-# Desktop packages whose AUR names are naps2, lact, and konsave are installed
-# by hand; see "AUR packages" in README.md.
 [bootstrap.packages]
 "pacman:dolphin" = "latest"
 "pacman:obsidian" = "latest"

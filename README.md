@@ -21,21 +21,6 @@ sudo pacman -S --needed mise git
 mise bootstrap --adopt 'joowy/dotfiles?ref=main'
 ```
 
-`base-devel` is needed before `yay` can build any AUR package:
-
-```bash
-sudo pacman -S --needed base-devel
-git clone https://aur.archlinux.org/yay.git /tmp/yay
-cd /tmp/yay && makepkg -si
-```
-
-### AUR packages
-
-```bash
-PATH=/usr/local/sbin:/usr/local/bin:/usr/bin:/bin \
-  yay -S --needed lact konsave naps2
-```
-
 Adoption clones this repository into `~/.config/mise` and then runs bootstrap
 in its fixed order: packages, repositories, dotfiles, login shell, tools, then
 the `bootstrap` task. Preview it first with `--dry-run`.
@@ -109,13 +94,10 @@ safe to repeat:
    `pi` launch in a bubblewrap namespace that hides the private folders of the
    Obsidian vault.
 4. The Neovim plugin sync (`nvim --headless "+Lazy! sync" +qa`).
-5. The konsave KDE profile, when the file is present.
-6. `mise prune`, which removes tool versions nothing selects.
+5. `mise prune`, which removes tool versions nothing selects.
 
 Steps that stay manual because no package manager covers them:
 
-- **AUR packages** (`lact`, `konsave`, `naps2`): install them by hand. See
-  "AUR packages" under "New machine".
 - **Vulkan SDK**: download from <https://vulkan.lunarg.com/> and extract to
   `~/vulkan/1.4.341.1/x86_64`. `.zshrc` points `VULKAN_SDK` there.
 - **Homebrew**: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`.
