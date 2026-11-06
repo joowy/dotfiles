@@ -7,12 +7,14 @@
 // around every blocking UI prompt, so those are forwarded.
 //
 // Bridge 2 — background subagents → working:
-// pi-subagents publishes "⏳ N subagent(s)" sidebar labels itself and emits
-// "herdr:busy" on pi.events while runs are active, but Herdr's v9 integration
-// does not listen for it — so a pane with an idle main agent and a running
-// worker is classified "idle". This bridge reports "working" to Herdr while
-// any subagent run is active. Reports are debounced so they land after the
-// managed integration's own reports and always reflect the newest state.
+// The main agent settles as soon as it starts background workers, so a pane
+// with an idle main agent and a running worker is classified "idle". This
+// bridge reports "working" to Herdr while any subagent run is active. Two
+// sources feed it: "herdr:busy" from pi-subagents, and the child-session
+// lifecycle channels that pi-subagents-lite announces on the parent bus
+// ("subagents:child:session-created" / "subagents:child:disposed"). Reports
+// are debounced so they land after the managed integration's own reports and
+// always reflect the newest state.
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import net from "node:net";
 
@@ -33,6 +35,19 @@ type BusyEvent = {
 	active?: boolean;
 	label?: string;
 };
+
+// pi-subagents-lite announces child sessions on the parent bus instead of
+// emitting "herdr:busy". The channel names come from its subagent-integration
+// convention, so they are stable.
+const CHILD_SESSION_CREATED_CHANNEL = "subagents:child:session-created";
+const CHILD_SESSION_DISPOSED_CHANNEL = "subagents:child:disposed";
+
+function announcedSessionId(data: unknown): string | undefined {
+	const payload = data as { sessionId?: unknown };
+	return typeof payload?.sessionId === "string" && payload.sessionId.length > 0
+		? payload.sessionId
+		: undefined;
+}
 
 function socketEndpoint(): string | undefined {
 	const socketPath = process.env.HERDR_SOCKET_PATH;
@@ -73,6 +88,13 @@ function nextLifecycleSeq(): number {
 	return lifecycleSeq;
 }
 
+const DEBUG = process.env.HERDR_BRIDGE_DEBUG === "1";
+
+function debugLog(message: string, detail?: unknown) {
+	if (!DEBUG) return;
+	console.log(`[herdr-bridge] ${message}${detail === undefined ? "" : ` ${JSON.stringify(detail)}`}`);
+}
+
 export default function (pi: ExtensionAPI) {
 	if (process.env.HERDR_ENV !== "1") {
 		return;
@@ -81,8 +103,9 @@ export default function (pi: ExtensionAPI) {
 	let rootSession = false;
 	let mainActive = false;
 	let uiPromptDepth = 0;
-	let busyActive = false;
-	let busyLabel: string | undefined;
+	let packageBusyActive = false;
+	let packageBusyLabel: string | undefined;
+	const liveChildSessions = new Set<string>();
 	let reportedBusyWorking = false;
 	let sessionRef: Record<string, unknown> = {};
 	let publishTimer: ReturnType<typeof setTimeout> | undefined;
@@ -103,6 +126,7 @@ export default function (pi: ExtensionAPI) {
 	}
 
 	function sendState(state: "working" | "idle", message: string | undefined) {
+		debugLog("send", { state, message });
 		void sendPayload(
 			{
 				id: `${SOURCE}:busy:${Date.now()}:${Math.random().toString(36).slice(2)}`,
@@ -141,12 +165,26 @@ export default function (pi: ExtensionAPI) {
 	}
 
 	function publishLifecycle() {
+		debugLog("publish", {
+			rootSession,
+			promptDepth: uiPromptDepth,
+			packageBusyActive,
+			liveChildSessions: liveChildSessions.size,
+			mainActive,
+			reportedBusyWorking,
+		});
 		if (!rootSession) return;
 		// A visible prompt takes precedence: the managed integration reports
 		// "blocked" for it, and needing user input outranks background work.
 		if (uiPromptDepth > 0) return;
-		if (busyActive) {
-			sendState("working", busyLabel ?? "subagent running");
+		const runningSubagents = liveChildSessions.size;
+		if (packageBusyActive || runningSubagents > 0) {
+			sendState(
+				"working",
+				packageBusyActive
+					? (packageBusyLabel ?? "subagent running")
+					: `${runningSubagents} subagent${runningSubagents === 1 ? "" : "s"} running`,
+			);
 			reportedBusyWorking = true;
 			return;
 		}
@@ -191,8 +229,22 @@ export default function (pi: ExtensionAPI) {
 	// handler before this bridge's own session_start handler has run.
 	pi.events.on("herdr:busy", (data) => {
 		const busy = data as BusyEvent;
-		busyActive = busy.active === true;
-		busyLabel = typeof busy.label === "string" ? busy.label : undefined;
+		packageBusyActive = busy.active === true;
+		packageBusyLabel = typeof busy.label === "string" ? busy.label : undefined;
+		schedulePublish();
+	});
+
+	// Bridge 2b: child sessions announced by pi-subagents-lite.
+	pi.events.on(CHILD_SESSION_CREATED_CHANNEL, (data) => {
+		const sessionId = announcedSessionId(data);
+		debugLog("child created", { sessionId, live: liveChildSessions.size, rootSession });
+		if (sessionId) liveChildSessions.add(sessionId);
+		schedulePublish();
+	});
+
+	pi.events.on(CHILD_SESSION_DISPOSED_CHANNEL, (data) => {
+		const sessionId = announcedSessionId(data);
+		if (sessionId) liveChildSessions.delete(sessionId);
 		schedulePublish();
 	});
 
