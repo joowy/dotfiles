@@ -123,22 +123,7 @@ report_vulkan_sdk() {
   warn "extract to ~/vulkan/1.4.341.1/x86_64, or update VULKAN_SDK in .zshrc"
 }
 
-# --- 6. KDE profile (konsave) ----------------------------------------------
-import_konsave_profile() {
-  if ! command -v konsave >/dev/null 2>&1; then
-    warn "konsave is not installed, skipping the KDE profile import"
-    return 0
-  fi
-  local profile="$HOME/arch-profile-1.knsv"
-  if [ ! -f "$profile" ]; then
-    warn "$profile is missing, skipping the KDE profile import"
-    return 0
-  fi
-  say "importing the konsave profile arch-profile-1"
-  konsave -i "$profile" || warn "konsave import failed; the profile is often already imported"
-}
-
-# --- 7. Neovim plugins ------------------------------------------------------
+# --- 6. Neovim plugins ------------------------------------------------------
 # This runs after dotfiles link ~/.config/nvim and after [tools] installed
 # nvim-adjacent tooling, so LazyVim can sync its plugins in one pass.
 sync_neovim_plugins() {
@@ -150,7 +135,7 @@ sync_neovim_plugins() {
   nvim --headless "+Lazy! sync" +qa
 }
 
-# --- 8. stale tool versions -------------------------------------------------
+# --- 7. stale tool versions -------------------------------------------------
 # `mise install --locked` never removes old versions; prune does.
 prune_tool_versions() {
   say "pruning tool versions nothing selects"
@@ -163,7 +148,6 @@ install_herdr
 install_pi
 install_skills
 report_vulkan_sdk
-import_konsave_profile
 sync_neovim_plugins
 prune_tool_versions
 say "mise bootstrap task finished"
