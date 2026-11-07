@@ -228,8 +228,9 @@ DialogHeight=630
 DialogWidth=810
 
 [Containments][30][Applets][150][General]
-extraItems=org.kde.plasma.vault,org.kde.plasma.bluetooth,org.kde.plasma.cameraindicator,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.manage-inputmethod,org.kde.plasma.mediacontroller,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.weather,org.kde.kscreen,org.kde.kupapplet,org.kde.plasma.battery,org.kde.plasma.brightness,org.kde.plasma.dwellclicker,org.kde.plasma.keyboardlayout,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.printmanager
+extraItems=org.kde.plasma.vault,org.kde.plasma.bluetooth,org.kde.plasma.cameraindicator,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.manage-inputmethod,org.kde.plasma.mediacontroller,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.weather,org.kde.kscreen,org.kde.kupapplet,org.kde.plasma.brightness,org.kde.plasma.dwellclicker,org.kde.plasma.keyboardlayout,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.printmanager,org.kde.plasma.battery
 knownItems=org.kde.plasma.vault,org.kde.plasma.bluetooth,org.kde.plasma.cameraindicator,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.manage-inputmethod,org.kde.plasma.mediacontroller,org.kde.plasma.notifications,org.kde.plasma.keyboardindicator,org.kde.plasma.weather,org.kde.kscreen,org.kde.kupapplet,org.kde.plasma.battery,org.kde.plasma.brightness,org.kde.plasma.dwellclicker,org.kde.plasma.keyboardlayout,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.printmanager
+shownItems=org.kde.plasma.battery
 
 [Containments][30][Applets][168]
 immutability=1
@@ -250,14 +251,6 @@ windowTitleUndefined=
 [Containments][30][Applets][169][Configuration][ConfigDialog]
 DialogHeight=630
 DialogWidth=810
-
-[Containments][30][Applets][171]
-immutability=1
-plugin=org.kde.plasma.battery
-
-[Containments][30][Applets][171][Configuration]
-popupHeight=181
-popupWidth=360
 
 [Containments][30][Applets][59]
 immutability=1
@@ -310,7 +303,7 @@ icon=/home/joey/images/Arch Linux.png
 systemFavorites=suspend\\,hibernate\\,reboot\\,shutdown
 
 [Containments][30][General]
-AppletOrder=65;169;64;59;60;126;168;171;150;128
+AppletOrder=65;169;64;59;60;126;168;150;128
 
 [ScreenMapping]
 itemsOnDisabledScreens=
