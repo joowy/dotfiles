@@ -5,12 +5,18 @@ updated_at = "2026-06-10T00:00:00Z"
 aliases = ["herdr:pi"]
 
 [[rules]]
-id = "working_literal"
+id = "working_spinner_line"
 state = "working"
 priority = 100
-region = "whole_recent"
+region = "bottom_non_empty_lines(12)"
 visible_working = true
-contains = ["Working..."]
+# pi renders a busy turn as the braille spinner, one space, then "Working",
+# with an interrupt hint appended while the turn can be interrupted:
+#   ⠋ Working
+#   ⠋ Working (esc to interrupt)
+# Plain "Working..." never appears, so the old literal could not match. Requiring
+# the spinner to open the line keeps prose that mentions Working out.
+line_regex = ['^\s*[\x{2800}-\x{28FF}]+\s+Working(?:\s+\([^)]*\))?\s*$']
 
 [[rules]]
 id = "live_blocked_form"
