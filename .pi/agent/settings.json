@@ -1,0 +1,44 @@
+{
+  "lastChangelogVersion": "1.5.0",
+  "enableInstallTelemetry": false,
+  "theme": "light/dark",
+  "packages": [
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:pi-footer",
+    "npm:pi-context-view",
+    "npm:pi-subagents-lite",
+    "npm:pi-slash-suggest",
+    "npm:@gotgenes/pi-permission-system",
+    "npm:@narumitw/pi-usage"
+  ],
+  "defaultTools": [
+    "+codemode"
+  ],
+  "defaultThinkingLevel": "high",
+  "skills": [
+    "~/.claude/skills",
+    "~/.codex/skills",
+    "../.claude/skills"
+  ],
+  "newLine": [
+    "shift+enter",
+    "ctrl+j"
+  ],
+  "defaultProvider": "opencode-go",
+  "enabledModels": [
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/gemini-4-argon",
+    "opencode-go/glm-5.3-flash",
+    "llama.cpp/*"
+  ],
+  "hideThinkingBlock": true,
+  "showHardwareCursor": true,
+  "showCacheMissNotices": true,
+  "quietStartup": false,
+  "treeFilterMode": "user-only",
+  "tuiMode": "regular",
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-footer\",\"scope\":\"user\"}": "0.5.1",
+    "{\"source\":\"npm:@gotgenes/pi-permission-system\",\"scope\":\"user\"}": "42.0.0"
+  }
+}

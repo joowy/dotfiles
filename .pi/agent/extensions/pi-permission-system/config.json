@@ -1,0 +1,26 @@
+{
+  "authorizerChain": ["permission-judge"],
+  "promptTimeoutMs": 300000,
+  "permission": {
+    "*": "allow",
+    "path": {
+      "~/.agents/": "allow",
+      "~/repos/": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
+    },
+    "bash": {
+      "*": "allow",
+      "rm": "ask",
+      "rm -rf *": "deny",
+      "* rm -rf *": "deny",
+      "sudo *": "deny",
+      "git push": "deny",
+      "* push *": "deny",
+      "brew *": "deny",
+      "pacman *": "deny"
+    },
+    "external_directory": "allow"
+  }
+}

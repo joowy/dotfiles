@@ -1,0 +1,130 @@
+#--------------------------------------------------
+# Powerlevel10k Instant Prompt
+#--------------------------------------------------
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+#--------------------------------------------------
+# Oh My Zsh Configuration
+#--------------------------------------------------
+export ZSH="$HOME/.oh-my-zsh"
+export ZSH_THEME="powerlevel10k/powerlevel10k"
+export AUTOSWITCH_SILENT=1
+
+export plugins=(git zsh-autosuggestions zsh-syntax-highlighting fzf fzf-tab npm autoswitch_virtualenv)
+
+fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+fpath=(~/.zfunc $fpath)
+#--------------------------------------------------
+# Environment Variables & PATH
+#--------------------------------------------------
+export PATH=/opt/cuda/bin:$PATH
+export PATH=/home/joey/.local/bin:$PATH
+export VULKAN_SDK=~/vulkan/1.4.341.1/x86_64
+export PATH=$VULKAN_SDK/bin:$PATH
+export LD_LIBRARY_PATH=$VULKAN_SDK/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+export VK_ADD_LAYER_PATH=$VULKAN_SDK/share/vulkan/explicit_layer.d
+export PKG_CONFIG_PATH=$VULKAN_SDK/share/pkgconfig:$VULKAN_SDK/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+#--------------------------------------------------
+# Google Cloud SDK
+#--------------------------------------------------
+if [ -f '/home/joey/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/home/joey/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/joey/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+#--------------------------------------------------
+# Editor
+#--------------------------------------------------
+export VISUAL=nvim
+export EDITOR=nvim
+
+#--------------------------------------------------
+# History Configuration
+#--------------------------------------------------
+export HISTSIZE=100000
+export SAVEHIST=100000
+export HISTFILE=~/.zsh_history
+export HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+
+#--------------------------------------------------
+# Aliases
+#--------------------------------------------------
+alias gs='git status'
+alias c='clear'
+alias n='nvim'
+alias ls='ls --color'
+alias open='dolphin'
+alias laz='lazygit'
+
+#--------------------------------------------------
+# herdr completion
+#--------------------------------------------------
+if command -v herdr &>/dev/null && [[ ! -f ~/.zfunc/_herdr ]]; then
+  mkdir -p ~/.zfunc
+  herdr completion zsh >~/.zfunc/_herdr
+fi
+
+#--------------------------------------------------
+# Completion Styling & Zoxide
+#--------------------------------------------------
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:*' fzf-preview '
+     if [[ -n $realpath && -d $realpath ]]; then
+       eza -1h --tree --level=2 --icons --color=always -- "$realpath"
+     elif [[ -n $realpath && -f $realpath ]]; then
+       bat --style=numbers --color=always --line-range=:500 -- "$realpath"
+     fi'
+
+command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
+[[ -r "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[[ -x /home/linuxbrew/.linuxbrew/bin/brew ]] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+
+# mise: shims mode so GUI-launched apps resolve the same tools (see ~/.zshenv)
+# Guarded: .zshenv already prepends shims for every shell; eval only if missing.
+case ":$PATH:" in
+*":$HOME/.local/share/mise/shims:"*) ;;
+*) eval "$(mise activate zsh --shims)" ;;
+esac
+
+export PATH="$HOME/dotfiles/bin:$PATH"
+# git worktrees: wt prints the path, then cd into it
+wt() {
+  local d
+  d=$(command wt "$@") && cd -- "$d"
+}
+
+notify() {
+  "$@"
+  local rc=$?
+  (($+commands[herdr])) || return $rc
+  if ((rc == 0)); then
+    herdr notification show "done: $1" --body "$*" --sound done
+  else
+    herdr notification show "failed ($rc): $1" --body "$*" --sound request
+  fi
+  return $rc
+}
+# Pi
+export PATH="/home/joey/.pi/agent/bin:$PATH"
+# >>> obsidian-private-guard (pi-safe) >>>
+export PATH="$HOME/.pi/agent/bin:$PATH"
+# Override lazy-load stubs (e.g. oh-my-zsh nvm plugin) so `pi` always goes
+# through the guard. Defined last, so it wins over earlier functions.
+pi() {
+  if ! command -v -p node >/dev/null 2>&1; then
+    [ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ] && . "${NVM_DIR:-$HOME/.nvm}/nvm.sh" >/dev/null 2>&1
+  fi
+  "$HOME/.pi/agent/bin/pi-safe" "$@"
+}
+# <<< obsidian-private-guard (pi-safe) <<<

@@ -1,0 +1,170 @@
+    OpenRGB v1.0
+    Commit:  from 
+    Launched: 20260917_005552
+====================================================================================================
+
+[0         ][Info   ][NetworkClient] Connection attempt failed
+[52        ][Info   ][DetectionManager] Saving detector settings
+[54        ][Info   ]------------------------------------------------------
+[54        ][Info   ]|               Start device detection               |
+[54        ][Info   ]------------------------------------------------------
+[61        ][Info   ]------------------------------------------------------
+[61        ][Info   ]|             Detecting I2C interfaces               |
+[61        ][Info   ]------------------------------------------------------
+[61        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU SMU 1 (/dev/i2c-3) Device 1002:73BF Subsystem: 1849:5202
+[61        ][Info   ][i2c_smbus_linux] Failed to read i2c device PCI device ID
+[61        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM aux hw bus 1 (/dev/i2c-10) Device 0000:0000 Subsystem: 0000:0000
+[61        ][Info   ][DetectionManager] Registering I2C interface: Synopsys DesignWare I2C adapter (/dev/i2c-1) Device 0000:0000 Subsystem: 0000:0000
+[61        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c OEM bus (/dev/i2c-8) Device 1002:73BF Subsystem: 1849:5202
+[61        ][Info   ][DetectionManager] Registering I2C interface: NVIDIA i2c adapter 6 at 1:00.0 (/dev/i2c-15) Device 10DE:2C02 Subsystem: 1458:4196
+[61        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c hw bus 2 (/dev/i2c-6) Device 1002:73BF Subsystem: 1849:5202
+[61        ][Info   ][DetectionManager] Registering I2C interface: NVIDIA i2c adapter 4 at 1:00.0 (/dev/i2c-13) Device 10DE:2C02 Subsystem: 1458:4196
+[61        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c hw bus 0 (/dev/i2c-4) Device 1002:73BF Subsystem: 1849:5202
+[61        ][Info   ][i2c_smbus_linux] Failed to read i2c device PCI device ID
+[61        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM aux hw bus 2 (/dev/i2c-11) Device 0000:0000 Subsystem: 0000:0000
+[62        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU SMU 0 (/dev/i2c-2) Device 1002:73BF Subsystem: 1849:5202
+[62        ][Info   ][DetectionManager] Registering I2C interface: Synopsys DesignWare I2C adapter (/dev/i2c-0) Device 0000:0000 Subsystem: 0000:0000
+[62        ][Info   ][i2c_smbus_linux] Failed to read i2c device PCI device ID
+[62        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM aux hw bus 0 (/dev/i2c-9) Device 0000:0000 Subsystem: 0000:0000
+[62        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c hw bus 3 (/dev/i2c-7) Device 1002:73BF Subsystem: 1849:5202
+[62        ][Info   ][DetectionManager] Registering I2C interface: NVIDIA i2c adapter 5 at 1:00.0 (/dev/i2c-14) Device 10DE:2C02 Subsystem: 1458:4196
+[62        ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c hw bus 1 (/dev/i2c-5) Device 1002:73BF Subsystem: 1849:5202
+[62        ][Info   ][DetectionManager] Registering I2C interface: NVIDIA i2c adapter 3 at 1:00.0 (/dev/i2c-12) Device 10DE:2C02 Subsystem: 1458:4196
+[62        ][Info   ]------------------------------------------------------
+[62        ][Info   ]|               Detecting I2C devices                |
+[62        ][Info   ]------------------------------------------------------
+[80        ][Info   ]------------------------------------------------------
+[80        ][Info   ]|            Detecting I2C DRAM modules              |
+[80        ][Info   ]------------------------------------------------------
+[80        ][Info   ]------------------------------------------------------
+[80        ][Info   ]|               Detecting I2C PCI devices            |
+[80        ][Info   ]------------------------------------------------------
+[81        ][Info   ]------------------------------------------------------
+[81        ][Info   ]|               Detecting HID devices                |
+[81        ][Info   ]------------------------------------------------------
+[794       ][Info   ]Count of connected devices to C52B: 1
+[794       ][Info   ]Faking a reconnect to get device list
+[798       ][Info   ]Connected Device Index 0:	VirtualID=408A		10 01 41 04 31 8A 40
+[800       ][Info   ]Connected Device Index 1:	VirtualID=0000		10 FF 80 02 00 00 00
+[800       ][Info   ][Logitech receiver C52B @ /dev/hidraw10] 1 paired device(s)
+[808       ][Info   ][Logitech receiver C52B] slot=1 PID=408A 'MX Keys' is device 99FF2B10
+[1783      ][Info   ][Logitech receiver watcher @ /dev/hidraw10] Watching for connection events
+[2137      ][Info   ]Unable add this Logitech device: Not Connected
+[2491      ][Info   ]Unable add this Logitech device: Not Connected
+[2845      ][Info   ]Unable add this Logitech device: Not Connected
+[3199      ][Info   ]Unable add this Logitech device: Not Connected
+[3553      ][Info   ]Unable add this Logitech device: Not Connected
+[3907      ][Info   ]Unable add this Logitech device: Not Connected
+[4261      ][Info   ]Unable add this Logitech device: Not Connected
+[4615      ][Info   ]Unable add this Logitech device: Not Connected
+[4969      ][Info   ]Unable add this Logitech device: Not Connected
+[5323      ][Info   ]Unable add this Logitech device: Not Connected
+[6037      ][Info   ]Count of connected devices to C539: 1
+[6037      ][Info   ]Faking a reconnect to get device list
+[6040      ][Info   ]Connected Device Index 0:	VirtualID=4079		10 01 41 0C 72 79 40
+[6041      ][Info   ]Connected Device Index 1:	VirtualID=0000		10 FF 80 02 00 00 00
+[6041      ][Info   ][Logitech receiver C539 @ /dev/hidraw2] 1 paired device(s)
+[6041      ][Info   ][Logitech receiver C539] slot=1 PID=4079 is owned by 'Logitech G Pro Wireless Gaming Mouse', leaving it alone (disable that detector to hand it to HID++ 2.0)
+[6757      ][Info   ]Count of connected devices to C548: 2
+[6757      ][Info   ]Faking a reconnect to get device list
+[6764      ][Info   ]Connected Device Index 0:	VirtualID=B034		10 01 41 10 02 34 B0
+[6765      ][Info   ]Connected Device Index 1:	VirtualID=B031		10 02 41 10 42 31 B0
+[6766      ][Info   ]Connected Device Index 2:	VirtualID=0000		10 FF 80 02 00 00 00
+[6766      ][Info   ][Logitech receiver C548 @ /dev/hidraw5] 2 paired device(s)
+[7370      ][Info   ][Logitech receiver C548] slot=2 '' has no stored serial; it will not be recognized over a second link
+[7370      ][Info   ][Logitech receiver C548] slot=2 PID=B031 '' is device /dev/hidraw5#2
+[7974      ][Info   ][Logitech receiver C548] slot=1 '' has no stored serial; it will not be recognized over a second link
+[7974      ][Info   ][Logitech receiver C548] slot=1 PID=B034 '' is device /dev/hidraw5#1
+[14445     ][Info   ][Logitech receiver watcher @ /dev/hidraw5] Watching for connection events
+[15572     ][Info   ][DetectionManager] Registering RGB controller B850 GAMING WIFI6
+[15574     ][Info   ]------------------------------------------------------
+[15574     ][Info   ]|            Detecting libusb HID devices            |
+[15574     ][Info   ]------------------------------------------------------
+[15727     ][Info   ]------------------------------------------------------
+[15727     ][Info   ]|              Detecting other devices               |
+[15727     ][Info   ]------------------------------------------------------
+[15742     ][Info   ]------------------------------------------------------
+[15742     ][Info   ]|                Detection completed                 |
+[15742     ][Info   ]------------------------------------------------------
+[322808    ][Info   ]------------------------------------------------------
+[322808    ][Info   ]|               Start device detection               |
+[322808    ][Info   ]------------------------------------------------------
+[322814    ][Info   ]------------------------------------------------------
+[322814    ][Info   ]|             Detecting I2C interfaces               |
+[322814    ][Info   ]------------------------------------------------------
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU SMU 1 (/dev/i2c-3) Device 1002:73BF Subsystem: 1849:5202
+[322814    ][Info   ][i2c_smbus_linux] Failed to read i2c device PCI device ID
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM aux hw bus 1 (/dev/i2c-10) Device 0000:0000 Subsystem: 0000:0000
+[322814    ][Info   ][DetectionManager] Registering I2C interface: Synopsys DesignWare I2C adapter (/dev/i2c-1) Device 0000:0000 Subsystem: 0000:0000
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c OEM bus (/dev/i2c-8) Device 1002:73BF Subsystem: 1849:5202
+[322814    ][Info   ][DetectionManager] Registering I2C interface: NVIDIA i2c adapter 6 at 1:00.0 (/dev/i2c-15) Device 10DE:2C02 Subsystem: 1458:4196
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c hw bus 2 (/dev/i2c-6) Device 1002:73BF Subsystem: 1849:5202
+[322814    ][Info   ][DetectionManager] Registering I2C interface: NVIDIA i2c adapter 4 at 1:00.0 (/dev/i2c-13) Device 10DE:2C02 Subsystem: 1458:4196
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c hw bus 0 (/dev/i2c-4) Device 1002:73BF Subsystem: 1849:5202
+[322814    ][Info   ][i2c_smbus_linux] Failed to read i2c device PCI device ID
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM aux hw bus 2 (/dev/i2c-11) Device 0000:0000 Subsystem: 0000:0000
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU SMU 0 (/dev/i2c-2) Device 1002:73BF Subsystem: 1849:5202
+[322814    ][Info   ][DetectionManager] Registering I2C interface: Synopsys DesignWare I2C adapter (/dev/i2c-0) Device 0000:0000 Subsystem: 0000:0000
+[322814    ][Info   ][i2c_smbus_linux] Failed to read i2c device PCI device ID
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM aux hw bus 0 (/dev/i2c-9) Device 0000:0000 Subsystem: 0000:0000
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c hw bus 3 (/dev/i2c-7) Device 1002:73BF Subsystem: 1849:5202
+[322814    ][Info   ][DetectionManager] Registering I2C interface: NVIDIA i2c adapter 5 at 1:00.0 (/dev/i2c-14) Device 10DE:2C02 Subsystem: 1458:4196
+[322814    ][Info   ][DetectionManager] Registering I2C interface: AMDGPU DM i2c hw bus 1 (/dev/i2c-5) Device 1002:73BF Subsystem: 1849:5202
+[322821    ][Info   ][DetectionManager] Registering I2C interface: NVIDIA i2c adapter 3 at 1:00.0 (/dev/i2c-12) Device 10DE:2C02 Subsystem: 1458:4196
+[322821    ][Info   ]------------------------------------------------------
+[322821    ][Info   ]|               Detecting I2C devices                |
+[322821    ][Info   ]------------------------------------------------------
+[322838    ][Info   ]------------------------------------------------------
+[322838    ][Info   ]|            Detecting I2C DRAM modules              |
+[322838    ][Info   ]------------------------------------------------------
+[322838    ][Info   ]------------------------------------------------------
+[322838    ][Info   ]|               Detecting I2C PCI devices            |
+[322838    ][Info   ]------------------------------------------------------
+[322839    ][Info   ]------------------------------------------------------
+[322839    ][Info   ]|               Detecting HID devices                |
+[322839    ][Info   ]------------------------------------------------------
+[323554    ][Info   ]Count of connected devices to C52B: 1
+[323554    ][Info   ]Faking a reconnect to get device list
+[323558    ][Info   ]Connected Device Index 0:	VirtualID=408A		10 01 41 04 31 8A 40
+[323558    ][Info   ][Logitech receiver watcher @ /dev/hidraw10] index=0x01 connected, building it
+[323560    ][Info   ]Connected Device Index 1:	VirtualID=0000		10 FF 80 02 00 00 00
+[323560    ][Info   ][Logitech receiver C52B @ /dev/hidraw10] 1 paired device(s)
+[323568    ][Info   ][Logitech receiver C52B] slot=1 PID=408A 'MX Keys' is device 99FF2B10
+[324915    ][Info   ]Unable add this Logitech device: Not Connected
+[325269    ][Info   ]Unable add this Logitech device: Not Connected
+[325623    ][Info   ]Unable add this Logitech device: Not Connected
+[325977    ][Info   ]Unable add this Logitech device: Not Connected
+[326331    ][Info   ]Unable add this Logitech device: Not Connected
+[326686    ][Info   ]Unable add this Logitech device: Not Connected
+[327040    ][Info   ]Unable add this Logitech device: Not Connected
+[327394    ][Info   ]Unable add this Logitech device: Not Connected
+[327748    ][Info   ]Unable add this Logitech device: Not Connected
+[328102    ][Info   ]Unable add this Logitech device: Not Connected
+[328816    ][Info   ]Count of connected devices to C539: 1
+[328816    ][Info   ]Faking a reconnect to get device list
+[328819    ][Info   ]Connected Device Index 0:	VirtualID=4079		10 01 41 0C 72 79 40
+[328820    ][Info   ]Connected Device Index 1:	VirtualID=0000		10 FF 80 02 00 00 00
+[328820    ][Info   ][Logitech receiver C539 @ /dev/hidraw2] 1 paired device(s)
+[328820    ][Info   ][Logitech receiver C539] slot=1 PID=4079 is owned by 'Logitech G Pro Wireless Gaming Mouse', leaving it alone (disable that detector to hand it to HID++ 2.0)
+[329537    ][Info   ]Count of connected devices to C548: 2
+[329537    ][Info   ]Faking a reconnect to get device list
+[329543    ][Info   ]Connected Device Index 0:	VirtualID=B034		10 01 41 10 02 34 B0
+[329543    ][Info   ][Logitech receiver watcher @ /dev/hidraw5] index=0x01 connected, building it
+[329544    ][Info   ]Connected Device Index 1:	VirtualID=B031		10 02 41 10 42 31 B0
+[329545    ][Info   ]Connected Device Index 2:	VirtualID=0000		10 FF 80 02 00 00 00
+[329545    ][Info   ][Logitech receiver C548 @ /dev/hidraw5] 2 paired device(s)
+[330149    ][Info   ][Logitech receiver C548] slot=2 '' has no stored serial; it will not be recognized over a second link
+[330149    ][Info   ][Logitech receiver C548] slot=2 PID=B031 '' is device /dev/hidraw5#2
+[330753    ][Info   ][Logitech receiver C548] slot=1 '' has no stored serial; it will not be recognized over a second link
+[330753    ][Info   ][Logitech receiver C548] slot=1 PID=B034 '' is device /dev/hidraw5#1
+[337827    ][Info   ][DetectionManager] Registering RGB controller B850 GAMING WIFI6
+[337830    ][Info   ]------------------------------------------------------
+[337830    ][Info   ]|            Detecting libusb HID devices            |
+[337830    ][Info   ]------------------------------------------------------
+[337973    ][Info   ]------------------------------------------------------
+[337973    ][Info   ]|              Detecting other devices               |
+[337973    ][Info   ]------------------------------------------------------
+[337977    ][Info   ]------------------------------------------------------
+[337977    ][Info   ]|                Detection completed                 |
+[337977    ][Info   ]------------------------------------------------------
+[440608    ][Info   ][DetectionManager] Cleaning up detected devices

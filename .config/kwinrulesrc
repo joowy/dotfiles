@@ -1,0 +1,18 @@
+[076c3e80-a3e8-4ee5-bce7-d5124c0b010f]
+Description=Application settings for md.Obsidian
+desktopfile=obsidian.desktop
+desktopfilerule=3
+wmclass=electron md.Obsidian
+wmclasscomplete=true
+wmclassmatch=1
+
+[General]
+Order=f1c5efdc-2409-4641-919c-50dc37e19b20,076c3e80-a3e8-4ee5-bce7-d5124c0b010f
+
+[f1c5efdc-2409-4641-919c-50dc37e19b20]
+Description=Application settings for md.obsidian.Obsidian
+desktopfile=/usr/share/applications/obsidian
+desktopfilerule=3
+wmclass=electron md.obsidian.Obsidian
+wmclasscomplete=true
+wmclassmatch=1

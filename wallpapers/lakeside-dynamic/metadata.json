@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Wallpaper/Images",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Louis Coyle",
+                "Email": "https://dynamicwallpaper.club/wallpaper/jculsb683ok"
+            },
+            {
+                "Name": "Hugo Trassoudaine"
+            },
+            {
+                "Name": "Karmanyaah Malhotra",
+                "Email": "32671690+karmanyaahm@users.noreply.github.com"
+            }
+        ],
+        "Id": "lakeside-dynamic",
+        "License": "CC-BY-SA-4.0",
+        "Name": "Lakeside (Day/Night)"
+    }
+}

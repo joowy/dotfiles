@@ -1,0 +1,47 @@
+id = "pi"
+version = "2026.06.10.1"
+min_engine_version = 1
+updated_at = "2026-06-10T00:00:00Z"
+aliases = ["herdr:pi"]
+
+[[rules]]
+id = "working_literal"
+state = "working"
+priority = 100
+region = "whole_recent"
+visible_working = true
+contains = ["Working..."]
+
+[[rules]]
+id = "live_blocked_form"
+state = "blocked"
+priority = 980
+region = "whole_recent"
+visible_blocker = true
+any = [
+  { contains = [
+    "Permission Required",
+  ] },
+  { contains = [
+    "enter to confirm",
+  ] },
+  { contains = [
+    "Enter to select",
+  ], any = [
+    { contains = [
+      "tab/arrow keys to navigate",
+    ] },
+    { contains = [
+      "arrow keys to navigate",
+    ] },
+    { contains = [
+      "arrows to navigate",
+    ] },
+    { contains = [
+      "↑/↓ to navigate",
+    ] },
+    { contains = [
+      "↑↓ to navigate",
+    ] },
+  ] },
+]

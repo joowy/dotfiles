@@ -1,0 +1,48 @@
+# Machine-specific KDE/Plasma state and settings
+.config/KDE/
+.config/kdedefaults/
+.config/kdeglobals
+.config/kaccessrc
+.config/kconf_updaterc
+.config/ksmserverrc
+.config/ktimezonedrc
+.config/kwinrc
+.config/kwinoutputconfig.json
+.config/plasmanotifyrc
+.config/plasma-welcomerc
+.config/spectaclerc
+.config/bluedevilglobalrc
+.config/session/
+.config/QtProject.conf
+.config/kglobalshortcutsrc
+.config/KeePass 
+# Desktop toolkit / display server state
+.config/dconf/
+.config/gtk-3.0/
+.config/gtk-4.0/
+.config/xsettingsd/
+.config/pulse/
+
+# Per-machine application data
+.config/gh/hosts.yml
+.config/go/
+.config/libaccounts-glib/
+.config/.mono/
+.config/mozilla/
+
+# Private / sensitive local data
+.config/obsidian/
+.config/obsidian-private-guard/config.json.pre-install-backup
+.pi/agent/extensions/obsidian-private-guard.ts
+
+#.zfunc 
+.zfunc/_herdr
+.config/kwin_dialogsrc
+
+.config/user-dirs.dirs
+.config/user-dirs.locale
+
+# Zoom
+.config/zoom/
+.config/zoom.conf
+.config/zoomus.conf

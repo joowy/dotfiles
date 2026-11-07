@@ -1,0 +1,15 @@
+{
+  "vault": "/home/joey/repos/Obsidian",
+  "privateFolders": [
+    "01-personal"
+  ],
+  "extraBlockedPaths": [],
+  "ghAuthPaths": [
+    "~/.config/gh/hosts.yml"
+  ],
+  "lockdownWithoutBarrier": true,
+  "realPiPath": "/home/joey/.local/share/obsidian-private-guard/assets/pi-managed-trampoline.sh",
+  "localModelProviders": [
+    "llama.cpp"
+  ]
+}

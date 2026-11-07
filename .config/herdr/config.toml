@@ -1,0 +1,118 @@
+onboarding = false
+[theme]
+name = "rose-pine-dawn"
+auto_switch = true
+dark_name = 'rose-pine'
+light_name = 'rose-pine-dawn'
+
+[keys]
+prefix = "ctrl+a"
+reload_config = "prefix+r"
+resize_mode = "prefix+shift+r"
+zoom = "prefix+m"
+
+split_vertical = "prefix+|"
+split_horizontal = "prefix+_"
+
+next_agent = "prefix+a"
+previous_agent = "prefix+shift+a"
+focus_agent = "prefix+shift+1..9"
+
+last_pane = "prefix+;"
+
+[experimental]
+pane_history = true
+
+
+[ui]
+accent = "#f6c17"
+pane_gaps = true
+
+agent_panel_sort = "priority"
+show_agent_labels_on_pane_borders = true
+
+[ui.sidebar.agents]
+rows = [["state_icon", "agent", "pane"], ["workspace"]]
+
+[[keys.command]]
+key = "ctrl+h"
+type = "plugin_action"
+command = "herdr-splits.nav-left"
+
+[[keys.command]]
+key = "ctrl+j"
+type = "plugin_action"
+command = "herdr-splits.nav-down"
+
+[[keys.command]]
+key = "ctrl+k"
+type = "plugin_action"
+command = "herdr-splits.nav-up"
+
+[[keys.command]]
+key = "ctrl+l"
+type = "plugin_action"
+command = "herdr-splits.nav-right"
+
+[[keys.command]]
+key = "alt+h"
+type = "plugin_action"
+command = "herdr-splits.resize-left"
+
+[[keys.command]]
+key = "alt+j"
+type = "plugin_action"
+command = "herdr-splits.resize-down"
+
+[[keys.command]]
+key = "alt+k"
+type = "plugin_action"
+command = "herdr-splits.resize-up"
+
+[[keys.command]]
+key = "alt+l"
+type = "plugin_action"
+command = "herdr-splits.resize-right"
+
+[[keys.command]]
+key = "prefix+e"
+type = "plugin_action"
+command = "chmarax.herdr-nvim.toggle"
+description = "nvim sidebar"
+
+[[keys.command]]
+key = "prefix+o"
+type = "plugin_action"
+command = "chmarax.herdr-nvim.pick-file"
+description = "open file from agent output"
+[ui.toast]
+delivery = "herdr"
+
+[ui.sound]
+enabled = false
+
+[[keys.command]]
+key = "prefix+alt+g"
+type = "popup"
+command = "lazygit"
+description = "run lazygit"
+width = "95%"
+height = "95%"
+
+
+[[keys.command]]
+key = "prefix+alt+r"
+type = "popup"
+command = "tuicr"
+description = "run tuicr"
+width = "95%"
+height = "95%"
+
+
+[[keys.command]]
+key = "prefix+alt+d"
+type = "popup"
+command = "lazydocker"
+description = "run lazydocker"
+width = "95%"
+height = "95%"

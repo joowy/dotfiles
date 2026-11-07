@@ -1,0 +1,15 @@
+/*
+!/extensions/
+!/extensions/pi-permission-system/
+!/extensions/pi-permission-system/**
+!/extensions/subagent/
+!/extensions/subagent/**
+!/extensions/herdr-agent-state.ts
+!/agents/
+!/agents/**
+!/prompts/
+!/prompts/**
+!settings.json
+
+# Permission review log — machine-generated, do not track.
+/extensions/pi-permission-system/logs/pi-permission-system-permission-review.jsonl

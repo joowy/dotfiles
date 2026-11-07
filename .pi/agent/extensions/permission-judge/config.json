@@ -1,0 +1,12 @@
+{
+  "enabled": true,
+  "judgeModel": "opencode-go/claude-haiku-5-5",
+  "timeoutMs": 20000,
+  "maxTokens": 1200,
+  "maxUserTranscriptTokens": 4000,
+  "maxToolTranscriptTokens": 4000,
+  "environment": ["$defaults"],
+  "allow": ["$defaults"],
+  "softDeny": ["$defaults"],
+  "hardDeny": ["$defaults"]
+}
