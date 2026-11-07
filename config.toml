@@ -87,7 +87,7 @@ uv = "latest"                         # Python project and package management; m
 "pacman:go" = "latest"
 "pacman:cmake" = "latest"
 "pacman:github-cli" = "latest"
-
+"pacman:fastfetch" = "latest"
 # --- login shell ------------------------------------------------------------
 # Replaces the manual `chsh -s $(which zsh)` the old README asked for.
 [bootstrap.user]
