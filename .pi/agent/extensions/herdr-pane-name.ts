@@ -2,7 +2,9 @@
  * Rename the Herdr pane label from a generated title.
  *
  * One destination only: the Herdr pane label. The pi session name and the OSC 2
- * terminal title are left alone.
+ * terminal title are left alone. The label ends with the live pane id, as in
+ * "Fix OAuth callback (w14:p7)", and quitting the agent clears the label this
+ * extension wrote so a dead pane does not keep advertising an old task.
  *
  * Two pitfalls this file carries from the package it replaces:
  * - A title is one short line, so the naming request must not reason. Reasoning
@@ -36,7 +38,6 @@ const SETTINGS_FILE = "pi-herdr.json";
 const DEFAULT_TITLE_MAX_CHARS = 32;
 const NAMING_SOURCE_CHAR_MAX = 4000;
 const NAMING_MAX_TOKENS = 64;
-const REQUEST_TIMEOUT_MS = 30_000;
 const SOCKET_TIMEOUT_MS = 1500;
 const OPENCODE_SESSION_HEADER = "x-opencode-session";
 
@@ -46,9 +47,10 @@ Reply with exactly one line:
 TITLE: <short title>
 
 Rules:
-- Write the title in the same language the user wrote in.
+- Write the title in English. 
 - Describe the concrete task, not the tooling.
-- Keep it short enough to fit a terminal tab label.
+- Keep it short less than 7 words 
+- Start with an action verb 
 - No quotes, no punctuation at the end, no emoji, no markdown, no extra labels or explanation.
 
 Example:
@@ -74,10 +76,14 @@ type RenameFailureReason =
 
 type GenerateTitleResult =
   | { ok: true; title: string }
-  | { ok: false; reason: Exclude<RenameFailureReason, "skipped" | "stale_session">; detail?: string };
+  | {
+      ok: false;
+      reason: Exclude<RenameFailureReason, "skipped" | "stale_session">;
+      detail?: string;
+    };
 
 type RenameResult =
-  | { ok: true; title: string }
+  | { ok: true; label: string }
   | { ok: false; reason: RenameFailureReason; detail?: string };
 
 // --- Herdr socket -----------------------------------------------------------
@@ -85,11 +91,17 @@ type RenameResult =
 function socketEndpoint(): string | undefined {
   const socketPath = process.env.HERDR_SOCKET_PATH;
   if (!socketPath) return undefined;
-  return process.platform === "win32" ? `\\\\.\\pipe\\${socketPath}` : socketPath;
+  return process.platform === "win32"
+    ? `\\\\.\\pipe\\${socketPath}`
+    : socketPath;
 }
 
 /** One request per connection, newline-delimited JSON. Resolves undefined on any failure. */
-function sendRequest(endpoint: string, method: string, params: unknown): Promise<unknown> {
+function sendRequest(
+  endpoint: string,
+  method: string,
+  params: unknown,
+): Promise<unknown> {
   return new Promise((resolve) => {
     const socket = net.createConnection(endpoint);
     let buffer = "";
@@ -118,7 +130,9 @@ function sendRequest(endpoint: string, method: string, params: unknown): Promise
       if (newline === -1) return;
 
       try {
-        const response = JSON.parse(buffer.slice(0, newline)) as { result?: unknown };
+        const response = JSON.parse(buffer.slice(0, newline)) as {
+          result?: unknown;
+        };
         finish(response.result);
       } catch {
         finish(undefined);
@@ -127,11 +141,53 @@ function sendRequest(endpoint: string, method: string, params: unknown): Promise
   });
 }
 
-async function setPaneLabel(endpoint: string, paneId: string, label: string): Promise<boolean> {
-  const result = (await sendRequest(endpoint, "pane.rename", { pane_id: paneId, label })) as
-    | { pane?: { pane_id?: string } }
-    | undefined;
+async function setPaneLabel(
+  endpoint: string,
+  paneId: string,
+  label: string,
+): Promise<boolean> {
+  const result = (await sendRequest(endpoint, "pane.rename", {
+    pane_id: paneId,
+    label,
+  })) as { pane?: { pane_id?: string } } | undefined;
   return !!result?.pane;
+}
+
+async function clearPaneLabel(
+  endpoint: string,
+  paneId: string,
+): Promise<boolean> {
+  const result = (await sendRequest(endpoint, "pane.rename", {
+    pane_id: paneId,
+    clear: true,
+  })) as { pane?: { pane_id?: string } } | undefined;
+  return !!result?.pane;
+}
+
+type PaneSnapshot = { paneId: string; label?: string };
+
+/**
+ * Read the live pane id and label. A pane moved into another workspace or tab
+ * gets a new id, and herdr keeps resolving the inherited one, so the id in the
+ * label must be read back rather than taken from the environment.
+ */
+async function readPaneSnapshot(
+  endpoint: string,
+  fallbackPaneId: string,
+): Promise<PaneSnapshot> {
+  const result = (await sendRequest(endpoint, "pane.get", {
+    pane_id: fallbackPaneId,
+  })) as { pane?: { pane_id?: string; label?: string } } | undefined;
+  const pane = result?.pane;
+
+  return {
+    paneId:
+      typeof pane?.pane_id === "string" && pane.pane_id
+        ? pane.pane_id
+        : fallbackPaneId,
+    label:
+      typeof pane?.label === "string" && pane.label ? pane.label : undefined,
+  };
 }
 
 // --- Settings ---------------------------------------------------------------
@@ -143,7 +199,8 @@ function asObject(value: unknown): Record<string, unknown> {
 }
 
 function readPositiveInteger(value: unknown, fallback: number): number {
-  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return fallback;
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0)
+    return fallback;
   return Math.floor(value);
 }
 
@@ -179,7 +236,10 @@ function sanitizeTitle(value: string): string {
 }
 
 /** Cut at a word boundary so a label does not end mid-word. */
-export function compactTitle(value: string, maxChars = DEFAULT_TITLE_MAX_CHARS): string | undefined {
+export function compactTitle(
+  value: string,
+  maxChars = DEFAULT_TITLE_MAX_CHARS,
+): string | undefined {
   const title = sanitizeTitle(value);
   if (!title) return undefined;
   if (title.length <= maxChars) return title;
@@ -192,6 +252,26 @@ export function compactTitle(value: string, maxChars = DEFAULT_TITLE_MAX_CHARS):
   }
 
   return title.slice(0, maxChars).trim() || undefined;
+}
+
+/** Pane ids read as w14:p7 today and wX:p5M in older session files. */
+const PANE_ID_SUFFIX_PATTERN = /\s*\(w[0-9a-z]+:p[0-9a-z]+\)$/i;
+
+/** Drop a pane id suffix, so a pasted label does not stack a second one. */
+export function stripPaneIdSuffix(value: string): string {
+  let text = value.trim();
+  let stripped = text.replace(PANE_ID_SUFFIX_PATTERN, "").trim();
+
+  while (stripped !== text) {
+    text = stripped;
+    stripped = text.replace(PANE_ID_SUFFIX_PATTERN, "").trim();
+  }
+
+  return text;
+}
+
+export function formatPaneLabel(title: string, paneId: string): string {
+  return `${title} (${paneId})`;
 }
 
 function cleanGeneratedValue(value: string): string {
@@ -229,7 +309,11 @@ function extractTextFromMessageContent(content: unknown): string {
   return content
     .filter(
       (part): part is { type: "text"; text: string } =>
-        !!part && typeof part === "object" && "type" in part && part.type === "text" && "text" in part,
+        !!part &&
+        typeof part === "object" &&
+        "type" in part &&
+        part.type === "text" &&
+        "text" in part,
     )
     .map((part) => part.text.trim())
     .filter(Boolean)
@@ -238,23 +322,32 @@ function extractTextFromMessageContent(content: unknown): string {
 }
 
 function normalizeUserPrompt(text: string): string | undefined {
-  const prompt = text.replace(/^(?:<skill\b[^>]*>[\s\S]*?<\/skill>\s*)+/, "").trim();
+  const prompt = text
+    .replace(/^(?:<skill\b[^>]*>[\s\S]*?<\/skill>\s*)+/, "")
+    .trim();
   return prompt || undefined;
 }
 
-function getFirstUserPrompt(entries: SessionEntry[], fallback?: string): string | undefined {
+function getFirstUserPrompt(
+  entries: SessionEntry[],
+  fallback?: string,
+): string | undefined {
   for (const entry of entries) {
     if (entry.type !== "message") continue;
     if (entry.message.role !== "user") continue;
 
-    const prompt = normalizeUserPrompt(extractTextFromMessageContent(entry.message.content));
+    const prompt = normalizeUserPrompt(
+      extractTextFromMessageContent(entry.message.content),
+    );
     if (prompt) return prompt;
   }
 
   return normalizeUserPrompt(fallback ?? "");
 }
 
-function buildConversationNamingSource(entries: SessionEntry[]): string | undefined {
+function buildConversationNamingSource(
+  entries: SessionEntry[],
+): string | undefined {
   const messages: string[] = [];
 
   for (const entry of entries) {
@@ -282,7 +375,9 @@ function formatNamingPrompt(seed: string, source: NamingSource): string {
 
 // --- Naming request ---------------------------------------------------------
 
-function parseModelSpec(modelSpec: string): { provider: string; modelId: string } | undefined {
+function parseModelSpec(
+  modelSpec: string,
+): { provider: string; modelId: string } | undefined {
   const [provider, ...modelParts] = modelSpec.split("/");
   const modelId = modelParts.join("/");
   if (!provider?.trim() || !modelId.trim()) return undefined;
@@ -314,7 +409,8 @@ function opencodeSessionHeaders(
   sessionId: string | undefined,
 ): Record<string, string> | undefined {
   if (!sessionId) return undefined;
-  if (model.provider !== "opencode" && model.provider !== "opencode-go") return undefined;
+  if (model.provider !== "opencode" && model.provider !== "opencode-go")
+    return undefined;
   return { [OPENCODE_SESSION_HEADER]: sessionId };
 }
 
@@ -330,10 +426,14 @@ type ReasoningCapableModel = {
  * on reasoning returns no text. pi only sends its own thinking-off signal when
  * the catalog marks "off" as supported, and the models in use do not.
  */
-function reasoningOffPayloadFields(model: ReasoningCapableModel): Record<string, unknown> | undefined {
+function reasoningOffPayloadFields(
+  model: ReasoningCapableModel,
+): Record<string, unknown> | undefined {
   if (!model.reasoning || model.api !== "openai-completions") return undefined;
 
-  const thinkingFormat = (model.compat as { thinkingFormat?: string } | undefined)?.thinkingFormat;
+  const thinkingFormat = (
+    model.compat as { thinkingFormat?: string } | undefined
+  )?.thinkingFormat;
 
   switch (thinkingFormat) {
     case "deepseek":
@@ -356,9 +456,13 @@ function reasoningOffPayloadFields(model: ReasoningCapableModel): Record<string,
 }
 
 /** onPayload is the portable place to add those fields: every adapter runs it. */
-function disableReasoningInPayload(model: ReasoningCapableModel, payload: unknown): unknown {
+function disableReasoningInPayload(
+  model: ReasoningCapableModel,
+  payload: unknown,
+): unknown {
   const fields = reasoningOffPayloadFields(model);
-  if (!fields || typeof payload !== "object" || payload === null) return payload;
+  if (!fields || typeof payload !== "object" || payload === null)
+    return payload;
 
   return { ...(payload as Record<string, unknown>), ...fields };
 }
@@ -392,7 +496,10 @@ async function generateTitle(
   };
 
   const sessionId = namingSessionId(ctx);
-  const headers = { ...auth.headers, ...opencodeSessionHeaders(model, sessionId) };
+  const headers = {
+    ...auth.headers,
+    ...opencodeSessionHeaders(model, sessionId),
+  };
 
   try {
     const response = await completeSimple(
@@ -406,24 +513,34 @@ async function generateTitle(
         sessionId,
         // Asking for a thinking level while disabling reasoning would ask for
         // reasoning that is already off, so the level is not forwarded.
-        onPayload: (payload: unknown) => disableReasoningInPayload(model, payload),
+        onPayload: (payload: unknown) =>
+          disableReasoningInPayload(model, payload),
         signal,
       },
     );
 
     const generated = response.content
-      .filter((part): part is { type: "text"; text: string } => part.type === "text")
+      .filter(
+        (part): part is { type: "text"; text: string } => part.type === "text",
+      )
       .map((part) => part.text)
       .join("\n");
 
-    const title = compactTitle(parseGeneratedTitle(generated).title ?? "", naming.maxChars);
+    const title = compactTitle(
+      parseGeneratedTitle(generated).title ?? "",
+      naming.maxChars,
+    );
     if (!title) {
       return { ok: false, reason: "invalid_output" };
     }
 
     return { ok: true, title };
   } catch (error) {
-    return { ok: false, reason: "request_failed", detail: describeError(error) };
+    return {
+      ok: false,
+      reason: "request_failed",
+      detail: describeError(error),
+    };
   }
 }
 
@@ -446,12 +563,19 @@ function renameFailureSummary(reason: RenameFailureReason): string {
   }
 }
 
-function describeRenameFailure(reason: RenameFailureReason, detail?: string): string {
+function describeRenameFailure(
+  reason: RenameFailureReason,
+  detail?: string,
+): string {
   const summary = renameFailureSummary(reason);
   return detail ? `${summary} (${detail})` : summary;
 }
 
-function notify(ctx: ExtensionCommandContext, message: string, level: "info" | "error"): void {
+function notify(
+  ctx: ExtensionCommandContext,
+  message: string,
+  level: "info" | "error",
+): void {
   if (!ctx.hasUI) return;
   ctx.ui.notify(message, level);
 }
@@ -476,19 +600,35 @@ export default function herdrPaneNameExtension(pi: ExtensionAPI) {
 
   const applyLabel = async (title: string): Promise<string | undefined> => {
     const naming = readNamingSettings();
-    const normalized = compactTitle(title, naming.maxChars);
+    const normalized = compactTitle(stripPaneIdSuffix(title), naming.maxChars);
     if (!normalized) return undefined;
+
+    const pane = await readPaneSnapshot(endpoint, paneId);
+    const label = formatPaneLabel(normalized, pane.paneId);
 
     labelInProgress = normalized;
     try {
-      const written = await setPaneLabel(endpoint, paneId, normalized);
+      const written = await setPaneLabel(endpoint, pane.paneId, label);
       if (!written) return undefined;
 
       appliedLabel = normalized;
       hasAttempted = true;
-      return normalized;
+      return label;
     } finally {
       labelInProgress = undefined;
+    }
+  };
+
+  /** Drop the label this extension wrote; a label from another writer survives. */
+  const clearOwnLabel = async (): Promise<void> => {
+    if (appliedLabel === undefined) return;
+
+    const pane = await readPaneSnapshot(endpoint, paneId);
+    if (pane.label === undefined) return;
+    if (stripPaneIdSuffix(pane.label) !== appliedLabel) return;
+
+    if (await clearPaneLabel(endpoint, pane.paneId)) {
+      appliedLabel = undefined;
     }
   };
 
@@ -508,7 +648,10 @@ export default function herdrPaneNameExtension(pi: ExtensionAPI) {
     const naming = readNamingSettings();
     if (!naming.enabled) return { ok: false, reason: "skipped" };
 
-    if (!force && (appliedLabel !== undefined || hasAttempted || renameInFlight)) {
+    if (
+      !force &&
+      (appliedLabel !== undefined || hasAttempted || renameInFlight)
+    ) {
       return { ok: false, reason: "skipped" };
     }
 
@@ -524,7 +667,13 @@ export default function herdrPaneNameExtension(pi: ExtensionAPI) {
     requestController = controller;
 
     const work = (async (): Promise<RenameResult> => {
-      const generated = await generateTitle(trimmedSeed, source, ctx, naming, controller.signal);
+      const generated = await generateTitle(
+        trimmedSeed,
+        source,
+        ctx,
+        naming,
+        controller.signal,
+      );
       if (!generated.ok) return generated;
 
       if (epoch !== sessionEpoch) {
@@ -536,10 +685,10 @@ export default function herdrPaneNameExtension(pi: ExtensionAPI) {
         return { ok: false, reason: "stale_session" };
       }
 
-      const title = await applyLabel(generated.title);
-      if (!title) return { ok: false, reason: "invalid_output" };
+      const label = await applyLabel(generated.title);
+      if (!label) return { ok: false, reason: "invalid_output" };
 
-      return { ok: true, title };
+      return { ok: true, label };
     })();
 
     const tracked = work.finally(() => {
@@ -552,7 +701,8 @@ export default function herdrPaneNameExtension(pi: ExtensionAPI) {
   };
 
   pi.registerCommand("rename", {
-    description: "Rename the Herdr pane label from the conversation or an explicit title",
+    description:
+      "Rename the Herdr pane label from the conversation or an explicit title",
     handler: async (args: string, ctx: ExtensionCommandContext) => {
       await ctx.waitForIdle();
       if (renameInFlight) await renameInFlight;
@@ -568,15 +718,21 @@ export default function herdrPaneNameExtension(pi: ExtensionAPI) {
         return;
       }
 
-      const conversation = buildConversationNamingSource(ctx.sessionManager.getBranch());
+      const conversation = buildConversationNamingSource(
+        ctx.sessionManager.getBranch(),
+      );
       const result = await runNaming(conversation, "conversation", ctx, true);
 
       if (!result.ok) {
-        notify(ctx, describeRenameFailure(result.reason, result.detail), "error");
+        notify(
+          ctx,
+          describeRenameFailure(result.reason, result.detail),
+          "error",
+        );
         return;
       }
 
-      notify(ctx, `Renamed pane: ${result.title}`, "info");
+      notify(ctx, `Renamed pane: ${result.label}`, "info");
     },
   });
 
@@ -609,7 +765,9 @@ export default function herdrPaneNameExtension(pi: ExtensionAPI) {
 
     // The naming request takes seconds; the turn must not wait on it.
     void runNaming(seed, "user_message", ctx, false).catch((error: unknown) => {
-      console.warn(`[herdr-pane-name] ${describeError(error) ?? "rename failed"}`);
+      console.warn(
+        `[herdr-pane-name] ${describeError(error) ?? "rename failed"}`,
+      );
     });
   });
 
@@ -619,13 +777,26 @@ export default function herdrPaneNameExtension(pi: ExtensionAPI) {
   pi.on("session_info_changed", async (event) => {
     const naming = readNamingSettings();
     const normalized = compactTitle(event.name ?? "", naming.maxChars);
-    if (!normalized || normalized === appliedLabel || normalized === labelInProgress) return;
+    if (
+      !normalized ||
+      normalized === appliedLabel ||
+      normalized === labelInProgress
+    )
+      return;
 
     cancelRename();
     await applyLabel(normalized);
   });
 
-  pi.on("session_shutdown", () => {
+  pi.on("session_shutdown", async (event) => {
+    const inFlight = renameInFlight;
     cancelRename();
+
+    // A title that lands after the clear would leave a stale label behind.
+    if (inFlight) await inFlight.catch(() => undefined);
+
+    // Reload, new, resume, and fork hand the pane to another session, which
+    // names it again. Only quit empties the pane, so only quit drops the label.
+    if (event.reason === "quit") await clearOwnLabel();
   });
 }

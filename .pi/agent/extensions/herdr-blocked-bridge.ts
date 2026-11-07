@@ -35,6 +35,16 @@
 // while that file says "running". A child whose ledger is missing is not
 // counted, so an agent type that excludes extensions can under-report a busy
 // pane but can never wedge one.
+//
+// Bridge 3 — pane release on exit:
+// A dying pi leaves its claim on the pane. Herdr granted the pane full lifecycle
+// hook authority, so it trusts only reports from that pane's source and drops
+// any report whose `seq` is not higher than the last one it accepted. The next
+// pi in the pane starts a fresh sequence, so its first turns can be ignored
+// while the dead process's record stands. Releasing on quit clears the claim so
+// the successor reports normally. Reload, new, resume, and fork keep this
+// process alive and therefore keep their claim.
+//
 import { mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import net from "node:net";
 import path from "node:path";
@@ -251,6 +261,27 @@ export default function (pi: ExtensionAPI) {
 		});
 	}
 
+	/** The pane keeps a claim from a dead process, so the successor's reports are dropped. */
+	function releasePane(): Promise<void> {
+		// One sequence for both attempts: it outranks every report this process made
+		// without pretending to be newer than it is.
+		const payload = {
+			id: `${SOURCE}:release:${Date.now()}:${Math.random().toString(36).slice(2)}`,
+			method: "pane.release_agent",
+			params: {
+				pane_id: process.env.HERDR_PANE_ID,
+				source: SOURCE,
+				agent: AGENT,
+				seq: nextLifecycleSeq(),
+			},
+		};
+		debugLog("release");
+		return sendPayload(payload, 500).then((delivered) => {
+			if (delivered) return;
+			return sendPayload(payload, 1500).then(() => undefined);
+		});
+	}
+
 	function runningChildSessions(): string[] {
 		return [...liveChildSessions].filter(
 			(sessionId) => readChildLedgerState(sessionId) === "running",
@@ -363,6 +394,19 @@ export default function (pi: ExtensionAPI) {
 			if (liveChildSessions.size === 0) stopChildPolling();
 		}
 		schedulePublish();
+	});
+
+	pi.on("session_shutdown", (event) => {
+		// Reload, new, resume, and fork keep this process and its agent.
+		if (event.reason !== "quit") return;
+		// Only the TUI session holds a pane; children share the process.
+		if (!rootSession) return;
+		// A pending publish would re-create the claim this release clears.
+		if (publishTimer) clearTimeout(publishTimer);
+		publishTimer = undefined;
+		stopChildPolling();
+		// Best effort: a process that dies mid-write still leaves the claim.
+		return releasePane();
 	});
 
 	pi.on("session_start", (_event, ctx) => {
