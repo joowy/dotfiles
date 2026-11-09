@@ -1,0 +1,264 @@
+#!/usr/bin/env bash
+# mise task: save — one round trip for the git-backed working repositories.
+#
+# Run it when you sit down at a machine and again when you leave it. For each
+# repository it commits pending work, rebases onto the remote, and pushes.
+#
+#   mise run save              round trip every repository
+#   mise run save status       report state, change nothing
+#   mise run save --dry-run    print the plan, change nothing
+#
+# Override the repository list with a colon-separated SAVE_REPOSITORIES, and
+# the machine label in commit messages with SAVE_MACHINE_NAME.
+set -euo pipefail
+
+readonly DEFAULT_REPOSITORIES="$HOME/repos/Obsidian:$HOME/repos/LeetCode:$HOME/repos/leetcode-visualization"
+
+failures=0
+skipped=0
+dry_run=0
+mode="save"
+
+readonly EXIT_OK=0
+readonly EXIT_FAILED=1
+readonly EXIT_SKIPPED=2
+
+show_help() {
+  sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+for argument in "$@"; do
+  case "$argument" in
+    status)
+      mode="status"
+      ;;
+    --dry-run | -n)
+      dry_run=1
+      ;;
+    --help | -h)
+      show_help
+      exit 0
+      ;;
+    *)
+      printf 'unknown argument: %s\n' "$argument" >&2
+      printf 'try: mise run save --help\n' >&2
+      exit 2
+      ;;
+  esac
+done
+
+machine_name() {
+  if [ -n "${SAVE_MACHINE_NAME:-}" ]; then
+    printf '%s' "$SAVE_MACHINE_NAME"
+    return
+  fi
+  local battery_path
+  for battery_path in /sys/class/power_supply/BAT*; do
+    if [ -e "$battery_path" ]; then
+      printf 'laptop'
+      return
+    fi
+  done
+  printf 'desktop'
+}
+
+readonly commit_message="save from $(machine_name) $(date '+%Y-%m-%d %H:%M')"
+
+is_git_repository() {
+  git -C "$1" rev-parse --git-dir >/dev/null 2>&1
+}
+
+upstream_of() {
+  git -C "$1" rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null || true
+}
+
+commits_between() {
+  git -C "$1" rev-list --count "$2" 2>/dev/null || printf '0'
+}
+
+status_repository() {
+  local directory="$1"
+  local name
+  name="$(basename "$directory")"
+  printf '%-26s' "$name"
+
+  if [ ! -d "$directory" ]; then
+    printf 'missing\n'
+    return "$EXIT_SKIPPED"
+  fi
+
+  # The pi privacy barrier mounts the vault read-only and hides its .git, so the
+  # only honest answer here is that this process cannot see the repository.
+  if [ ! -w "$directory" ]; then
+    printf 'read-only here (pi privacy barrier), check it in a normal terminal\n'
+    return "$EXIT_SKIPPED"
+  fi
+
+  if ! is_git_repository "$directory"; then
+    printf 'no git repository\n'
+    return "$EXIT_FAILED"
+  fi
+
+  local branch
+  branch="$(git -C "$directory" symbolic-ref --quiet --short HEAD || printf 'detached')"
+
+  local change_count
+  change_count="$(git -C "$directory" status --porcelain | wc -l)"
+
+  local upstream
+  upstream="$(upstream_of "$directory")"
+
+  if [ -z "$upstream" ]; then
+    printf '%s, uncommitted %s, not published\n' "$branch" "$change_count"
+    return "$EXIT_OK"
+  fi
+
+  git -C "$directory" fetch --quiet origin >/dev/null 2>&1 || true
+
+  local incoming outgoing
+  incoming="$(commits_between "$directory" "HEAD..$upstream")"
+  outgoing="$(commits_between "$directory" "$upstream..HEAD")"
+
+  printf '%s, uncommitted %s, behind %s, ahead %s\n' \
+    "$branch" "$change_count" "$incoming" "$outgoing"
+
+  return "$EXIT_OK"
+}
+
+save_repository() {
+  local directory="$1"
+  local name
+  name="$(basename "$directory")"
+
+  printf '\n==> %s\n' "$name"
+
+  if [ ! -d "$directory" ]; then
+    printf '    missing, skipping\n'
+    return "$EXIT_SKIPPED"
+  fi
+
+  # The pi privacy barrier mounts the vault read-only. Say so plainly instead of
+  # failing halfway through a commit.
+  if [ ! -w "$directory" ]; then
+    printf '    read-only here (pi privacy barrier), run this in a normal terminal\n' >&2
+    return "$EXIT_SKIPPED"
+  fi
+
+  if ! is_git_repository "$directory"; then
+    printf '    no git repository, skipping\n' >&2
+    return "$EXIT_FAILED"
+  fi
+
+  local branch
+  branch="$(git -C "$directory" symbolic-ref --quiet --short HEAD || true)"
+  if [ -z "$branch" ]; then
+    printf '    detached HEAD, skipping\n' >&2
+    return "$EXIT_FAILED"
+  fi
+
+  local change_count
+  change_count="$(git -C "$directory" status --porcelain | wc -l)"
+
+  if [ "$change_count" -gt 0 ]; then
+    if [ "$dry_run" -eq 1 ]; then
+      printf '    would commit %s change(s)\n' "$change_count"
+    else
+      git -C "$directory" add --all
+      git -C "$directory" commit --quiet --message "$commit_message"
+      printf '    committed %s change(s)\n' "$change_count"
+    fi
+  else
+    printf '    nothing to commit\n'
+  fi
+
+  local upstream
+  upstream="$(upstream_of "$directory")"
+
+  if [ -z "$upstream" ]; then
+    if [ "$dry_run" -eq 1 ]; then
+      printf '    would publish %s to origin\n' "$branch"
+      return "$EXIT_OK"
+    fi
+    if ! git -C "$directory" push --quiet --set-upstream origin "$branch"; then
+      printf '    publish failed, check the remote and your credentials\n' >&2
+      return "$EXIT_FAILED"
+    fi
+    printf '    published %s to origin\n' "$branch"
+    return "$EXIT_OK"
+  fi
+
+  if [ "$dry_run" -eq 0 ]; then
+    if ! git -C "$directory" fetch --quiet origin; then
+      printf '    fetch failed, check the network and your credentials\n' >&2
+      return "$EXIT_FAILED"
+    fi
+  fi
+
+  local incoming
+  incoming="$(commits_between "$directory" "HEAD..$upstream")"
+
+  if [ "$incoming" -gt 0 ]; then
+    if [ "$dry_run" -eq 1 ]; then
+      printf '    would pull %s commit(s)\n' "$incoming"
+    else
+      if ! git -C "$directory" pull --quiet --rebase --autostash; then
+        git -C "$directory" rebase --abort >/dev/null 2>&1 || true
+        printf '    pull failed, fix the conflict by hand in %s\n' "$directory" >&2
+        return "$EXIT_FAILED"
+      fi
+      printf '    pulled %s commit(s)\n' "$incoming"
+    fi
+  fi
+
+  local outgoing
+  outgoing="$(commits_between "$directory" "$upstream..HEAD")"
+
+  if [ "$outgoing" -eq 0 ]; then
+    printf '    up to date\n'
+    return "$EXIT_OK"
+  fi
+
+  if [ "$dry_run" -eq 1 ]; then
+    printf '    would push %s commit(s)\n' "$outgoing"
+    return "$EXIT_OK"
+  fi
+
+  if ! git -C "$directory" push --quiet; then
+    printf '    push failed, work is committed locally\n' >&2
+    return "$EXIT_FAILED"
+  fi
+  printf '    pushed %s commit(s)\n' "$outgoing"
+
+  return "$EXIT_OK"
+}
+
+IFS=':' read -r -a repositories <<<"${SAVE_REPOSITORIES:-$DEFAULT_REPOSITORIES}"
+
+for repository in "${repositories[@]}"; do
+  if [ -z "$repository" ]; then
+    continue
+  fi
+  exit_code="$EXIT_OK"
+  if [ "$mode" = "status" ]; then
+    status_repository "$repository" || exit_code=$?
+  else
+    save_repository "$repository" || exit_code=$?
+  fi
+  case "$exit_code" in
+    "$EXIT_OK") ;;
+    "$EXIT_SKIPPED") skipped=$((skipped + 1)) ;;
+    *) failures=$((failures + 1)) ;;
+  esac
+done
+
+if [ "$failures" -gt 0 ]; then
+  printf '\n%s repository/repositories need attention\n' "$failures" >&2
+  exit 1
+fi
+
+if [ "$skipped" -gt 0 ]; then
+  printf '\n%s repository/repositories skipped\n' "$skipped"
+  exit 0
+fi
+
+printf '\nall repositories synced\n'

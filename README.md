@@ -66,6 +66,37 @@ git-manifest group. Generated state never enters the repository:
 | `~/.config/kglobalshortcutsrc` | Plasma                 |
 | `~/.config/plasma-welcomerc`   | Plasma                 |
 
+## Working repositories between machines
+
+Notes and practice work live in separate repositories, not in this checkout:
+
+| Repository                       | Branch   | Hosted at                       |
+| -------------------------------- | -------- | ------------------------------- |
+| `~/repos/Obsidian`               | `main`   | `joowy/Obsidian` (private)      |
+| `~/repos/LeetCode`               | `master` | `joowy/LeetCode`                |
+| `~/repos/leetcode-visualization` | `main`   | `joowy/leetcode-visualization`  |
+
+`save` is the whole round trip for all of them. Run it when you sit down at a
+machine and again when you leave it. Per repository it commits pending work,
+fetches, rebases onto the remote with `--autostash`, and pushes. It reports
+every step and exits non-zero if any repository needs a human.
+
+```bash
+save              # commit, pull, push every repository
+save status       # branch, uncommitted count, behind, ahead
+save --dry-run    # print the plan, change nothing
+```
+
+`bin/save` is a two-line wrapper around `tasks/save`, so `~/bin` on `PATH`
+provides the command. To add a repository, extend `DEFAULT_REPOSITORIES` in
+`tasks/save`, or set a colon-separated `SAVE_REPOSITORIES` for a one-off run.
+Commit messages read `save from laptop 2026-11-08 21:40`; the machine label
+comes from battery presence, and `SAVE_MACHINE_NAME` overrides it.
+
+One catch: `obsidian-private-guard` mounts the vault read-only and hides its
+`.git` inside a pi session, so `save` reports the vault as read-only when you
+run it from pi. Run it from a normal terminal.
+
 ## Per-machine settings
 
 `miserc.toml` selects the `workstation` environment, which loads

@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+# `save` on PATH: the mise task that commits, pulls, and pushes every working
+# repository. The logic lives in tasks/save, so there is one implementation.
+#
+#   save            round trip every repository
+#   save status     report state, change nothing
+#   save --dry-run  print the plan, change nothing
+exec mise run --quiet save "$@"
