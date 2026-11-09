@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-# `save` on PATH: commits, pulls, and pushes every working repository.
-# The logic lives in tasks/save, so there is one implementation. Called
-# directly rather than through `mise run`, so arguments like `review` and
-# `--help` reach the script instead of mise's own argument parser.
-exec "$HOME/.config/mise/tasks/save" "$@"

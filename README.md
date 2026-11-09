@@ -76,41 +76,46 @@ Notes and practice work live in separate repositories, not in this checkout:
 | `~/repos/LeetCode`               | `master` | `joowy/LeetCode`                |
 | `~/repos/leetcode-visualization` | `main`   | `joowy/leetcode-visualization`  |
 
-`save` is the whole round trip for all of them. Run it when you sit down at a
-machine and again when you leave it. Per repository it commits pending work,
-fetches, rebases onto the remote with `--autostash`, and pushes. It reports
-every step and exits non-zero if any repository needs a human.
+`reposync` is the whole round trip for all of them. Run it when you sit down
+at a machine and again when you leave it. Per repository it shows the diff,
+asks, then commits pending work, fetches, rebases onto the remote with
+`--autostash`, and pushes. It reports every step and exits non-zero if any
+repository needs a human.
 
 ```bash
-save              # commit, pull, push every repository
-save review       # show each change, ask per repository before touching it
-save status       # branch, uncommitted count, behind, ahead
-save --dry-run    # print the plan, change nothing
+reposync              # show the diff, ask, then commit, pull, push
+reposync --yes        # the same with no questions, for scripts
+reposync status       # branch, uncommitted count, behind, ahead
+reposync --dry-run    # print the plan, change nothing
 ```
 
-`review` prints `git status --short` for the repository, then waits for one of
-`d` (print the full diff), `y` (sync it), `n` (skip it), or `q` (stop). Nothing
-is committed, pulled, or pushed unless you answer `y`.
+Before committing, `reposync` prints `git status --short` and the full diff for
+the repository, then waits for one of `d` (print the diff again), `y` (sync
+it), `n` (skip it), or `q` (stop). Nothing is committed, pulled, or pushed
+unless you answer `y`. `reposync --yes` skips the question entirely.
+
+Without a terminal and without `--yes`, `reposync` refuses to run and points
+you at `reposync --yes`, `reposync status`, or `reposync --dry-run`.
 
 The diff renders through `delta` when it is installed, with plain `git diff` as
 the fallback. Short diffs print inline; long ones open in `less`, where `n` and
 `N` jump between files and `q` returns to the question. Inside that pager `n`
 navigates rather than skipping the repository.
 
-`bin/save` is a three-line wrapper that runs `tasks/save` directly, so `~/bin`
-on `PATH` provides the command and its arguments. `mise run save` also works,
-but mise's own parser intercepts `--help`, so use `save` for the rest.
-`.zfunc/_save` completes the mode argument and the flags, and loads because
-`~/.zfunc` is already on `fpath`.
+`bin/reposync` is a three-line wrapper that runs `tasks/reposync` directly, so
+`~/bin` on `PATH` provides the command and its arguments. `mise run reposync`
+also works, but mise's own parser intercepts `--help`, so use `reposync` for
+the rest. `.zfunc/_reposync` completes the argument and the flags, and loads
+because `~/.zfunc` is already on `fpath`.
 
 To add a repository, extend `DEFAULT_REPOSITORIES` in
-`tasks/save`, or set a colon-separated `SAVE_REPOSITORIES` for a one-off run.
-Commit messages read `save from laptop 2026-11-08 21:40`; the machine label
-comes from battery presence, and `SAVE_MACHINE_NAME` overrides it.
+`tasks/reposync`, or set a colon-separated `REPOSYNC_REPOSITORIES` for a one-off
+run. Commit messages read `reposync from laptop 2026-11-08 21:40`; the machine
+label comes from battery presence, and `REPOSYNC_MACHINE_NAME` overrides it.
 
 One catch: `obsidian-private-guard` mounts the vault read-only and hides its
-`.git` inside a pi session, so `save` reports the vault as read-only when you
-run it from pi. Run it from a normal terminal.
+`.git` inside a pi session, so `reposync` reports the vault as read-only when
+you run it from pi. Run it from a normal terminal.
 
 ## Per-machine settings
 

@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# `reposync` on PATH: commits, pulls, and pushes every working repository.
+# The logic lives in tasks/reposync, so there is one implementation. Called
+# directly rather than through `mise run`, so `--yes`, `status`, and `--help`
+# reach the script instead of mise's own argument parser.
+exec "$HOME/.config/mise/tasks/reposync" "$@"

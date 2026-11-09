@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-# mise task: save — one round trip for the git-backed working repositories.
+# mise task: reposync — one round trip for the git-backed working repositories.
 #
 # Run it when you sit down at a machine and again when you leave it. Per
-# repository it commits pending work, rebases onto the remote, and pushes.
+# repository it shows the diff, asks, then commits, rebases onto the remote,
+# and pushes.
 #
-#   save              round trip every repository, no questions
-#   save review       show every change, ask before each repository
-#   save status       report state, change nothing
-#   save --dry-run    print the plan, change nothing
-#   save --help       this text
+#   reposync              show the diff, then ask before each repository
+#   reposync --yes        the same round trip with no questions, for scripts
+#   reposync status       report state, change nothing
+#   reposync --dry-run    print the plan, change nothing
+#   reposync --help       this text
 #
-# Override the repository list with a colon-separated SAVE_REPOSITORIES, and
-# the machine label in commit messages with SAVE_MACHINE_NAME.
+# Override the repository list with a colon-separated REPOSYNC_REPOSITORIES,
+# and the machine label in commit messages with REPOSYNC_MACHINE_NAME.
 set -euo pipefail
 
 readonly DEFAULT_REPOSITORIES="$HOME/repos/Obsidian:$HOME/repos/LeetCode:$HOME/repos/leetcode-visualization"
@@ -24,19 +25,22 @@ readonly EXIT_QUIT=3
 failures=0
 skipped=0
 dry_run=0
-mode="save"
+assume_yes=0
+report_only=0
 
+# Prints the leading comment block, so the usage text has no line count to
+# drift out of step.
 show_help() {
-  sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
+  awk 'NR > 1 && /^#/ { sub(/^# ?/, ""); print; next } NR > 1 { exit }' "$0"
 }
 
 for argument in "$@"; do
   case "$argument" in
-    review)
-      mode="review"
-      ;;
     status)
-      mode="status"
+      report_only=1
+      ;;
+    --yes | -y)
+      assume_yes=1
       ;;
     --dry-run | -n)
       dry_run=1
@@ -47,20 +51,22 @@ for argument in "$@"; do
       ;;
     *)
       printf 'unknown argument: %s\n' "$argument" >&2
-      printf 'try: save --help\n' >&2
+      printf 'try: reposync --help\n' >&2
       exit 2
       ;;
   esac
 done
 
-if [ "$mode" = "review" ] && [ ! -t 0 ]; then
-  printf 'review mode needs an interactive terminal; use `save status` or `save --dry-run`\n' >&2
+if [ "$report_only" -eq 0 ] && [ "$assume_yes" -eq 0 ] && [ "$dry_run" -eq 0 ] &&
+  [ ! -t 0 ]; then
+  printf 'reposync asks before each commit and there is no terminal here;\n' >&2
+  printf 'use `reposync --yes`, `reposync status`, or `reposync --dry-run`\n' >&2
   exit 2
 fi
 
 machine_name() {
-  if [ -n "${SAVE_MACHINE_NAME:-}" ]; then
-    printf '%s' "$SAVE_MACHINE_NAME"
+  if [ -n "${REPOSYNC_MACHINE_NAME:-}" ]; then
+    printf '%s' "$REPOSYNC_MACHINE_NAME"
     return
   fi
   local battery_path
@@ -73,7 +79,7 @@ machine_name() {
   printf 'desktop'
 }
 
-readonly commit_message="save from $(machine_name) $(date '+%Y-%m-%d %H:%M')"
+readonly commit_message="reposync from $(machine_name) $(date '+%Y-%m-%d %H:%M')"
 
 is_git_repository() {
   git -C "$1" rev-parse --git-dir >/dev/null 2>&1
@@ -143,9 +149,12 @@ review_gate() {
 
   printf '    uncommitted %s, %s\n' "$change_count" "$upcoming"
   show_changes "$directory" "$upstream"
+  if [ "$change_count" -gt 0 ]; then
+    show_diff "$directory"
+  fi
 
   while true; do
-    printf '    [d]iff  [y]es, sync it  [n]o, skip it  [q]uit > '
+    printf '    [d]iff again  [y]es, sync it  [n]o, skip it  [q]uit > '
     IFS= read -r answer || return "$EXIT_QUIT"
     case "$answer" in
       d | D)
@@ -227,7 +236,7 @@ push_remote() {
   printf '    pushed %s commit(s)\n' "$outgoing"
 }
 
-save_repository() {
+sync_repository() {
   local directory="$1"
   local name
   name="$(basename "$directory")"
@@ -281,16 +290,7 @@ save_repository() {
     return "$EXIT_OK"
   fi
 
-  if [ "$mode" = "review" ]; then
-    local gate_status=0
-    review_gate "$directory" "$change_count" "$incoming" "$outgoing" "$upstream" ||
-      gate_status=$?
-    case "$gate_status" in
-      0) ;;
-      "$EXIT_QUIT") return "$EXIT_QUIT" ;;
-      *) return "$EXIT_SKIPPED" ;;
-    esac
-  elif [ "$dry_run" -eq 1 ]; then
+  if [ "$dry_run" -eq 1 ]; then
     if [ "$change_count" -gt 0 ]; then
       printf '    would commit %s change(s)\n' "$change_count"
     else
@@ -309,6 +309,17 @@ save_repository() {
       printf '    remote up to date\n'
     fi
     return "$EXIT_OK"
+  fi
+
+  if [ "$assume_yes" -eq 0 ]; then
+    local gate_status=0
+    review_gate "$directory" "$change_count" "$incoming" "$outgoing" "$upstream" ||
+      gate_status=$?
+    case "$gate_status" in
+      0) ;;
+      "$EXIT_QUIT") return "$EXIT_QUIT" ;;
+      *) return "$EXIT_SKIPPED" ;;
+    esac
   fi
 
   commit_pending "$directory" "$change_count" || return "$EXIT_FAILED"
@@ -369,17 +380,17 @@ status_repository() {
   return "$EXIT_OK"
 }
 
-IFS=':' read -r -a repositories <<<"${SAVE_REPOSITORIES:-$DEFAULT_REPOSITORIES}"
+IFS=':' read -r -a repositories <<<"${REPOSYNC_REPOSITORIES:-$DEFAULT_REPOSITORIES}"
 
 for repository in "${repositories[@]}"; do
   if [ -z "$repository" ]; then
     continue
   fi
   exit_code="$EXIT_OK"
-  if [ "$mode" = "status" ]; then
+  if [ "$report_only" -eq 1 ]; then
     status_repository "$repository" || exit_code=$?
   else
-    save_repository "$repository" || exit_code=$?
+    sync_repository "$repository" || exit_code=$?
   fi
   case "$exit_code" in
     "$EXIT_OK") ;;

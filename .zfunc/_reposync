@@ -1,16 +1,17 @@
-#compdef save
+#compdef reposync
 #
-# zsh completion for bin/save, the mise task that round-trips the working
-# repositories. Keep these words in step with tasks/save.
+# zsh completion for bin/reposync, the mise task that round-trips the working
+# repositories. Keep these words in step with tasks/reposync.
 #
 # Loaded automatically because ~/.zfunc is on fpath (see ~/.zshrc) and the
 # first line names the command this file completes.
 
-_save() {
+_reposync() {
   _arguments -s \
+    '(-y --yes)'{-y,--yes}'[commit without asking]' \
     '(-n --dry-run)'{-n,--dry-run}'[print the plan and change nothing]' \
     '(-h --help)'{-h,--help}'[show the usage text]' \
-    '1:mode:(review status)'
+    '1:mode:(status)'
 }
 
-_save "$@"
+_reposync "$@"
