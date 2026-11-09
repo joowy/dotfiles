@@ -13,7 +13,8 @@
     "bash": {
       "*": "allow",
       "rm": "ask",
-      "git commit": "ask",
+      "git commit": "deny",
+      "* commit *": "deny",
       "rm -rf *": "deny",
       "* rm -rf *": "deny",
       "sudo *": "deny",

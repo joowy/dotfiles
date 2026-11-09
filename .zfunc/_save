@@ -1,0 +1,16 @@
+#compdef save
+#
+# zsh completion for bin/save, the mise task that round-trips the working
+# repositories. Keep these words in step with tasks/save.
+#
+# Loaded automatically because ~/.zfunc is on fpath (see ~/.zshrc) and the
+# first line names the command this file completes.
+
+_save() {
+  _arguments -s \
+    '(-n --dry-run)'{-n,--dry-run}'[print the plan and change nothing]' \
+    '(-h --help)'{-h,--help}'[show the usage text]' \
+    '1:mode:(review status)'
+}
+
+_save "$@"

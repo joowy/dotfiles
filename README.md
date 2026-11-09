@@ -83,12 +83,27 @@ every step and exits non-zero if any repository needs a human.
 
 ```bash
 save              # commit, pull, push every repository
+save review       # show each change, ask per repository before touching it
 save status       # branch, uncommitted count, behind, ahead
 save --dry-run    # print the plan, change nothing
 ```
 
-`bin/save` is a two-line wrapper around `tasks/save`, so `~/bin` on `PATH`
-provides the command. To add a repository, extend `DEFAULT_REPOSITORIES` in
+`review` prints `git status --short` for the repository, then waits for one of
+`d` (print the full diff), `y` (sync it), `n` (skip it), or `q` (stop). Nothing
+is committed, pulled, or pushed unless you answer `y`.
+
+The diff renders through `delta` when it is installed, with plain `git diff` as
+the fallback. Short diffs print inline; long ones open in `less`, where `n` and
+`N` jump between files and `q` returns to the question. Inside that pager `n`
+navigates rather than skipping the repository.
+
+`bin/save` is a three-line wrapper that runs `tasks/save` directly, so `~/bin`
+on `PATH` provides the command and its arguments. `mise run save` also works,
+but mise's own parser intercepts `--help`, so use `save` for the rest.
+`.zfunc/_save` completes the mode argument and the flags, and loads because
+`~/.zfunc` is already on `fpath`.
+
+To add a repository, extend `DEFAULT_REPOSITORIES` in
 `tasks/save`, or set a colon-separated `SAVE_REPOSITORIES` for a one-off run.
 Commit messages read `save from laptop 2026-11-08 21:40`; the machine label
 comes from battery presence, and `SAVE_MACHINE_NAME` overrides it.

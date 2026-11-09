@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # mise task: save — one round trip for the git-backed working repositories.
 #
-# Run it when you sit down at a machine and again when you leave it. For each
+# Run it when you sit down at a machine and again when you leave it. Per
 # repository it commits pending work, rebases onto the remote, and pushes.
 #
-#   mise run save              round trip every repository
-#   mise run save status       report state, change nothing
-#   mise run save --dry-run    print the plan, change nothing
+#   save              round trip every repository, no questions
+#   save review       show every change, ask before each repository
+#   save status       report state, change nothing
+#   save --dry-run    print the plan, change nothing
+#   save --help       this text
 #
 # Override the repository list with a colon-separated SAVE_REPOSITORIES, and
 # the machine label in commit messages with SAVE_MACHINE_NAME.
@@ -14,14 +16,15 @@ set -euo pipefail
 
 readonly DEFAULT_REPOSITORIES="$HOME/repos/Obsidian:$HOME/repos/LeetCode:$HOME/repos/leetcode-visualization"
 
+readonly EXIT_OK=0
+readonly EXIT_FAILED=1
+readonly EXIT_SKIPPED=2
+readonly EXIT_QUIT=3
+
 failures=0
 skipped=0
 dry_run=0
 mode="save"
-
-readonly EXIT_OK=0
-readonly EXIT_FAILED=1
-readonly EXIT_SKIPPED=2
 
 show_help() {
   sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
@@ -29,6 +32,9 @@ show_help() {
 
 for argument in "$@"; do
   case "$argument" in
+    review)
+      mode="review"
+      ;;
     status)
       mode="status"
       ;;
@@ -41,11 +47,16 @@ for argument in "$@"; do
       ;;
     *)
       printf 'unknown argument: %s\n' "$argument" >&2
-      printf 'try: mise run save --help\n' >&2
+      printf 'try: save --help\n' >&2
       exit 2
       ;;
   esac
 done
+
+if [ "$mode" = "review" ] && [ ! -t 0 ]; then
+  printf 'review mode needs an interactive terminal; use `save status` or `save --dry-run`\n' >&2
+  exit 2
+fi
 
 machine_name() {
   if [ -n "${SAVE_MACHINE_NAME:-}" ]; then
@@ -76,6 +87,241 @@ commits_between() {
   git -C "$1" rev-list --count "$2" 2>/dev/null || printf '0'
 }
 
+change_count_of() {
+  git -C "$1" status --porcelain | wc -l
+}
+
+show_changes() {
+  local directory="$1"
+  local upstream="$2"
+
+  git -C "$directory" --no-pager status --short
+
+  if [ -n "$upstream" ]; then
+    local outgoing
+    outgoing="$(commits_between "$directory" "$upstream..HEAD")"
+    if [ "$outgoing" -gt 0 ]; then
+      printf '    push these commits:\n'
+      git -C "$directory" --no-pager log --oneline --decorate=short "$upstream..HEAD" |
+        sed 's/^/      /'
+    fi
+  fi
+}
+
+show_diff() {
+  local directory="$1"
+
+  # delta reads the diff on stdin and renders it with file headers, syntax
+  # colors, and hunk numbers. It pages through less only when the output is
+  # longer than the screen, so short diffs print inline. Quitting that pager
+  # early sends SIGPIPE to git, which must not abort the run.
+  if command -v delta >/dev/null 2>&1; then
+    git -C "$directory" diff | delta --navigate || true
+  else
+    git -C "$directory" --no-pager diff || true
+  fi
+
+  git -C "$directory" ls-files --others --exclude-standard | sed 's/^/  untracked: /'
+}
+
+# Asks whether to touch this repository. Returns EXIT_OK to proceed, and
+# EXIT_SKIPPED or EXIT_QUIT to leave it alone.
+review_gate() {
+  local directory="$1"
+  local change_count="$2"
+  local incoming="$3"
+  local outgoing="$4"
+  local upstream="$5"
+  local upcoming
+  local answer
+
+  if [ -z "$upstream" ]; then
+    upcoming="not published yet"
+  else
+    upcoming="$incoming to pull, $outgoing to push"
+  fi
+
+  printf '    uncommitted %s, %s\n' "$change_count" "$upcoming"
+  show_changes "$directory" "$upstream"
+
+  while true; do
+    printf '    [d]iff  [y]es, sync it  [n]o, skip it  [q]uit > '
+    IFS= read -r answer || return "$EXIT_QUIT"
+    case "$answer" in
+      d | D)
+        show_diff "$directory"
+        ;;
+      y | Y)
+        return "$EXIT_OK"
+        ;;
+      n | N | "")
+        return "$EXIT_SKIPPED"
+        ;;
+      q | Q)
+        return "$EXIT_QUIT"
+        ;;
+      *)
+        printf '    pick d, y, n, or q\n'
+        ;;
+    esac
+  done
+}
+
+commit_pending() {
+  local directory="$1"
+  local change_count="$2"
+
+  if [ "$change_count" -eq 0 ]; then
+    printf '    nothing to commit\n'
+    return 0
+  fi
+
+  git -C "$directory" add --all
+  git -C "$directory" commit --quiet --message "$commit_message"
+  printf '    committed %s change(s)\n' "$change_count"
+}
+
+pull_remote() {
+  local directory="$1"
+  local upstream="$2"
+  local incoming
+
+  incoming="$(commits_between "$directory" "HEAD..$upstream")"
+  if [ "$incoming" -eq 0 ]; then
+    return 0
+  fi
+
+  if ! git -C "$directory" pull --quiet --rebase --autostash; then
+    git -C "$directory" rebase --abort >/dev/null 2>&1 || true
+    printf '    pull failed, fix the conflict by hand in %s\n' "$directory" >&2
+    return "$EXIT_FAILED"
+  fi
+  printf '    pulled %s commit(s)\n' "$incoming"
+}
+
+push_remote() {
+  local directory="$1"
+  local branch="$2"
+  local upstream="$3"
+  local outgoing
+
+  if [ -z "$upstream" ]; then
+    if ! git -C "$directory" push --quiet --set-upstream origin "$branch"; then
+      printf '    publish failed, check the remote and your credentials\n' >&2
+      return "$EXIT_FAILED"
+    fi
+    printf '    published %s to origin\n' "$branch"
+    return 0
+  fi
+
+  outgoing="$(commits_between "$directory" "$upstream..HEAD")"
+  if [ "$outgoing" -eq 0 ]; then
+    printf '    remote up to date\n'
+    return 0
+  fi
+
+  if ! git -C "$directory" push --quiet; then
+    printf '    push failed, work is committed locally\n' >&2
+    return "$EXIT_FAILED"
+  fi
+  printf '    pushed %s commit(s)\n' "$outgoing"
+}
+
+save_repository() {
+  local directory="$1"
+  local name
+  name="$(basename "$directory")"
+
+  printf '\n==> %s\n' "$name"
+
+  if [ ! -d "$directory" ]; then
+    printf '    missing, skipping\n'
+    return "$EXIT_SKIPPED"
+  fi
+
+  # The pi privacy barrier mounts the vault read-only and hides its .git. Say so
+  # plainly instead of failing halfway through a commit.
+  if [ ! -w "$directory" ]; then
+    printf '    read-only here (pi privacy barrier), run this in a normal terminal\n' >&2
+    return "$EXIT_SKIPPED"
+  fi
+
+  if ! is_git_repository "$directory"; then
+    printf '    no git repository, skipping\n' >&2
+    return "$EXIT_FAILED"
+  fi
+
+  local branch
+  branch="$(git -C "$directory" symbolic-ref --quiet --short HEAD || true)"
+  if [ -z "$branch" ]; then
+    printf '    detached HEAD, skipping\n' >&2
+    return "$EXIT_FAILED"
+  fi
+
+  local change_count
+  change_count="$(change_count_of "$directory")"
+
+  local upstream
+  upstream="$(upstream_of "$directory")"
+
+  if [ "$dry_run" -eq 0 ] && [ -n "$upstream" ]; then
+    if ! git -C "$directory" fetch --quiet origin; then
+      printf '    fetch failed, check the network and your credentials\n' >&2
+      return "$EXIT_FAILED"
+    fi
+  fi
+
+  local incoming outgoing
+  incoming="$(commits_between "$directory" "HEAD..$upstream")"
+  outgoing="$(commits_between "$directory" "$upstream..HEAD")"
+
+  if [ -n "$upstream" ] && [ "$change_count" -eq 0 ] &&
+    [ "$incoming" -eq 0 ] && [ "$outgoing" -eq 0 ]; then
+    printf '    up to date\n'
+    return "$EXIT_OK"
+  fi
+
+  if [ "$mode" = "review" ]; then
+    local gate_status=0
+    review_gate "$directory" "$change_count" "$incoming" "$outgoing" "$upstream" ||
+      gate_status=$?
+    case "$gate_status" in
+      0) ;;
+      "$EXIT_QUIT") return "$EXIT_QUIT" ;;
+      *) return "$EXIT_SKIPPED" ;;
+    esac
+  elif [ "$dry_run" -eq 1 ]; then
+    if [ "$change_count" -gt 0 ]; then
+      printf '    would commit %s change(s)\n' "$change_count"
+    else
+      printf '    nothing to commit\n'
+    fi
+    if [ -z "$upstream" ]; then
+      printf '    would publish %s to origin\n' "$branch"
+      return "$EXIT_OK"
+    fi
+    if [ "$incoming" -gt 0 ]; then
+      printf '    would pull %s commit(s)\n' "$incoming"
+    fi
+    if [ "$outgoing" -gt 0 ]; then
+      printf '    would push %s commit(s)\n' "$outgoing"
+    else
+      printf '    remote up to date\n'
+    fi
+    return "$EXIT_OK"
+  fi
+
+  commit_pending "$directory" "$change_count" || return "$EXIT_FAILED"
+
+  if [ -n "$upstream" ]; then
+    pull_remote "$directory" "$upstream" || return "$EXIT_FAILED"
+  fi
+
+  push_remote "$directory" "$branch" "$upstream" || return "$EXIT_FAILED"
+
+  return "$EXIT_OK"
+}
+
 status_repository() {
   local directory="$1"
   local name
@@ -87,8 +333,6 @@ status_repository() {
     return "$EXIT_SKIPPED"
   fi
 
-  # The pi privacy barrier mounts the vault read-only and hides its .git, so the
-  # only honest answer here is that this process cannot see the repository.
   if [ ! -w "$directory" ]; then
     printf 'read-only here (pi privacy barrier), check it in a normal terminal\n'
     return "$EXIT_SKIPPED"
@@ -103,7 +347,7 @@ status_repository() {
   branch="$(git -C "$directory" symbolic-ref --quiet --short HEAD || printf 'detached')"
 
   local change_count
-  change_count="$(git -C "$directory" status --porcelain | wc -l)"
+  change_count="$(change_count_of "$directory")"
 
   local upstream
   upstream="$(upstream_of "$directory")"
@@ -125,113 +369,6 @@ status_repository() {
   return "$EXIT_OK"
 }
 
-save_repository() {
-  local directory="$1"
-  local name
-  name="$(basename "$directory")"
-
-  printf '\n==> %s\n' "$name"
-
-  if [ ! -d "$directory" ]; then
-    printf '    missing, skipping\n'
-    return "$EXIT_SKIPPED"
-  fi
-
-  # The pi privacy barrier mounts the vault read-only. Say so plainly instead of
-  # failing halfway through a commit.
-  if [ ! -w "$directory" ]; then
-    printf '    read-only here (pi privacy barrier), run this in a normal terminal\n' >&2
-    return "$EXIT_SKIPPED"
-  fi
-
-  if ! is_git_repository "$directory"; then
-    printf '    no git repository, skipping\n' >&2
-    return "$EXIT_FAILED"
-  fi
-
-  local branch
-  branch="$(git -C "$directory" symbolic-ref --quiet --short HEAD || true)"
-  if [ -z "$branch" ]; then
-    printf '    detached HEAD, skipping\n' >&2
-    return "$EXIT_FAILED"
-  fi
-
-  local change_count
-  change_count="$(git -C "$directory" status --porcelain | wc -l)"
-
-  if [ "$change_count" -gt 0 ]; then
-    if [ "$dry_run" -eq 1 ]; then
-      printf '    would commit %s change(s)\n' "$change_count"
-    else
-      git -C "$directory" add --all
-      git -C "$directory" commit --quiet --message "$commit_message"
-      printf '    committed %s change(s)\n' "$change_count"
-    fi
-  else
-    printf '    nothing to commit\n'
-  fi
-
-  local upstream
-  upstream="$(upstream_of "$directory")"
-
-  if [ -z "$upstream" ]; then
-    if [ "$dry_run" -eq 1 ]; then
-      printf '    would publish %s to origin\n' "$branch"
-      return "$EXIT_OK"
-    fi
-    if ! git -C "$directory" push --quiet --set-upstream origin "$branch"; then
-      printf '    publish failed, check the remote and your credentials\n' >&2
-      return "$EXIT_FAILED"
-    fi
-    printf '    published %s to origin\n' "$branch"
-    return "$EXIT_OK"
-  fi
-
-  if [ "$dry_run" -eq 0 ]; then
-    if ! git -C "$directory" fetch --quiet origin; then
-      printf '    fetch failed, check the network and your credentials\n' >&2
-      return "$EXIT_FAILED"
-    fi
-  fi
-
-  local incoming
-  incoming="$(commits_between "$directory" "HEAD..$upstream")"
-
-  if [ "$incoming" -gt 0 ]; then
-    if [ "$dry_run" -eq 1 ]; then
-      printf '    would pull %s commit(s)\n' "$incoming"
-    else
-      if ! git -C "$directory" pull --quiet --rebase --autostash; then
-        git -C "$directory" rebase --abort >/dev/null 2>&1 || true
-        printf '    pull failed, fix the conflict by hand in %s\n' "$directory" >&2
-        return "$EXIT_FAILED"
-      fi
-      printf '    pulled %s commit(s)\n' "$incoming"
-    fi
-  fi
-
-  local outgoing
-  outgoing="$(commits_between "$directory" "$upstream..HEAD")"
-
-  if [ "$outgoing" -eq 0 ]; then
-    printf '    up to date\n'
-    return "$EXIT_OK"
-  fi
-
-  if [ "$dry_run" -eq 1 ]; then
-    printf '    would push %s commit(s)\n' "$outgoing"
-    return "$EXIT_OK"
-  fi
-
-  if ! git -C "$directory" push --quiet; then
-    printf '    push failed, work is committed locally\n' >&2
-    return "$EXIT_FAILED"
-  fi
-  printf '    pushed %s commit(s)\n' "$outgoing"
-
-  return "$EXIT_OK"
-}
-
 IFS=':' read -r -a repositories <<<"${SAVE_REPOSITORIES:-$DEFAULT_REPOSITORIES}"
 
 for repository in "${repositories[@]}"; do
@@ -247,6 +384,10 @@ for repository in "${repositories[@]}"; do
   case "$exit_code" in
     "$EXIT_OK") ;;
     "$EXIT_SKIPPED") skipped=$((skipped + 1)) ;;
+    "$EXIT_QUIT")
+      printf '\nstopped at your request\n'
+      exit 0
+      ;;
     *) failures=$((failures + 1)) ;;
   esac
 done
@@ -257,7 +398,7 @@ if [ "$failures" -gt 0 ]; then
 fi
 
 if [ "$skipped" -gt 0 ]; then
-  printf '\n%s repository/repositories skipped\n' "$skipped"
+  printf '\n%s repository/repositories left alone\n' "$skipped"
   exit 0
 fi
 
