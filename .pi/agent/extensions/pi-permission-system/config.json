@@ -17,6 +17,7 @@
       "* commit *": "deny",
       "rm -rf *": "deny",
       "* rm -rf *": "deny",
+      "* sudo *": "deny",
       "sudo *": "deny",
       "git push": "deny",
       "* push *": "deny",

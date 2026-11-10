@@ -36,24 +36,24 @@ show_help() {
 
 for argument in "$@"; do
   case "$argument" in
-    status)
-      report_only=1
-      ;;
-    --yes | -y)
-      assume_yes=1
-      ;;
-    --dry-run | -n)
-      dry_run=1
-      ;;
-    --help | -h)
-      show_help
-      exit 0
-      ;;
-    *)
-      printf 'unknown argument: %s\n' "$argument" >&2
-      printf 'try: reposync --help\n' >&2
-      exit 2
-      ;;
+  status)
+    report_only=1
+    ;;
+  --yes | -y)
+    assume_yes=1
+    ;;
+  --dry-run | -n)
+    dry_run=1
+    ;;
+  --help | -h)
+    show_help
+    exit 0
+    ;;
+  *)
+    printf 'unknown argument: %s\n' "$argument" >&2
+    printf 'try: reposync --help\n' >&2
+    exit 2
+    ;;
   esac
 done
 
@@ -117,12 +117,14 @@ show_changes() {
 show_diff() {
   local directory="$1"
 
-  # delta reads the diff on stdin and renders it with file headers, syntax
-  # colors, and hunk numbers. It pages through less only when the output is
-  # longer than the screen, so short diffs print inline. Quitting that pager
-  # early sends SIGPIPE to git, which must not abort the run.
+  # delta reads the diff on stdin and renders it side by side with line
+  # numbers, matching the renderer lazygit uses so both tools look the same.
+  # It pages through less only when the output is longer than the screen, so
+  # short diffs print inline. Quitting that pager early sends SIGPIPE to git,
+  # which must not abort the run.
   if command -v delta >/dev/null 2>&1; then
-    git -C "$directory" diff | delta --navigate || true
+    git -C "$directory" diff |
+      delta --navigate --side-by-side --line-numbers || true
   else
     git -C "$directory" --no-pager diff || true
   fi
@@ -157,21 +159,21 @@ review_gate() {
     printf '    [d]iff again  [y]es, sync it  [n]o, skip it  [q]uit > '
     IFS= read -r answer || return "$EXIT_QUIT"
     case "$answer" in
-      d | D)
-        show_diff "$directory"
-        ;;
-      y | Y)
-        return "$EXIT_OK"
-        ;;
-      n | N | "")
-        return "$EXIT_SKIPPED"
-        ;;
-      q | Q)
-        return "$EXIT_QUIT"
-        ;;
-      *)
-        printf '    pick d, y, n, or q\n'
-        ;;
+    d | D)
+      show_diff "$directory"
+      ;;
+    y | Y)
+      return "$EXIT_OK"
+      ;;
+    n | N | "")
+      return "$EXIT_SKIPPED"
+      ;;
+    q | Q)
+      return "$EXIT_QUIT"
+      ;;
+    *)
+      printf '    pick d, y, n, or q\n'
+      ;;
     esac
   done
 }
@@ -316,9 +318,9 @@ sync_repository() {
     review_gate "$directory" "$change_count" "$incoming" "$outgoing" "$upstream" ||
       gate_status=$?
     case "$gate_status" in
-      0) ;;
-      "$EXIT_QUIT") return "$EXIT_QUIT" ;;
-      *) return "$EXIT_SKIPPED" ;;
+    0) ;;
+    "$EXIT_QUIT") return "$EXIT_QUIT" ;;
+    *) return "$EXIT_SKIPPED" ;;
     esac
   fi
 
@@ -393,13 +395,13 @@ for repository in "${repositories[@]}"; do
     sync_repository "$repository" || exit_code=$?
   fi
   case "$exit_code" in
-    "$EXIT_OK") ;;
-    "$EXIT_SKIPPED") skipped=$((skipped + 1)) ;;
-    "$EXIT_QUIT")
-      printf '\nstopped at your request\n'
-      exit 0
-      ;;
-    *) failures=$((failures + 1)) ;;
+  "$EXIT_OK") ;;
+  "$EXIT_SKIPPED") skipped=$((skipped + 1)) ;;
+  "$EXIT_QUIT")
+    printf '\nstopped at your request\n'
+    exit 0
+    ;;
+  *) failures=$((failures + 1)) ;;
   esac
 done
 

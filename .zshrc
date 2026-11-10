@@ -59,7 +59,7 @@ setopt hist_find_no_dups
 alias gs='git status'
 alias c='clear'
 alias n='nvim'
-alias ls='ls --color'
+# alias ls='ls --color -lrt'
 alias open='dolphin'
 alias laz='lazygit'
 
