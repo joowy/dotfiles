@@ -11,6 +11,10 @@
 #   reposync --dry-run    print the plan, change nothing
 #   reposync --help       this text
 #
+# `status`, `--yes`, and `--dry-run` work on every repository at once and print
+# each report in list order when the whole batch finishes. The interactive run
+# stays one repository at a time, because the questions need the terminal.
+#
 # Override the repository list with a colon-separated REPOSYNC_REPOSITORIES,
 # and the machine label in commit messages with REPOSYNC_MACHINE_NAME.
 set -euo pipefail
@@ -382,28 +386,98 @@ status_repository() {
   return "$EXIT_OK"
 }
 
-IFS=':' read -r -a repositories <<<"${REPOSYNC_REPOSITORIES:-$DEFAULT_REPOSITORIES}"
-
-for repository in "${repositories[@]}"; do
-  if [ -z "$repository" ]; then
-    continue
-  fi
-  exit_code="$EXIT_OK"
-  if [ "$report_only" -eq 1 ]; then
-    status_repository "$repository" || exit_code=$?
-  else
-    sync_repository "$repository" || exit_code=$?
-  fi
-  case "$exit_code" in
+# Tallies one repository's exit code for the closing summary.
+record_result() {
+  case "$1" in
   "$EXIT_OK") ;;
   "$EXIT_SKIPPED") skipped=$((skipped + 1)) ;;
-  "$EXIT_QUIT")
-    printf '\nstopped at your request\n'
-    exit 0
-    ;;
   *) failures=$((failures + 1)) ;;
   esac
+}
+
+# Runs one step for every repository at the same time. Each repository writes
+# into its own files, so the reports cannot interleave, and the batch replays
+# them in list order once the slowest repository finishes. Only for runs that
+# never read from the terminal: two repositories cannot share one prompt.
+run_all_in_parallel() {
+  local operation="$1"
+  shift
+
+  local batch_directory
+  batch_directory="$(mktemp -d "${TMPDIR:-/tmp}/reposync.XXXXXX")"
+  trap "rm -rf '$batch_directory'" EXIT
+
+  local repository
+  local position=0
+  local process_id
+  local exit_code
+  local status_file
+  local -a batch_repositories=("$@")
+  local -a batch_process_ids=()
+
+  for repository in "${batch_repositories[@]}"; do
+    position=$((position + 1))
+    (
+      set +e
+      "$operation" "$repository"
+      printf '%s\n' "$?" >"$batch_directory/$position.status"
+    ) >"$batch_directory/$position.output" 2>"$batch_directory/$position.error" &
+    batch_process_ids+=("$!")
+  done
+
+  for process_id in "${batch_process_ids[@]}"; do
+    wait "$process_id" || true
+  done
+
+  position=0
+  for repository in "${batch_repositories[@]}"; do
+    position=$((position + 1))
+    if [ -s "$batch_directory/$position.output" ]; then
+      cat "$batch_directory/$position.output"
+    fi
+    if [ -s "$batch_directory/$position.error" ]; then
+      cat "$batch_directory/$position.error" >&2
+    fi
+
+    status_file="$batch_directory/$position.status"
+    exit_code="$EXIT_FAILED"
+    if [ -s "$status_file" ]; then
+      read -r exit_code <"$status_file"
+    fi
+
+    if [ "$exit_code" -eq "$EXIT_QUIT" ]; then
+      printf '\nstopped at your request\n'
+      exit 0
+    fi
+    record_result "$exit_code"
+  done
+}
+
+IFS=':' read -r -a repositories <<<"${REPOSYNC_REPOSITORIES:-$DEFAULT_REPOSITORIES}"
+
+# One cleaned list, so every path below sees the same repositories.
+active_repositories=()
+for repository in "${repositories[@]}"; do
+  if [ -n "$repository" ]; then
+    active_repositories+=("$repository")
+  fi
 done
+
+if [ "$report_only" -eq 1 ]; then
+  run_all_in_parallel status_repository "${active_repositories[@]}"
+elif [ "$assume_yes" -eq 1 ] || [ "$dry_run" -eq 1 ]; then
+  run_all_in_parallel sync_repository "${active_repositories[@]}"
+else
+  for repository in "${active_repositories[@]}"; do
+    exit_code="$EXIT_OK"
+    sync_repository "$repository" || exit_code=$?
+    if [ "$exit_code" -eq "$EXIT_QUIT" ]; then
+      printf '\nstopped at your request\n'
+      exit 0
+    fi
+    record_result "$exit_code"
+  done
+fi
 
 if [ "$failures" -gt 0 ]; then
   printf '\n%s repository/repositories need attention\n' "$failures" >&2

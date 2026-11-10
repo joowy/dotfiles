@@ -80,7 +80,10 @@ Notes and practice work live in separate repositories, not in this checkout:
 at a machine and again when you leave it. Per repository it shows the diff,
 asks, then commits pending work, fetches, rebases onto the remote with
 `--autostash`, and pushes. It reports every step and exits non-zero if any
-repository needs a human.
+repository needs a human. `reposync status`, `reposync --yes`, and
+`reposync --dry-run` work on every repository at once, each into its own buffer,
+then print the reports in list order when the batch finishes. The interactive
+run stays serial, since the questions need the one terminal.
 
 ```bash
 reposync              # show the diff, ask, then commit, pull, push
