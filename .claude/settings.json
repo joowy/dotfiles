@@ -1,0 +1,35 @@
+{
+  "syncClaudeAiSkills": false,
+  "skillOverrides": {
+    "dataviz": "off",
+    "claude-api": "off",
+    "artifact-capabilities": "off",
+    "update-config": "off",
+    "claude-in-chrome": "off",
+    "schedule": "off",
+    "run": "off",
+    "loop": "off",
+    "plugin-authoring": "off",
+    "keybindings-help": "off",
+    "artifact-diagramming": "off",
+    "artifact-design": "off",
+    "fewer-permission-prompts": "off",
+    "simplify": "off",
+    "security-review": "off",
+    "init": "off"
+  },
+  "workflowKeywordTriggerEnabled": false,
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline.sh"
+  },
+  "feedbackDrafts": "notify",
+  "theme": "auto",
+  "preferredNotifChannel": "ghostty",
+  "autoCompactEnabled": false,
+  "idleCompaction": false,
+  "switchModelsOnFlag": true,
+  "terminalProgressBarEnabled": true,
+  "model": "sonnet",
+  "hooks": {"SessionStart":[{"matcher":"^(startup|resume|clear|compact|fork)$","hooks":[{"type":"command","command":"bash '/home/joey/.claude/hooks/herdr-agent-state.sh' session","timeout":10}]}]}
+}
