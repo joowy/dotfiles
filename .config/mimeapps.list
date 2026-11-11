@@ -26,3 +26,4 @@ x-scheme-handler/http=firefox.desktop;
 x-scheme-handler/https=firefox.desktop;
 x-scheme-handler/lmstudio=LM-Studio.desktop
 x-scheme-handler/openwhispr-dev=open-whispr.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop

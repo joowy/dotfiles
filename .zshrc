@@ -62,7 +62,7 @@ alias n='nvim'
 # alias ls='ls --color -lrt'
 alias open='dolphin'
 alias laz='lazygit'
-
+alias cl="claude"
 #--------------------------------------------------
 # herdr completion
 #--------------------------------------------------
