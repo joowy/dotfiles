@@ -7,6 +7,7 @@
 !/extensions/herdr-agent-state.ts
 !/agents/
 !/agents/**
+!/model-tiers.json
 !/prompts/
 !/prompts/**
 !settings.json

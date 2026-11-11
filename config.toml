@@ -45,6 +45,10 @@ exclude = [
 "~/bin" = { mode = "symlink" }
 "~/images" = { mode = "symlink" }     # referenced by absolute path from the KDE applet config
 "~/wallpapers" = { mode = "symlink" }
+# subagents-lite skips symlinks when it scans for agent files, so the agent
+# files must be real copies. The model-tiers task edits the sources in this
+# repository and then runs `mise dot apply` to refresh the copies.
+"~/.pi/agent/agents" = { mode = "copy" }
 # .pi, .zfunc, and .agents stay real directories with one link per file, so the
 # tools that write into them (herdr completions, the skill lock file, pi
 # installs) keep their state out of this checkout.

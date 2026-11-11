@@ -12,26 +12,19 @@
     "npm:@narumitw/pi-usage",
     "npm:@cortexkit/pi-anthropic-auth@2.10.0"
   ],
-  "defaultTools": [
-    "+codemode"
-  ],
+  "defaultTools": ["+codemode"],
   "defaultThinkingLevel": "high",
-  "skills": [
-    "~/.claude/skills",
-    "~/.codex/skills",
-    "../.claude/skills"
-  ],
-  "newLine": [
-    "shift+enter",
-    "ctrl+j"
-  ],
-  "defaultProvider": "opencode-go",
+  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
+  "newLine": ["shift+enter", "ctrl+j"],
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-sonnet-5-5",
   "enabledModels": [
+    "anthropic/claude-haiku-5-5",
+    "anthropic/claude-sonnet-5-5",
     "opencode-go/deepseek-v4.1-flash",
     "opencode-go/gemini-4-argon",
-    "opencode-go/kimi-k3.1-pro",
-    "opencode-go/hy4",
-    "llama.cpp/*"
+    "llama.cpp/*",
+    "anthropic/claude-opus-5-5"
   ],
   "showHardwareCursor": true,
   "showCacheMissNotices": true,

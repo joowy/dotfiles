@@ -1,0 +1,235 @@
+#!/usr/bin/env node
+// mise task: model-tiers — apply the model tiers in ~/.pi/agent/model-tiers.json.
+//
+// Edit one file, run `mise run model-tiers`, then /reload in pi.
+//
+//   model-tiers              validate, then write every consumer
+//   model-tiers --dry-run    print what would change, write nothing
+//   model-tiers --help       this text
+//
+// Tiers: fast (cheap), default (medium), large (planner class).
+//
+// Consumers, and the tag that selects a tier:
+//   agents/*.md (repo source)  `tier: fast` in the frontmatter -> model line
+//   permission-judge/config    "judgeTier": "fast"   -> judgeModel
+//   pi-herdr.json              "naming": { "tier": "fast" } -> naming.model
+//   subagents-lite.json        agent.default = default tier; agent.<Name> per tagged agent
+//                              (a per-agent entry outranks agent.default and the frontmatter)
+//   settings.json              defaultProvider/defaultModel = large tier. tier models are added to enabledModels if missing.
+//
+// Every tier model is checked against `pi --list-models` first. One unknown
+// model aborts the run before any file changes.
+
+"use strict";
+
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
+const { execFileSync } = require("node:child_process");
+
+const TIER_NAMES = ["fast", "default", "large"];
+const agentDirectory = path.join(os.homedir(), ".pi", "agent");
+const tiersPath = path.join(agentDirectory, "model-tiers.json");
+// ~/.pi/agent/agents holds real copies (subagents-lite skips symlinks), so the
+// task edits the sources next to the real model-tiers.json and then refreshes
+// the copies with `mise dot apply`.
+const agentsDirectory = path.join(path.dirname(fs.realpathSync(tiersPath)), "agents");
+const deployedAgentsDirectory = path.join(agentDirectory, "agents");
+const judgeConfigPath = path.join(agentDirectory, "extensions", "permission-judge", "config.json");
+const herdrSettingsPath = path.join(agentDirectory, "pi-herdr.json");
+const subagentsPath = path.join(agentDirectory, "subagents-lite.json");
+const settingsPath = path.join(agentDirectory, "settings.json");
+
+const arguments_ = process.argv.slice(2);
+if (arguments_.includes("--help") || arguments_.includes("-h")) {
+  const header = fs.readFileSync(__filename, "utf8").split("\n").slice(1, 23);
+  console.log(header.map((line) => line.replace(/^\/\/ ?/, "")).join("\n"));
+  process.exit(0);
+}
+const isDryRun = arguments_.includes("--dry-run");
+
+function fail(message) {
+  console.error(`model-tiers: ${message}`);
+  process.exit(1);
+}
+
+function readJson(filePath) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch (error) {
+    fail(`cannot read ${filePath}: ${error.message}`);
+  }
+}
+
+function readJsonIfPresent(filePath) {
+  return fs.existsSync(filePath) ? readJson(filePath) : undefined;
+}
+
+// --- load and validate the tiers file --------------------------------------
+const tiers = readJson(tiersPath);
+const problems = [];
+for (const tierName of TIER_NAMES) {
+  const value = tiers[tierName];
+  if (typeof value !== "string" || !/^[^/\s]+\/\S+$/.test(value)) {
+    problems.push(`tier "${tierName}" must be "provider/model", got ${JSON.stringify(value)}`);
+  }
+}
+if (problems.length > 0) fail(problems.join("\n"));
+
+let listing;
+try {
+  listing = execFileSync("pi", ["--list-models"], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+} catch (error) {
+  fail(`pi --list-models failed, so the tiers cannot be checked: ${error.message}`);
+}
+const knownModels = new Set();
+for (const line of listing.split("\n").slice(1)) {
+  const [provider, model] = line.trim().split(/\s+/);
+  if (provider && model) knownModels.add(`${provider}/${model}`);
+}
+for (const tierName of TIER_NAMES) {
+  const value = tiers[tierName];
+  if (knownModels.has(value)) continue;
+  const modelPart = value.split("/").slice(1).join("/");
+  const suggestions = [...knownModels].filter((known) => known.includes(modelPart.slice(0, 8))).slice(0, 5);
+  problems.push(
+    `tier "${tierName}" names unknown model ${value}` +
+      (suggestions.length ? `\n    closest: ${suggestions.join(", ")}` : ""),
+  );
+}
+if (problems.length > 0) fail(`${problems.join("\n")}\nNothing was written.`);
+
+// --- plan every change before writing anything -----------------------------
+const plannedWrites = []; // { filePath, content, notes }
+
+function formatJson(value) {
+  return `${JSON.stringify(value, null, 2)}\n`;
+}
+
+function planJson(filePath, value, notes) {
+  if (notes.length === 0) return;
+  plannedWrites.push({ filePath, content: formatJson(value), notes });
+}
+
+function tierModel(tierName, source) {
+  if (!TIER_NAMES.includes(tierName)) fail(`${source} uses unknown tier "${tierName}"`);
+  return tiers[tierName];
+}
+
+function setKey(object, key, value, label, notes) {
+  if (object[key] === value) return;
+  notes.push(`${label}: ${object[key] === undefined ? "(unset)" : object[key]} -> ${value}`);
+  object[key] = value;
+}
+
+// Agent files: the tier line selects a tier, and the sync writes the real
+// model line right after it.
+const agentTiers = {};
+if (fs.existsSync(agentsDirectory)) {
+  for (const fileName of fs.readdirSync(agentsDirectory).filter((entry) => entry.endsWith(".md"))) {
+    const filePath = path.join(agentsDirectory, fileName);
+    const text = fs.readFileSync(filePath, "utf8");
+    const frontmatterMatch = /^---\n([\s\S]*?)\n---/.exec(text);
+    const frontmatter = frontmatterMatch?.[1] ?? "";
+    const name = /^name:\s*(.+?)\s*$/m.exec(frontmatter)?.[1];
+    const tier = /^tier:\s*(\S+)\s*$/m.exec(frontmatter)?.[1];
+    if (!name || !tier) continue;
+    const model = tierModel(tier, `agents/${fileName}`);
+    agentTiers[name] = tier;
+
+    const originalLines = frontmatter.split("\n");
+    const previousModel = /^model:\s*(\S+)\s*$/m.exec(frontmatter)?.[1];
+    const tierIndexBefore = originalLines.findIndex((line) => /^tier:/.test(line));
+    if (originalLines[tierIndexBefore + 1] === `model: ${model}`) continue;
+
+    const lines = originalLines.filter((line) => !/^model:/.test(line));
+    const tierIndex = lines.findIndex((line) => /^tier:/.test(line));
+    lines.splice(tierIndex + 1, 0, `model: ${model}`);
+    plannedWrites.push({
+      filePath,
+      content: text.replace(frontmatterMatch[0], () => `---\n${lines.join("\n")}\n---`),
+      notes: [`agent ${name} model (${tier}): ${previousModel ?? "(unset)"} -> ${model}`],
+    });
+  }
+}
+
+// subagents-lite.json: agent.default covers agents with no tier. It outranks
+// the frontmatter model, so every tagged agent also gets its own entry, which
+// outranks agent.default.
+{
+  const subagents = readJsonIfPresent(subagentsPath) ?? {};
+  const notes = [];
+  subagents.agent = subagents.agent ?? {};
+  setKey(subagents.agent, "default", tiers.default, "subagents-lite agent.default", notes);
+  for (const [name, tier] of Object.entries(agentTiers)) {
+    setKey(subagents.agent, name, tiers[tier], `subagents-lite agent.${name} (${tier})`, notes);
+  }
+  planJson(subagentsPath, subagents, notes);
+}
+
+// permission-judge config
+{
+  const judge = readJsonIfPresent(judgeConfigPath);
+  if (judge?.judgeTier) {
+    const notes = [];
+    setKey(judge, "judgeModel", tierModel(judge.judgeTier, "permission-judge config"), `permission-judge judgeModel (${judge.judgeTier})`, notes);
+    planJson(judgeConfigPath, judge, notes);
+  }
+}
+
+// pi-herdr.json naming
+{
+  const herdr = readJsonIfPresent(herdrSettingsPath);
+  if (herdr?.naming?.tier) {
+    const notes = [];
+    setKey(herdr.naming, "model", tierModel(herdr.naming.tier, "pi-herdr naming"), `pi-herdr naming.model (${herdr.naming.tier})`, notes);
+    planJson(herdrSettingsPath, herdr, notes);
+  }
+}
+
+// settings.json
+{
+  const settings = readJson(settingsPath);
+  const notes = [];
+  const [largeProvider, ...largeIdParts] = tiers.large.split("/");
+  const rebuilt = {};
+  for (const [key, value] of Object.entries(settings)) {
+    if (key === "defaultModel") continue;
+    rebuilt[key] = value;
+    if (key === "defaultProvider") rebuilt.defaultModel = largeIdParts.join("/");
+  }
+  if (!("defaultProvider" in settings)) rebuilt.defaultModel = largeIdParts.join("/");
+  setKey(rebuilt, "defaultProvider", largeProvider, "settings defaultProvider (large)", notes);
+  if (settings.defaultModel !== rebuilt.defaultModel) {
+    notes.push(`settings defaultModel (large): ${settings.defaultModel ?? "(unset)"} -> ${rebuilt.defaultModel}`);
+  }
+  // Add tier models that enabledModels lacks. Existing entries stay as they are.
+  const enabledModels = Array.isArray(settings.enabledModels) ? [...settings.enabledModels] : [];
+  const missingModels = [...new Set(TIER_NAMES.map((tierName) => tiers[tierName]))].filter(
+    (model) => !enabledModels.includes(model),
+  );
+  if (missingModels.length > 0) {
+    notes.push(`settings enabledModels: added ${missingModels.join(", ")}`);
+    rebuilt.enabledModels = [...enabledModels, ...missingModels];
+  }
+  planJson(settingsPath, rebuilt, notes);
+}
+
+// --- report and write ------------------------------------------------------
+if (plannedWrites.length === 0) {
+  console.log("model-tiers: everything already matches. Nothing to do.");
+  process.exit(0);
+}
+for (const { filePath, content, notes } of plannedWrites) {
+  console.log(`${isDryRun ? "would update" : "updating"} ${filePath}`);
+  for (const note of notes) console.log(`  ${note}`);
+  if (!isDryRun) fs.writeFileSync(filePath, content);
+}
+if (!isDryRun && plannedWrites.some(({ filePath }) => filePath.startsWith(agentsDirectory + path.sep))) {
+  try {
+    execFileSync("mise", ["dot", "apply", deployedAgentsDirectory], { stdio: "inherit" });
+  } catch (error) {
+    fail(`agent sources changed but mise dot apply failed: ${error.message}`);
+  }
+}
+console.log(isDryRun ? "model-tiers: dry run, nothing written." : "model-tiers: done. Run /reload in pi.");

@@ -1,0 +1,5 @@
+{
+  "fast": "anthropic/claude-haiku-5-5",
+  "default": "anthropic/claude-sonnet-5-5",
+  "large": "anthropic/claude-opus-5-5"
+}

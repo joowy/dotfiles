@@ -2,7 +2,8 @@
 name: Reviewer
 description: Versatile review specialist for code diffs, plans, proposed solutions, codebase health, and PR/issue validation
 tools: [read, grep, bash, ask_user_question, codemode, tool_search]
-model: opencode-go/gemini-4-argon
+tier: default
+model: anthropic/claude-sonnet-5-5
 thinking: high
 include_system_prompt: false
 include_context_files: true

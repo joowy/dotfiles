@@ -142,6 +142,14 @@ prune_tool_versions() {
   mise prune || warn "mise prune reported a problem"
 }
 
+# --- 8. model tiers ---------------------------------------------------------
+# ~/.pi/agent/model-tiers.json is the one place that names models. This writes
+# them into the agent, judge, naming, and settings files.
+apply_model_tiers() {
+  say "applying pi model tiers"
+  mise run model-tiers || warn "model tiers were not applied (is pi logged in?)"
+}
+
 say "mise bootstrap task starting"
 install_oh_my_zsh
 install_herdr
@@ -150,4 +158,5 @@ install_skills
 report_vulkan_sdk
 sync_neovim_plugins
 prune_tool_versions
+apply_model_tiers
 say "mise bootstrap task finished"
