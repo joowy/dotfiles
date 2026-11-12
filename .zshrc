@@ -53,37 +53,6 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
-#--------------------------------------------------
-# Aliases
-#--------------------------------------------------
-alias gs='git status'
-alias c='clear'
-alias n='nvim'
-# alias ls='ls --color -lrt'
-alias open='dolphin'
-alias laz='lazygit'
-alias cl="claude"
-#--------------------------------------------------
-# herdr completion
-#--------------------------------------------------
-if command -v herdr &>/dev/null && [[ ! -f ~/.zfunc/_herdr ]]; then
-  mkdir -p ~/.zfunc
-  herdr completion zsh >~/.zfunc/_herdr
-fi
-
-#--------------------------------------------------
-# Completion Styling & Zoxide
-#--------------------------------------------------
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:*' fzf-preview '
-     if [[ -n $realpath && -d $realpath ]]; then
-       eza -1h --tree --level=2 --icons --color=always -- "$realpath"
-     elif [[ -n $realpath && -f $realpath ]]; then
-       bat --style=numbers --color=always --line-range=:500 -- "$realpath"
-     fi'
-
 command -v zoxide >/dev/null && eval "$(zoxide init zsh)"
 [[ -r "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -128,3 +97,36 @@ pi() {
   "$HOME/.pi/agent/bin/pi-safe" "$@"
 }
 # <<< obsidian-private-guard (pi-safe) <<<
+#--------------------------------------------------
+# Aliases
+#--------------------------------------------------
+alias gs='git status'
+alias c='clear'
+alias n='nvim'
+alias open='dolphin'
+alias laz='lazygit'
+alias cl="claude"
+
+alias pih="pi --model anthropic/claude-haiku-5-5"
+alias pis="pi --model anthropic/claude-sonnet-5-5"
+alias pio="pi --model anthropic/claude-opus-5-5"
+#--------------------------------------------------
+# herdr completion
+#--------------------------------------------------
+if command -v herdr &>/dev/null && [[ ! -f ~/.zfunc/_herdr ]]; then
+  mkdir -p ~/.zfunc
+  herdr completion zsh >~/.zfunc/_herdr
+fi
+
+#--------------------------------------------------
+# Completion Styling & Zoxide
+#--------------------------------------------------
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:*' fzf-preview '
+     if [[ -n $realpath && -d $realpath ]]; then
+       eza -1h --tree --level=2 --icons --color=always -- "$realpath"
+     elif [[ -n $realpath && -f $realpath ]]; then
+       bat --style=numbers --color=always --line-range=:500 -- "$realpath"
+     fi'

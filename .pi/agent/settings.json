@@ -12,10 +12,19 @@
     "npm:@narumitw/pi-usage",
     "npm:@cortexkit/pi-anthropic-auth@2.10.0"
   ],
-  "defaultTools": ["+codemode"],
+  "defaultTools": [
+    "+codemode"
+  ],
   "defaultThinkingLevel": "high",
-  "skills": ["~/.claude/skills", "~/.codex/skills", "../.claude/skills"],
-  "newLine": ["shift+enter", "ctrl+j"],
+  "skills": [
+    "~/.claude/skills",
+    "~/.codex/skills",
+    "../.claude/skills"
+  ],
+  "newLine": [
+    "shift+enter",
+    "ctrl+j"
+  ],
   "defaultProvider": "anthropic",
   "defaultModel": "claude-sonnet-5-5",
   "enabledModels": [
