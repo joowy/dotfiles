@@ -1,7 +1,7 @@
 {
     "controllers": [
         {
-            "active_mode": 0,
+            "active_mode": 1,
             "colors": [
                 0,
                 0,
@@ -87,7 +87,7 @@
                     "gen2_d_led1": false,
                     "gen2_d_led2": false,
                     "gen2_d_led3": false,
-                    "persist_lighting_on_exit": false
+                    "persist_lighting_on_exit": true
                 },
                 "schema": {
                     "calibration_d_led1": {
