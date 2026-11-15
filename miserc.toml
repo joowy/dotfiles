@@ -1,3 +1,8 @@
-# Read by mise before config.toml. A per-machine miserc.local.toml overrides
-# this list, so a fresh machine with nothing local still gets the desktop set.
+# Read by mise before config.toml. Selects the config.<env>.toml overlays.
+# A per-machine miserc.local.toml overrides `env`. Without one, a machine gets
+# the workstation set only, so desktop-only and laptop-only files stay off.
 env = ["workstation"]
+
+[env_sets]
+desktop = ["workstation", "desktop"]
+laptop = ["workstation", "laptop"]

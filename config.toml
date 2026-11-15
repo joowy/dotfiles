@@ -33,12 +33,16 @@ exclude = [
   "/config.toml",
   "/config.workstation.toml",
   "/config.wsl2.toml",
+  "/config.desktop.toml",
+  "/config.laptop.toml",
   "/miserc.toml",
   "/miserc.local.toml",
   "/mise.lock",
   "/locks/**",
   "/tasks/**",
   "/.mise/**",
+  # Desktop-only files deploy through the desktop group in config.desktop.toml.
+  "/desktop/**",
 ]
 
 [dotfile_groups.home.entries]

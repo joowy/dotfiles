@@ -1,0 +1,10 @@
+# Desktop overlay: hardware-specific config for the desktop PC (Gigabyte B850,
+# RTX 5080, Ryzen 9800X3D). Selected by the desktop set in miserc.toml.
+# Files live under desktop/ and deploy to $HOME only on this overlay.
+
+[dotfile_groups.desktop]
+root = "desktop"
+target = "~"
+mode = "symlink-each"
+manifest = "git"
+relative = true

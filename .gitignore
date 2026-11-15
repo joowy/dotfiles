@@ -53,3 +53,6 @@ miserc.local.toml
 .config/zoom/
 .config/zoom.conf
 .config/zoomus.conf
+
+# Desktop-only OpenRGB logs are app output, not configuration.
+desktop/.config/OpenRGB/logs/

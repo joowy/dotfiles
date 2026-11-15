@@ -7,9 +7,13 @@ it to `~/.config/mise` on every machine.
 - `config.toml` — global mise config: `[tools]`, `[bootstrap.packages]`,
   `[bootstrap.repos]`, and the `[dotfile_groups.home]` group that deploys the
   checkout into `$HOME`.
-- `config.workstation.toml` — desktop applications, selected by default.
+- `config.workstation.toml` — desktop applications, in every profile.
+- `config.desktop.toml` — desktop PC hardware (OpenRGB, LACT GPU config), deployed
+  from `desktop/`.
+- `config.laptop.toml` — laptop overlay, empty until the laptop is set up.
 - `config.wsl2.toml` — WSL2 overlay, empty until that machine exists.
-- `miserc.toml` — tracked default environment selection (`workstation`).
+- `miserc.toml` — tracked default environment selection (`workstation`) and the
+  `desktop` and `laptop` sets.
 - `tasks/bootstrap` — the `bootstrap` task that runs installers mise cannot
   express declaratively.
 - Everything else is a dotfile, deployed at the same path under `$HOME`.
@@ -127,9 +131,23 @@ you run it from pi. Run it from a normal terminal.
 `~/.config/mise/miserc.local.toml` (untracked, gitignored):
 
 ```toml
+# Desktop PC: workstation + config.desktop.toml
+env = ["desktop"]
+```
+
+```toml
+# Laptop: workstation + config.laptop.toml
+env = ["laptop"]
+```
+
+```toml
 # WSL2 machine
 env = ["wsl2"]
 ```
+
+Set a new laptop with `env = ["laptop"]`, then run `mise dot diff` and
+`mise dot apply`. Do not put `MISE_ENV` in a shell file: it overrides
+`miserc.local.toml`.
 
 `miserc.local.toml` sits at the checkout root, so the `home` group excludes it
 and it never deploys to `$HOME`.
