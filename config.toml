@@ -43,6 +43,8 @@ exclude = [
   "/.mise/**",
   # Desktop-only files deploy through the desktop group in config.desktop.toml.
   "/desktop/**",
+  # Laptop-only files deploy through the laptop group in config.laptop.toml.
+  "/laptop/**",
 ]
 
 [dotfile_groups.home.entries]

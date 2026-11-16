@@ -1,2 +1,10 @@
-# Laptop overlay: empty until the laptop is set up. Selected by the laptop set
-# in miserc.toml. Add power and battery packages here when the laptop needs them.
+# Laptop overlay: hardware-specific config for the ThinkPad. Selected by the
+# laptop set in miserc.toml. Files live under laptop/ and deploy to $HOME only
+# on this overlay. Add power and battery packages here when the laptop needs them.
+
+[dotfile_groups.laptop]
+root = "laptop"
+target = "~"
+mode = "symlink-each"
+manifest = "git"
+relative = true

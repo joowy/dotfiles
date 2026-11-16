@@ -10,7 +10,7 @@ it to `~/.config/mise` on every machine.
 - `config.workstation.toml` — desktop applications, in every profile.
 - `config.desktop.toml` — desktop PC hardware (OpenRGB, LACT GPU config), deployed
   from `desktop/`.
-- `config.laptop.toml` — laptop overlay, empty until the laptop is set up.
+- `config.laptop.toml` — laptop (ThinkPad) overlay, deployed from `laptop/`.
 - `config.wsl2.toml` — WSL2 overlay, empty until that machine exists.
 - `miserc.toml` — tracked default environment selection (`workstation`) and the
   `desktop` and `laptop` sets.
@@ -229,7 +229,9 @@ wallpapers/lakeside-dynamic/
 
 The KDE wallpaper and layout state (`kdynamicwallpaperrc`,
 `plasma-org.kde.plasma.desktop-appletsrc`) is tracked and linked, with absolute
-paths on purpose. A wallpaper or panel change made in the GUI shows up as a git
+paths on purpose. The panel layout differs per machine, so
+`plasma-org.kde.plasma.desktop-appletsrc` and `plasmashellrc` each have one copy
+in `desktop/.config/` and one in `laptop/.config/`. A wallpaper or panel change made in the GUI shows up as a git
 diff: commit it or revert it.
 
 ## Rollback
