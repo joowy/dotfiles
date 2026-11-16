@@ -4,7 +4,7 @@
 #
 # Prints the resolved worktree path as the LAST line of stdout. All picker
 # UI, progress output, and messages go to stderr/tty so stdout stays clean
-# for the shell function in ~/dotfiles/.zshrc that cd's into the result:
+# for the shell function in ~/.config/mise/.zshrc that cd's into the result:
 #
 #   wt() { local d; d=$(command wt "$@") && cd -- "$d"; }
 #
@@ -24,7 +24,7 @@ Usage: wt [--repo PATH] [--branch NAME] [--path PATH]
 
 Create or attach to a git worktree, prompting via fzf for any argument not
 given explicitly. Prints the resolved worktree path on stdout; wrap with a
-shell function to cd into it (see ~/dotfiles/.zshrc).
+shell function to cd into it (see ~/.config/mise/.zshrc).
 
   --repo PATH       Path to the target repository (default: fzf picker over ~/repos)
   --branch NAME     Branch to check out or create (default: fzf picker + type-to-create)

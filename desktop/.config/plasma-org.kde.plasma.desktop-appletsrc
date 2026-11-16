@@ -22,7 +22,7 @@ DialogHeight=630
 DialogWidth=810
 
 [Containments][1][Wallpaper][org.kde.image][General]
-Image=/home/joey/dotfiles/wallpapers/lakeside-dynamic/
+Image=/home/joey/wallpapers/lakeside-dynamic/
 
 [Containments][114]
 activityId=
@@ -92,7 +92,7 @@ plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.image
 
 [Containments][2][Wallpaper][org.kde.image][General]
-Image=/home/joey/dotfiles/wallpapers/lakeside-dynamic
+Image=/home/joey/wallpapers/lakeside-dynamic
 
 [Containments][3]
 activityId=

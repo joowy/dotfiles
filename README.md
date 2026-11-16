@@ -238,7 +238,7 @@ diff: commit it or revert it.
 
 mise keeps a link ledger in `~/.local/state/mise`. To undo a deployment,
 `mise dot unapply` the entries listed by `mise dot status`. A full return to the
-previous stow-based setup needs the archived `~/dotfiles` checkout and its
+previous stow-based setup needs the archived `~/repos/dotfiles` checkout and its
 `stow .` run.
 
 ## History
