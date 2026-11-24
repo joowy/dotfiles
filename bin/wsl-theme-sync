@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+# `wsl-theme-sync`: copies the Windows light/dark app theme into the GNOME
+# color-scheme setting. WSLg never passes the Windows theme to Linux, so
+# xdg-desktop-portal reports "no preference" and apps such as Ghostty stay
+# light. The portal reads org.gnome.desktop.interface color-scheme, so setting
+# it makes Ghostty follow Windows. Called from .zshrc on every new shell.
+
+[ -n "$WSL_DISTRO_NAME" ] || exit 0
+command -v reg.exe >/dev/null 2>&1 || exit 0
+command -v gsettings >/dev/null 2>&1 || exit 0
+
+registry_value=$(reg.exe query 'HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' \
+  /v AppsUseLightTheme 2>/dev/null | tr -d '\r' | awk '/AppsUseLightTheme/ { print $3 }')
+
+case "$registry_value" in
+0x0) desired_scheme="'prefer-dark'" ;;
+0x1) desired_scheme="'prefer-light'" ;;
+*) exit 0 ;;
+esac
+
+current_scheme=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null)
+[ "$current_scheme" = "$desired_scheme" ] && exit 0
+
+gsettings set org.gnome.desktop.interface color-scheme "$(echo "$desired_scheme" | tr -d "'")"

@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.5.2",
+  "lastChangelogVersion": "1.6.0",
   "enableInstallTelemetry": false,
   "theme": "light/dark",
   "packages": [
@@ -10,7 +10,7 @@
     "npm:pi-slash-suggest",
     "npm:@gotgenes/pi-permission-system",
     "npm:@narumitw/pi-usage",
-    "npm:@cortexkit/pi-anthropic-auth@2.10.0"
+    "npm:@cortexkit/pi-anthropic-auth@2.16.6"
   ],
   "defaultTools": [
     "+codemode"
@@ -40,9 +40,9 @@
   "tuiMode": "regular",
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-footer\",\"scope\":\"user\"}": "0.5.1",
-    "{\"source\":\"npm:@gotgenes/pi-permission-system\",\"scope\":\"user\"}": "42.2.0",
+    "{\"source\":\"npm:@gotgenes/pi-permission-system\",\"scope\":\"user\"}": "42.2.1",
     "{\"source\":\"npm:pi-context-view\",\"scope\":\"user\"}": "0.8.4",
-    "{\"source\":\"npm:@narumitw/pi-usage\",\"scope\":\"user\"}": "0.69.3"
+    "{\"source\":\"npm:@narumitw/pi-usage\",\"scope\":\"user\"}": "0.70.0"
   },
   "hideThinkingBlock": true
 }

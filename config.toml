@@ -89,7 +89,6 @@ uv = "latest"                         # Python project and package management; m
 "pacman:mise" = "latest"
 "pacman:yazi" = "latest"
 "pacman:jq" = "latest"
-"pacman:docker" = "latest"
 "pacman:bubblewrap" = "latest"
 "pacman:btop" = "latest"
 "pacman:htop" = "latest"

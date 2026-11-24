@@ -6,4 +6,5 @@
 "pacman:dolphin" = "latest"
 "pacman:obsidian" = "latest"
 "pacman:keepass" = "latest"
+"pacman:docker" = "latest"           # not shared: WSL2 gets docker from Docker Desktop on the host
 "brew:colima" = "latest"         # Homebrew, not the AUR: this machine already has it there

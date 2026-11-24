@@ -94,6 +94,9 @@ aube = { path = "locks/npm-googleworkspace-cli/0.22.5", digest = "sha256:9050180
 backend = "npm:@googleworkspace/cli"
 specifiers = ["latest"]
 
+[tools."npm:@googleworkspace/cli".provenance]
+repository = "github.com/googleworkspace/cli"
+
 [[tools.python]]
 version = "3.14.8"
 backend = "core:python"

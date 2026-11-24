@@ -67,6 +67,9 @@ case ":$PATH:" in
 esac
 
 export PATH="$HOME/bin:$PATH"
+# WSL: make Linux apps (Ghostty) follow the Windows light/dark theme.
+# Runs in the background so it never slows down shell startup.
+[[ -n $WSL_DISTRO_NAME ]] && ("$HOME/bin/wsl-theme-sync" &>/dev/null &)
 # git worktrees: wt prints the path, then cd into it
 wt() {
   local d
