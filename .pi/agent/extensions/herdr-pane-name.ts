@@ -24,8 +24,6 @@ import net from "node:net";
 import { join } from "node:path";
 
 import type { UserMessage } from "@earendil-works/pi-ai";
-// The loader aliases this subpath to the same compat module for type and runtime.
-import { completeSimple } from "@earendil-works/pi-ai/compat";
 import {
   getAgentDir,
   type ExtensionAPI,
@@ -484,11 +482,6 @@ async function generateTitle(
     return { ok: false, reason: "missing_model" };
   }
 
-  const auth = await ctx.modelRegistry.getApiKeyAndHeaders(model);
-  if (!auth.ok) {
-    return { ok: false, reason: "missing_auth", detail: auth.error };
-  }
-
   const message: UserMessage = {
     role: "user",
     content: [{ type: "text", text: formatNamingPrompt(seed, source) }],
@@ -496,28 +489,36 @@ async function generateTitle(
   };
 
   const sessionId = namingSessionId(ctx);
-  const headers = {
-    ...auth.headers,
-    ...opencodeSessionHeaders(model, sessionId),
-  };
+  const headers = opencodeSessionHeaders(model, sessionId);
 
   try {
-    const response = await completeSimple(
-      model,
-      { systemPrompt: TITLE_PROMPT, messages: [message] },
-      {
-        apiKey: auth.apiKey,
-        headers: Object.keys(headers).length > 0 ? headers : undefined,
-        maxTokens: NAMING_MAX_TOKENS,
-        // Providers such as opencode-go route by session, so reuse the live one.
-        sessionId,
-        // Asking for a thinking level while disabling reasoning would ask for
-        // reasoning that is already off, so the level is not forwarded.
-        onPayload: (payload: unknown) =>
-          disableReasoningInPayload(model, payload),
-        signal,
-      },
-    );
+    // The registry resolves auth and sees providers registered by other
+    // extensions; the pi-ai/compat functions cannot.
+    const response = await ctx.modelRegistry
+      .streamSimple(
+        model,
+        { systemPrompt: TITLE_PROMPT, messages: [message] },
+        {
+          headers,
+          maxTokens: NAMING_MAX_TOKENS,
+          // Providers such as opencode-go route by session, so reuse the live one.
+          sessionId,
+          // Asking for a thinking level while disabling reasoning would ask for
+          // reasoning that is already off, so the level is not forwarded.
+          onPayload: (payload: unknown) =>
+            disableReasoningInPayload(model, payload),
+          signal,
+        },
+      )
+      .result();
+
+    if (response.stopReason === "error" || response.stopReason === "aborted") {
+      return {
+        ok: false,
+        reason: "request_failed",
+        detail: response.errorMessage ?? response.stopReason,
+      };
+    }
 
     const generated = response.content
       .filter(
