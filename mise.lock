@@ -88,15 +88,6 @@ aube = { path = "locks/npm-angular-cli/22.2.2", digest = "sha256:f3d453e5227143d
 backend = "npm:@angular/cli"
 specifiers = ["latest"]
 
-[[tools."npm:@googleworkspace/cli"]]
-version = "0.22.5"
-aube = { path = "locks/npm-googleworkspace-cli/0.22.5", digest = "sha256:9050180fd67fb9fd886305e61250ade7b044608606490440fdb4f22fa6c82116" }
-backend = "npm:@googleworkspace/cli"
-specifiers = ["latest"]
-
-[tools."npm:@googleworkspace/cli".provenance]
-repository = "github.com/googleworkspace/cli"
-
 [[tools.python]]
 version = "3.14.8"
 backend = "core:python"

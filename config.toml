@@ -72,7 +72,6 @@ python = "3.14"
 rust = "stable"
 uv = "latest"                         # Python project and package management; mise owns it, not pacman
 "npm:@angular/cli" = "latest"
-"npm:@googleworkspace/cli" = "latest"
 "github:agavra/tuicr" = "latest"
 
 # --- host packages: CLI and system ------------------------------------------

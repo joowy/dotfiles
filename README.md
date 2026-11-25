@@ -178,7 +178,7 @@ Steps that stay manual because no package manager covers them:
 ## Language toolchains
 
 mise owns `node`, `python`, `rust`, `uv`, `@angular/cli`,
-`@googleworkspace/cli`, and `tuicr` from `[tools]`. Do not install `nodejs`,
+and `tuicr` from `[tools]`. Do not install `nodejs`,
 `npm`, `python`, `rustup`, or `uv` from pacman.
 
 ```bash
